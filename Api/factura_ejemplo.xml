@@ -1,0 +1,94 @@
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<FacturaElectronica xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.3/facturaElectronica" xsi:schemaLocation="https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.3/facturaElectronica https://cdn.comprobanteselectronicos.go.cr/xml-schemas/v4.3/facturaElectronica.xsd">
+    <Clave>50610022300060453034000100001010000000062110995936</Clave>
+    <CodigoActividad>722003</CodigoActividad>
+    <NumeroConsecutivo>00100001010000000062</NumeroConsecutivo>
+    <FechaEmision>2023-02-10T11:50:00-06:00</FechaEmision>
+    <Emisor>
+        <Nombre>CARLOS ADRIAN ARAYA RAMIREZ</Nombre>
+        <Identificacion>
+            <Tipo>01</Tipo>
+            <Numero>604530340</Numero>
+        </Identificacion>
+        <NombreComercial>ADRIAN ARAYA</NombreComercial>
+        <Ubicacion>
+            <Provincia>6</Provincia>
+            <Canton>08</Canton>
+            <Distrito>01</Distrito>
+            <Barrio>11</Barrio>
+            <OtrasSenas>PRIMERA ENTRADA SEGUNDA CASA A MANO IZQUIERDA</OtrasSenas>
+        </Ubicacion>
+        <Telefono>
+            <CodigoPais>506</CodigoPais>
+            <NumTelefono>88393511</NumTelefono>
+        </Telefono>
+        <CorreoElectronico>carlosadrian19921@gmail.com</CorreoElectronico>
+    </Emisor>
+    <Receptor>
+        <Nombre>CAJA COSTARRICENSE DEL SEGURO SOCIAL</Nombre>
+        <Identificacion>
+            <Tipo>02</Tipo>
+            <Numero>4000042147</Numero>
+        </Identificacion>
+        <Ubicacion>
+            <Provincia>6</Provincia>
+            <Canton>04</Canton>
+            <Distrito>01</Distrito>
+            <OtrasSenas>frente parquecito infantil, centro Miramar</OtrasSenas>
+        </Ubicacion>
+        <Telefono>
+            <CodigoPais>506</CodigoPais>
+            <NumTelefono>26399226</NumTelefono>
+        </Telefono>
+        <CorreoElectronico>suc_miramar@ccss.sa.cr</CorreoElectronico>
+    </Receptor>
+    <CondicionVenta>01</CondicionVenta>
+    <MedioPago>04</MedioPago>
+    <DetalleServicio>
+        <LineaDetalle>
+            <NumeroLinea>1</NumeroLinea>
+            <Codigo>7211200000300</Codigo>
+            <CodigoComercial>
+                <Tipo>01</Tipo>
+                <Codigo>01</Codigo>
+            </CodigoComercial>
+            <Cantidad>1.00</Cantidad>
+            <UnidadMedida>Alc</UnidadMedida>
+            <Detalle>Alquiler edificio Sucursal CCSS Miramar setiembre 2023</Detalle>
+            <PrecioUnitario>1050000.00</PrecioUnitario>
+            <MontoTotal>1050000.00</MontoTotal>
+            <SubTotal>1050000.00</SubTotal>
+            <Impuesto>
+                <Codigo>01</Codigo>
+                <CodigoTarifa>01</CodigoTarifa>
+                <Tarifa>0</Tarifa>
+                <Monto>0.00</Monto>
+            </Impuesto>
+            <ImpuestoNeto>0.00</ImpuestoNeto>
+            <MontoTotalLinea>1050000.00</MontoTotalLinea>
+        </LineaDetalle>
+    </DetalleServicio>
+    <ResumenFactura>
+        <CodigoTipoMoneda>
+            <CodigoMoneda>CRC</CodigoMoneda>
+            <TipoCambio>1</TipoCambio>
+        </CodigoTipoMoneda>
+        <TotalServGravados>1050000.00</TotalServGravados>
+        <TotalServExentos>0</TotalServExentos>
+        <TotalServExonerado>0</TotalServExonerado>
+        <TotalMercanciasGravadas>0</TotalMercanciasGravadas>
+        <TotalMercanciasExentas>0</TotalMercanciasExentas>
+        <TotalMercExonerada>0</TotalMercExonerada>
+        <TotalGravado>1050000.00</TotalGravado>
+        <TotalExento>0</TotalExento>
+        <TotalExonerado>0</TotalExonerado>
+        <TotalVenta>1050000.00</TotalVenta>
+        <TotalDescuentos>0</TotalDescuentos>
+        <TotalVentaNeta>1050000.00</TotalVentaNeta>
+        <TotalImpuesto>0</TotalImpuesto>
+        <TotalIVADevuelto>0</TotalIVADevuelto>
+        <TotalComprobante>1050000.000</TotalComprobante>
+    </ResumenFactura>
+</FacturaElectronica>
