@@ -21,10 +21,13 @@ namespace Api.Data
                 new Actividad { Id = 2, Codigo = "721001", Nombre = "CONSULTORES INFORMÁTICOS" },
                 new Actividad { Id = 3, Codigo = "503002", Nombre = "VENTA DE REPUESTOS USADOS PARA AUTOMOVILES" }
             );
+            modelBuilder.Entity<Ubicacion>().HasData(Ubicacion.Ubicaciones);
+
         }
 
         public DbSet<Usuario> Usuarios => Set<Usuario>();
         public DbSet<Cuenta> Cuentas => Set<Cuenta>();
         public DbSet<Actividad> Actividades => Set<Actividad>();
+        public DbSet<Ubicacion> Ubicaciones => Set<Ubicacion>();
     }
 }

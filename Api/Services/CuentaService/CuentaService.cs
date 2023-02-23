@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Api.Data;
 using Api.Dtos.Cuenta;
+using Api.Dtos.Cuenta.Ubicacion;
 using Api.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -166,6 +167,140 @@ namespace Api.Services.CuentaService
                 cuenta.Actividades!.Add(actividad);
                 await _context.SaveChangesAsync();
                 response.Data = _mapper.Map<GetCuentaDto>(cuenta);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<GetUbicacionDto>> GetUbicacion(string codigoUbicacion)
+        {
+            var response = new ServiceResponse<GetUbicacionDto>();
+
+            try
+            {
+                int codigoProvincia = int.Parse(codigoUbicacion.Substring(0, 1));
+                int codigoCanton = int.Parse(codigoUbicacion.Substring(1, 2));
+                int codigoDistrito = int.Parse(codigoUbicacion.Substring(3, 2));
+                int codigoBarrio = int.Parse(codigoUbicacion.Substring(5, 2));
+
+                var ubicacion = await _context.Ubicaciones
+                    .FirstOrDefaultAsync(u => u.Provincia == codigoProvincia &&
+                                u.Canton == codigoCanton &&
+                                u.Distrito == codigoDistrito &&
+                                u.Barrio == codigoBarrio);
+
+                if (ubicacion is null)
+                    throw new Exception($"No se ha encontrado la ubicacion con el codigo '{codigoUbicacion}'");
+
+                response.Data = _mapper.Map<GetUbicacionDto>(ubicacion);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<List<GetUbicacionProvinciaDto>>> GetUbicacionProvincias()
+        {
+            var response = new ServiceResponse<List<GetUbicacionProvinciaDto>>();
+
+            try
+            {
+                var provincias = await _context.Ubicaciones
+                    .Select(u => new GetUbicacionProvinciaDto {Provincia = u.Provincia, NombreProvincia = u.NombreProvincia})
+                    .Distinct()
+                    .ToListAsync();
+
+                if (provincias is null)
+                    throw new Exception($"No se han encontrado provincias.");
+
+                response.Data = provincias;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<List<GetUbicacionCantonDto>>> GetUbicacionCanton(int provincia)
+        {
+            var response = new ServiceResponse<List<GetUbicacionCantonDto>>();
+
+            try
+            {
+                var cantones = await _context.Ubicaciones
+                    .Where(u => u.Provincia == provincia)
+                    .Select(u => new GetUbicacionCantonDto {Canton = u.Canton, NombreCanton = u.NombreCanton})
+                    .Distinct()
+                    .ToListAsync();
+
+                if (cantones is null)
+                    throw new Exception($"No se han encontrado cantones.");
+
+                response.Data = cantones;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<List<GetUbicacionDistritoDto>>> GetUbicacionDistrito(int provincia, int canton)
+        {
+            var response = new ServiceResponse<List<GetUbicacionDistritoDto>>();
+
+            try
+            {
+                var distritos = await _context.Ubicaciones
+                    .Where(u => u.Provincia == provincia && u.Canton == canton)
+                    .Select(u => new GetUbicacionDistritoDto {Distrito = u.Distrito, NombreDistrito = u.NombreDistrito})
+                    .Distinct()
+                    .ToListAsync();
+
+                if (distritos is null)
+                    throw new Exception($"No se han encontrado distritos.");
+
+                response.Data = distritos;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<List<GetUbicacionBarrioDto>>> GetUbicacionBarrio(int provincia, int canton, int distrito)
+        {
+            var response = new ServiceResponse<List<GetUbicacionBarrioDto>>();
+
+            try
+            {
+                var barrios = await _context.Ubicaciones
+                    .Where(u => u.Provincia == provincia && u.Canton == canton && u.Distrito == distrito)
+                    .Select(u => new GetUbicacionBarrioDto {Barrio = u.Barrio, NombreBarrio = u.NombreBarrio})
+                    .Distinct()
+                    .ToListAsync();
+
+                if (barrios is null)
+                    throw new Exception($"No se han encontrado barrios.");
+
+                response.Data = barrios;
             }
             catch (Exception ex)
             {

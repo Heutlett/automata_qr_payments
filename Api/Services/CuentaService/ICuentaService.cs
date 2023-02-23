@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Api.Dtos.Cuenta;
+using Api.Dtos.Cuenta.Ubicacion;
 using Api.Models;
 
 namespace Api.Services.CuentaService
@@ -15,5 +16,10 @@ namespace Api.Services.CuentaService
         Task<ServiceResponse<GetCuentaDto>> UpdateCuenta(UpdateCuentaDto updatedCuenta);
         Task<ServiceResponse<List<GetCuentaDto>>> DeleteCuenta(int id);
         Task<ServiceResponse<GetCuentaDto>> AddCuentaActividad(AddCuentaActividadDto newCuentaActivdad);
+        Task<ServiceResponse<GetUbicacionDto>> GetUbicacion(string codigoUbicacion);
+        Task<ServiceResponse<List<GetUbicacionProvinciaDto>>> GetUbicacionProvincias();
+        Task<ServiceResponse<List<GetUbicacionCantonDto>>> GetUbicacionCanton(int provincia);
+        Task<ServiceResponse<List<GetUbicacionDistritoDto>>> GetUbicacionDistrito(int provincia, int canton);
+        Task<ServiceResponse<List<GetUbicacionBarrioDto>>> GetUbicacionBarrio(int provincia, int canton, int distrito);
     }
 }

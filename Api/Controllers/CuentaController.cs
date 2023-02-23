@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Api.Dtos.Cuenta;
+using Api.Dtos.Cuenta.Ubicacion;
 using Api.Models;
 using Api.Services.CuentaService;
 using Microsoft.AspNetCore.Authorization;
@@ -71,6 +72,36 @@ namespace Api.Controllers
         public async Task<ActionResult<ServiceResponse<GetActividadDto>>> AddCharacterSkill(AddCuentaActividadDto newCuentaActividad)
         {
             return Ok(await _cuentaService.AddCuentaActividad(newCuentaActividad));
+        }
+        [AllowAnonymous]
+        [HttpGet("Ubicacion/{codigoUbicacion}")]
+        public async Task<ActionResult<ServiceResponse<GetUbicacionDto>>> GetUbicacion(string codigoUbicacion)
+        {
+            return Ok(await _cuentaService.GetUbicacion(codigoUbicacion));
+        }
+        [AllowAnonymous]
+        [HttpGet("UbicacionProvincias")]
+        public async Task<ActionResult<ServiceResponse<List<GetUbicacionProvinciaDto>>>> GetUbicacionProvincias()
+        {
+            return Ok(await _cuentaService.GetUbicacionProvincias());
+        }
+        [AllowAnonymous]
+        [HttpGet("UbicacionCantones")]
+        public async Task<ActionResult<ServiceResponse<List<GetUbicacionCantonDto>>>> GetUbicacionCantones(int provincia)
+        {
+            return Ok(await _cuentaService.GetUbicacionCanton(provincia));
+        }
+        [AllowAnonymous]
+        [HttpGet("UbicacionDistritos")]
+        public async Task<ActionResult<ServiceResponse<List<GetUbicacionDistritoDto>>>> GetUbicacionDistritos(int provincia, int canton)
+        {
+            return Ok(await _cuentaService.GetUbicacionDistrito(provincia, canton));
+        }
+        [AllowAnonymous]
+        [HttpGet("UbicacionBarrios")]
+        public async Task<ActionResult<ServiceResponse<List<GetUbicacionBarrioDto>>>> GetUbicacionBarrios(int provincia, int canton, int distrito)
+        {
+            return Ok(await _cuentaService.GetUbicacionBarrio(provincia, canton, distrito));
         }
     }
 }
