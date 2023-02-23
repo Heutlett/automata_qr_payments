@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/heutlett/automata_qr_payments/Api/Api.csproj": {}
+    "/home/heutlett/Trabajo_QR/automata_qr_payments/Api/Api.csproj": {}
   },
   "projects": {
-    "/home/heutlett/automata_qr_payments/Api/Api.csproj": {
+    "/home/heutlett/Trabajo_QR/automata_qr_payments/Api/Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/heutlett/automata_qr_payments/Api/Api.csproj",
+        "projectUniqueName": "/home/heutlett/Trabajo_QR/automata_qr_payments/Api/Api.csproj",
         "projectName": "Api",
-        "projectPath": "/home/heutlett/automata_qr_payments/Api/Api.csproj",
+        "projectPath": "/home/heutlett/Trabajo_QR/automata_qr_payments/Api/Api.csproj",
         "packagesPath": "/home/heutlett/.nuget/packages/",
-        "outputPath": "/home/heutlett/automata_qr_payments/Api/obj/",
+        "outputPath": "/home/heutlett/Trabajo_QR/automata_qr_payments/Api/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/heutlett/.nuget/NuGet/NuGet.Config"
@@ -38,13 +38,43 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[12.0.0, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[7.0.3, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[7.0.3, )"
             },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[7.0.3, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.4.0, )"
+            },
+            "Swashbuckle.AspNetCore.Filters": {
+              "target": "Package",
+              "version": "[7.0.6, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[6.27.0, )"
             }
           },
           "imports": [
