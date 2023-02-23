@@ -1,11 +1,10 @@
-global using Api.Models;
-global using Api.Data;
-global using Api.Dtos.Usuario;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Api.Data;
+using Microsoft.EntityFrameworkCore;
+using Api.Services.CuentaService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +42,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 // Inyeccion de servicios
+builder.Services.AddScoped<ICuentaService, CuentaService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 // Se agrega el servicio para implementar authentication middleware
