@@ -1,0 +1,9 @@
+Provincia Nombre Provincia Cantón Nombre Cantón Distrito Nombre Distrito Barrio Nombre Barrio
+1 San José 1 San José 1 CARMEN 1 Amón
+1 San José 1 San José 1 CARMEN 2 Aranjuez
+1 San José 1 San José 1 CARMEN 3 California (parte)
+1 San José 1 San José 1 CARMEN 4 Carmen
+1 San José 1 San José 1 CARMEN 5 Empalme
+1 San José 1 San José 1 CARMEN 6 Escalante
+1 San José 1 San José 1 CARMEN 7 Otoya.
+1 San José 1 San José 2 MERCE
