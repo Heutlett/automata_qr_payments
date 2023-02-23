@@ -78,6 +78,7 @@ namespace Api.Services.CuentaService
         {
             var serviceResponse = new ServiceResponse<List<GetCuentaDto>>();
             var dbCuentas = await _context.Cuentas
+                .Include(c => c.Actividades)
                 .Where(c => c.Usuario!.Id == GetUserId() && c.IsActive).ToListAsync();
 
             serviceResponse.Data = dbCuentas.Select(c => _mapper.Map<GetCuentaDto>(c)).ToList();
@@ -89,6 +90,7 @@ namespace Api.Services.CuentaService
 
             var serviceResponse = new ServiceResponse<GetCuentaDto>();
             var dbCuenta = await _context.Cuentas
+                .Include(c => c.Actividades)
                 .FirstOrDefaultAsync(c => c.Id == id && c.Usuario!.Id == GetUserId() && c.IsActive);
             serviceResponse.Data = _mapper.Map<GetCuentaDto>(dbCuenta);
             return serviceResponse;
@@ -133,6 +135,45 @@ namespace Api.Services.CuentaService
             }
 
             return serviceResponse;
+        }
+        public async Task<ServiceResponse<GetCuentaDto>> AddCuentaActividad(AddCuentaActividadDto newCuentaActividad)
+        {
+            var response = new ServiceResponse<GetCuentaDto>();
+            try
+            {
+                var cuenta = await _context.Cuentas
+                    .Include(c => c.Actividades)
+                    .FirstOrDefaultAsync(c => c.Id == newCuentaActividad.CuentaId &&
+                    c.Usuario!.Id == GetUserId());
+
+                if (cuenta is null)
+                {
+                    response.Success = false;
+                    response.Message = "No se ha encontrado la cuenta.";
+                    return response;
+                }
+
+                var actividad = await _context.Actividades
+                    .FirstOrDefaultAsync(s => s.Id == newCuentaActividad.ActividadId);
+
+                if (actividad is null)
+                {
+                    response.Success = false;
+                    response.Message = "No se ha encontrado la actividad";
+                    return response;
+                }
+
+                cuenta.Actividades!.Add(actividad);
+                await _context.SaveChangesAsync();
+                response.Data = _mapper.Map<GetCuentaDto>(cuenta);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
         }
     }
 }

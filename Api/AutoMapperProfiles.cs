@@ -14,6 +14,7 @@ namespace dotnet_rpg
         {
             CreateMap<Cuenta, GetCuentaDto>();
             CreateMap<AddCuentaDto, Cuenta>();
+            CreateMap<Actividad, GetActividadDto>();
         }
     }
 }

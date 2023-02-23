@@ -7,23 +7,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Api.Data
 {
-    public class DataContext: DbContext
+    public class DataContext : DbContext
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-            
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // modelBuilder.Entity<Skill>().HasData(
-            //     new Skill {Id = 1, Name = "Fireball", Damage = 30},
-            //     new Skill {Id = 2, Name = "Freezy", Damage = 20},
-            //     new Skill {Id = 3, Name = "Blizzard", Damage = 50}
-            // );
+            modelBuilder.Entity<Actividad>().HasData(
+                new Actividad { Id = 1, Codigo = "722003", Nombre = "DISEÑADOR GRAFICO, DE SOFWARE Y PAGINAS WEB" },
+                new Actividad { Id = 2, Codigo = "721001", Nombre = "CONSULTORES INFORMÁTICOS" },
+                new Actividad { Id = 3, Codigo = "503002", Nombre = "VENTA DE REPUESTOS USADOS PARA AUTOMOVILES" }
+            );
         }
 
         public DbSet<Usuario> Usuarios => Set<Usuario>();
         public DbSet<Cuenta> Cuentas => Set<Cuenta>();
+        public DbSet<Actividad> Actividades => Set<Actividad>();
     }
 }
