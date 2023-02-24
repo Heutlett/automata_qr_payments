@@ -30,15 +30,16 @@ namespace Api.Data
             if(usuario is null)
             {
                 response.Success = false;
-                response.Message = "User not found.";
+                response.Message = "No se ha encontrado el usuario.";
             }
             else if(!VerifyPasswordHash(password, usuario.PasswordHash, usuario.PasswordSalt))
             {
                 response.Success = false;
-                response.Message = "Wrong password.";
+                response.Message = "Contraseña incorrecta.";
             }
             else{
                 response.Data = CreateToken(usuario);
+                response.Message = "Se ha iniciado sesión correctamente!";
             }
             
             return response;

@@ -11,6 +11,7 @@ class HomePage extends StatelessWidget {
       key: _scaffKey,
       appBar: AppBar(
         title: Text('QR Payments'),
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Column(
