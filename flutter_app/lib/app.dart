@@ -6,6 +6,8 @@ import 'package:flutter_app/screens/register.dart';
 import 'package:flutter_app/screens/login.dart';
 import 'package:flutter_app/screens/account_management.dart';
 import 'package:flutter_app/screens/create_account.dart';
+import 'package:flutter_app/screens/facturar.dart';
+import 'package:flutter_app/screens/generate_qr.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -22,6 +24,8 @@ class MyApp extends StatelessWidget {
         "/account_management": (BuildContext context) =>
             AccountManagementScreen(),
         "/create_account": (BuildContext context) => AgregarCuentaForm(),
+        "/facturar": (BuildContext context) => FacturarPage(),
+        "/generateQR": (BuildContext context) => QRScreen(),
       },
     );
   }

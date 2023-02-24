@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeLoggedPage extends StatelessWidget {
   HomeLoggedPage({Key? key}) : super(key: key);
-  final _scaffKey = GlobalKey<ScaffoldState>();
 
   void _showAccountManagement(BuildContext context) async {
     var response = await _getCuentas();
@@ -34,7 +33,6 @@ class HomeLoggedPage extends StatelessWidget {
     final String message = ModalRoute.of(context)?.settings.arguments as String;
 
     return Scaffold(
-      key: _scaffKey,
       appBar: AppBar(
         title: Text('QR Payments'),
         automaticallyImplyLeading: false,
@@ -60,7 +58,9 @@ class HomeLoggedPage extends StatelessWidget {
             ),
             SizedBox(height: 20.0),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pushNamed("/facturar");
+              },
               child: Text('Facturar', style: TextStyle(fontSize: 18)),
               style: ElevatedButton.styleFrom(
                 fixedSize: Size(200, 60),

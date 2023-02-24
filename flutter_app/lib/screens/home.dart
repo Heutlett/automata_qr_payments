@@ -3,12 +3,10 @@ import 'package:flutter_app/screens/demo.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
-  final _scaffKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffKey,
       appBar: AppBar(
         title: Text('QR Payments'),
         automaticallyImplyLeading: false,

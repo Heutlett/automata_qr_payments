@@ -15,7 +15,6 @@ class DemoPage extends StatefulWidget {
 class _DemoPage extends State<DemoPage> {
   String _scanBarcode = '';
   String _apiResponse = '';
-  final _scaffKey = GlobalKey<ScaffoldState>();
 
   Future<void> scanQR() async {
     String barcodeScanRes;
@@ -62,7 +61,6 @@ class _DemoPage extends State<DemoPage> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        key: _scaffKey,
         appBar: AppBar(
           title: const Text('Facturacion QR Demo'),
           leading: IconButton(
