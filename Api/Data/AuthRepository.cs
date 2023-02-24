@@ -50,7 +50,7 @@ namespace Api.Data
             if(await UserExists(usuario.Username))
             {
                 response.Success = false;
-                response.Message = "User already exists.";
+                response.Message = "Error, el usuario ya existe.";
                 return response;
             }
 
@@ -62,6 +62,7 @@ namespace Api.Data
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
             response.Data = usuario.Id;
+            response.Message = "El usuario se ha registrado exitosamente.";
             return response;
         }
 
