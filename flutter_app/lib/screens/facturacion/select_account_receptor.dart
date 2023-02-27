@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 
 class SelectAccountReceptorScreen extends StatefulWidget {
   const SelectAccountReceptorScreen({Key? key}) : super(key: key);
@@ -14,6 +15,10 @@ class SelectAccountReceptorScreen extends StatefulWidget {
 class _SelectAccountReceptorScreenState
     extends State<SelectAccountReceptorScreen> {
   String _scanBarcode = '';
+
+  // Esto es temporal, sebe cambiar por metodo seguro
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _idCuentaController = TextEditingController();
 
   Future<void> scanQR() async {
     String barcodeScanRes;
@@ -85,10 +90,18 @@ class _SelectAccountReceptorScreenState
                             style: TextStyle(fontSize: 13),
                           ),
                           SizedBox(height: 16),
+                          ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('Cambiar a otra cuenta'))
                         ],
                       ),
                     ),
                   ),
+                ),
+                SizedBox(
+                  height: 50,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -109,6 +122,9 @@ class _SelectAccountReceptorScreenState
                             MaterialStateProperty.all(Colors.green)),
                   ),
                 ),
+                SizedBox(
+                  height: 50,
+                ),
                 Container(
                   color: Colors.red[100],
                   //width: double.infinity,
@@ -118,7 +134,7 @@ class _SelectAccountReceptorScreenState
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
                           onPressed: () {
-                            scanQR();
+                            showSelectAccountManagement(context);
                           },
                           child: Text('Simular escaneo QR de receptor'),
                           style: ButtonStyle(
@@ -131,20 +147,22 @@ class _SelectAccountReceptorScreenState
                         child: Row(
                           children: [
                             Expanded(
-                              child: TextFormField(
-                                initialValue: '1',
+                              child: TextField(
                                 decoration: InputDecoration(
-                                    labelText: 'Nombre usuario'),
+                                  labelText: 'Nombre de usuario',
+                                ),
+                                controller: _usernameController,
                               ),
                             ),
                             SizedBox(
                               width: 15,
                             ),
                             Expanded(
-                              child: TextFormField(
-                                initialValue: '1',
-                                decoration:
-                                    InputDecoration(labelText: 'Id cuenta'),
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  labelText: 'Id cuenta',
+                                ),
+                                controller: _idCuentaController,
                               ),
                             ),
                           ],
@@ -159,5 +177,20 @@ class _SelectAccountReceptorScreenState
         ),
       ),
     );
+  }
+
+  void showSelectAccountManagement(BuildContext context) async {
+    final String username = _usernameController.text;
+    final String idCuenta = _idCuentaController.text;
+
+    var account_receptor = await getCuentaTemporal(username, idCuenta);
+
+    final Account account_emisor =
+        ModalRoute.of(context)?.settings.arguments as Account;
+
+    List<Account> cuentas = [account_emisor, account_receptor];
+
+    Navigator.of(context)
+        .pushNamed("/select_account_management", arguments: cuentas);
   }
 }

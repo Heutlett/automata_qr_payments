@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 
 class AgregarCuentaForm extends StatefulWidget {
   @override
@@ -191,7 +192,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                 DropdownButtonFormField<String>(
                   value: _tipoCuenta,
                   decoration: InputDecoration(
-                    labelText: 'Tipo de cédula',
+                    labelText: 'Tipo de cuenta',
                   ),
                   items: _tiposCuenta
                       .map((tipoCuenta) => DropdownMenuItem(
@@ -230,25 +231,10 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
     );
   }
 
-  Future<http.Response> _getCuentas() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('accessToken');
-
-    var url = "http://10.0.2.2:5275/api/Cuenta/GetAll";
-
-    var headers = {"Authorization": "bearer $token"};
-
-    var response = await http.get(Uri.parse(url), headers: headers);
-
-    return response;
-  }
-
   void _showAccountManagement(BuildContext context) async {
-    var response = await _getCuentas();
-    var data = jsonDecode(response.body);
+    var cuentas = await getCuentasList();
 
-    Navigator.of(context)
-        .pushNamed("/account_management", arguments: data['data']);
+    Navigator.of(context).pushNamed("/account_management", arguments: cuentas);
   }
 
   void _submitForm() async {

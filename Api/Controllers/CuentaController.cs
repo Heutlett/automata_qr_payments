@@ -103,5 +103,11 @@ namespace Api.Controllers
         {
             return Ok(await _cuentaService.GetUbicacionBarrio(provincia, canton, distrito));
         }
+        [AllowAnonymous]
+        [HttpGet("cuentaTemporal/{nombreUsuario}/{id}")] 
+        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> GetCuentaTemporal(string nombreUsuario, int id)
+        {
+            return Ok(await _cuentaService.GetCuentaTemporal(nombreUsuario,id));
+        }
     }
 }

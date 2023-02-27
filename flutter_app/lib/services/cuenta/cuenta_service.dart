@@ -17,14 +17,22 @@ Future<http.Response> _getCuentas() async {
   return response;
 }
 
+Future<http.Response> _getCuentaTemporal(String username, String id) async {
+  final prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('accessToken');
+
+  var url = "http://10.0.2.2:5275/api/Cuenta/cuentaTemporal/$username/$id";
+
+  var response = await http.get(Uri.parse(url));
+
+  return response;
+}
+
 Future<List<Account>> getCuentasList() async {
   var response = await _getCuentas();
   var data = jsonDecode(response.body);
   data = data['data'];
   List<Account> accounts = [];
-  print(data);
-  print(data[0]['id']);
-  print(data[1]['id']);
 
   for (var i = 0; i < data.length; i++) {
     accounts.add(Account(
@@ -44,6 +52,29 @@ Future<List<Account>> getCuentasList() async {
         ubicacionSenasExtranjero: data[i]['ubicacionSenasExtranjero'],
         tipo: data[i]['tipo']));
   }
-  print(accounts);
   return accounts;
+}
+
+Future<Account> getCuentaTemporal(String username, String id) async {
+  var response = await _getCuentaTemporal(username, id);
+  var data = jsonDecode(response.body);
+  data = data['data'];
+  Account account = Account(
+      id: data['id'].toString(),
+      cedulaTipo: data['cedulaTipo'],
+      cedulaNumero: data['cedulaNumero'],
+      idExtranjero: data['idExtranjero'],
+      nombre: data['nombre'],
+      nombreComercial: data['nombreComercial'],
+      telCodigoPais: data['telCodigoPais'],
+      telNumero: data['telNumero'],
+      faxCodigoPais: data['faxCodigoPais'],
+      faxNumero: data['faxNumero'],
+      correo: data['correo'],
+      ubicacionCodigo: data['ubicacionCodigo'],
+      ubicacionSenas: data['ubicacionSenas'],
+      ubicacionSenasExtranjero: data['ubicacionSenasExtranjero'],
+      tipo: data['tipo']);
+
+  return account;
 }

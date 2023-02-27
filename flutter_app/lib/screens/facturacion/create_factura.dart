@@ -27,40 +27,12 @@ class _CreateFacturaState extends State<CreateFactura> {
     'Emisor',
   ];
 
-  final _cedulaNumeroController = TextEditingController();
-  final _idExtranjeroController = TextEditingController();
-  final _nombreController = TextEditingController();
-  final _nombreComercialController = TextEditingController();
-  final _telCodigoPaisController = TextEditingController();
-  final _telNumeroController = TextEditingController();
-  final _faxCodigoPaisController = TextEditingController();
-  final _faxNumeroController = TextEditingController();
-  final _correoController = TextEditingController();
-  final _ubicacionCodigoController = TextEditingController();
-  final _ubicacionSenasController = TextEditingController();
-  final _ubicacionSenasExtranjeroController = TextEditingController();
-
-  @override
-  void dispose() {
-    _cedulaNumeroController.dispose();
-    _idExtranjeroController.dispose();
-    _nombreController.dispose();
-    _nombreComercialController.dispose();
-    _telCodigoPaisController.dispose();
-    _telNumeroController.dispose();
-    _faxCodigoPaisController.dispose();
-    _faxNumeroController.dispose();
-    _correoController.dispose();
-    _ubicacionCodigoController.dispose();
-    _ubicacionSenasController.dispose();
-    _ubicacionSenasExtranjeroController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final Account account =
-        ModalRoute.of(context)?.settings.arguments as Account;
+    final List<Account> account =
+        ModalRoute.of(context)?.settings.arguments as List<Account>;
+    final Account accountEmisor = account[0];
+    final Account accountReceptor = account[1];
 
     return Scaffold(
       appBar: AppBar(
@@ -68,36 +40,24 @@ class _CreateFacturaState extends State<CreateFactura> {
       ),
       body: SingleChildScrollView(
         child: Column(
+          //crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AccountForm(
               titulo: 'Datos emisor',
-              account: account,
+              account: accountEmisor,
             ),
+            AccountForm(
+              titulo: 'Datos receptor',
+              account: accountReceptor,
+            ),
+            SizedBox(
+              height: 25,
+            ),
+            ElevatedButton(onPressed: () {}, child: Text('Crear factura'))
           ],
         ),
       ),
     );
-  }
-
-  Future<http.Response> _getCuentas() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('accessToken');
-
-    var url = "http://10.0.2.2:5275/api/Cuenta/GetAll";
-
-    var headers = {"Authorization": "bearer $token"};
-
-    var response = await http.get(Uri.parse(url), headers: headers);
-
-    return response;
-  }
-
-  void _showAccountManagement(BuildContext context) async {
-    var response = await _getCuentas();
-    var data = jsonDecode(response.body);
-
-    Navigator.of(context)
-        .pushNamed("/account_management", arguments: data['data']);
   }
 
   void _submitForm() async {}

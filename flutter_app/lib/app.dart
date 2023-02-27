@@ -10,6 +10,7 @@ import 'package:flutter_app/screens/facturacion/facturar.dart';
 import 'package:flutter_app/screens/facturacion/generate_qr.dart';
 import 'package:flutter_app/screens/facturacion/select_account_emisor.dart';
 import 'package:flutter_app/screens/facturacion/select_account_receptor.dart';
+import 'package:flutter_app/screens/facturacion/select_accounts_management.dart';
 import 'package:flutter_app/screens/facturacion/create_factura.dart';
 
 class MyApp extends StatelessWidget {
@@ -33,6 +34,8 @@ class MyApp extends StatelessWidget {
             SelectAccountEmisorScreen(),
         "/select_account_receptor": (BuildContext context) =>
             SelectAccountReceptorScreen(),
+        "/select_account_management": (BuildContext context) =>
+            SelectAccountManagementScreen(),
         "/create_factura": (BuildContext context) => CreateFactura(),
       },
     );

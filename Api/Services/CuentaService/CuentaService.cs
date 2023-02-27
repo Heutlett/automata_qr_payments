@@ -88,7 +88,6 @@ namespace Api.Services.CuentaService
 
         public async Task<ServiceResponse<GetCuentaDto>> GetCuentaById(int id)
         {
-
             var serviceResponse = new ServiceResponse<GetCuentaDto>();
             var dbCuenta = await _context.Cuentas
                 .Include(c => c.Actividades)
@@ -309,6 +308,16 @@ namespace Api.Services.CuentaService
             }
 
             return response;
+        }
+
+        public async Task<ServiceResponse<GetCuentaDto>> GetCuentaTemporal(string nombreUsuario, int id)
+        {
+            var serviceResponse = new ServiceResponse<GetCuentaDto>();
+            var dbCuenta = await _context.Cuentas
+                .Include(c => c.Actividades)
+                .FirstOrDefaultAsync(c => c.Id == id && c.Usuario!.Username == nombreUsuario && c.IsActive);
+            serviceResponse.Data = _mapper.Map<GetCuentaDto>(dbCuenta);
+            return serviceResponse;
         }
     }
 }
