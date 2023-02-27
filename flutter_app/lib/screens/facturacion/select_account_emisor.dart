@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
 
-class SelectAccountScreen extends StatefulWidget {
-  const SelectAccountScreen({Key? key}) : super(key: key);
+class SelectAccountEmisorScreen extends StatefulWidget {
+  const SelectAccountEmisorScreen({Key? key}) : super(key: key);
 
   @override
-  State<SelectAccountScreen> createState() => _SelectAccountScreenState();
+  State<SelectAccountEmisorScreen> createState() =>
+      _SelectAccountEmisorScreenState();
 }
 
-class _SelectAccountScreenState extends State<SelectAccountScreen> {
+class _SelectAccountEmisorScreenState extends State<SelectAccountEmisorScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Account> accounts =
@@ -25,7 +26,7 @@ class _SelectAccountScreenState extends State<SelectAccountScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                'Seleccione una cuenta:',
+                'Seleccione su cuenta emisor',
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
             ),
@@ -62,9 +63,9 @@ class _SelectAccountScreenState extends State<SelectAccountScreen> {
                           SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () {
-                              print(acc.id.toString());
-                              Navigator.of(context)
-                                  .pushNamed("/create_factura", arguments: acc);
+                              Navigator.of(context).pushNamed(
+                                  "/select_account_receptor",
+                                  arguments: acc);
                             },
                             child: Text('Seleccionar'),
                           ),

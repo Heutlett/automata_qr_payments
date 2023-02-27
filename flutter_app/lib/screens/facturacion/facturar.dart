@@ -7,7 +7,8 @@ class FacturarPage extends StatelessWidget {
 
   void _showSelectAccount(BuildContext context) async {
     List<Account> accounts = await getCuentasList();
-    Navigator.of(context).pushNamed("/select_account", arguments: accounts);
+    Navigator.of(context)
+        .pushNamed("/select_account_emisor", arguments: accounts);
   }
 
   @override

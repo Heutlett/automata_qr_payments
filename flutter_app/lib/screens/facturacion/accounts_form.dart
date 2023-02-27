@@ -55,6 +55,13 @@ class AccountForm extends StatelessWidget {
             decoration: InputDecoration(labelText: 'Nombre comercial'),
           ),
           SizedBox(height: 16.0),
+          Text(
+            'Telefono',
+            style: TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           Container(
             child: Row(
               children: [
@@ -78,6 +85,13 @@ class AccountForm extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16.0),
+          Text(
+            'Fax',
+            style: TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           Container(
             child: Row(
               children: [

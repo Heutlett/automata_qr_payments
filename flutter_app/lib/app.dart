@@ -8,7 +8,8 @@ import 'package:flutter_app/screens/user/account_management.dart';
 import 'package:flutter_app/screens/user/create_account.dart';
 import 'package:flutter_app/screens/facturacion/facturar.dart';
 import 'package:flutter_app/screens/facturacion/generate_qr.dart';
-import 'package:flutter_app/screens/facturacion/select_account.dart';
+import 'package:flutter_app/screens/facturacion/select_account_emisor.dart';
+import 'package:flutter_app/screens/facturacion/select_account_receptor.dart';
 import 'package:flutter_app/screens/facturacion/create_factura.dart';
 
 class MyApp extends StatelessWidget {
@@ -28,7 +29,10 @@ class MyApp extends StatelessWidget {
         "/create_account": (BuildContext context) => AgregarCuentaForm(),
         "/facturar": (BuildContext context) => FacturarPage(),
         "/generateQR": (BuildContext context) => QRScreen(),
-        "/select_account": (BuildContext context) => SelectAccountScreen(),
+        "/select_account_emisor": (BuildContext context) =>
+            SelectAccountEmisorScreen(),
+        "/select_account_receptor": (BuildContext context) =>
+            SelectAccountReceptorScreen(),
         "/create_factura": (BuildContext context) => CreateFactura(),
       },
     );
