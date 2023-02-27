@@ -1,31 +1,13 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_app/models/account.dart';
+import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 
 class HomeLoggedPage extends StatelessWidget {
   HomeLoggedPage({Key? key}) : super(key: key);
 
   void _showAccountManagement(BuildContext context) async {
-    var response = await _getCuentas();
-    var data = jsonDecode(response.body);
-
-    Navigator.of(context)
-        .pushNamed("/account_management", arguments: data['data']);
-  }
-
-  Future<http.Response> _getCuentas() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('accessToken');
-
-    var url = "http://10.0.2.2:5275/api/Cuenta/GetAll";
-
-    var headers = {"Authorization": "bearer $token"};
-
-    var response = await http.get(Uri.parse(url), headers: headers);
-
-    return response;
+    List<Account> accounts = await getCuentasList();
+    Navigator.of(context).pushNamed("/account_management", arguments: accounts);
   }
 
   @override

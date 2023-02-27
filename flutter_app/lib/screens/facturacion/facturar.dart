@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_app/models/account.dart';
+import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 
 class FacturarPage extends StatelessWidget {
   FacturarPage({Key? key}) : super(key: key);
+
+  void _showSelectAccount(BuildContext context) async {
+    List<Account> accounts = await getCuentasList();
+    Navigator.of(context).pushNamed("/select_account", arguments: accounts);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,9 @@ class FacturarPage extends StatelessWidget {
             ),
             SizedBox(height: 40.0),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                _showSelectAccount(context);
+              },
               child:
                   Text('Crear factura emisor', style: TextStyle(fontSize: 16)),
               style: ElevatedButton.styleFrom(

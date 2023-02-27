@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/home.dart';
 import 'package:flutter_app/screens/home_logged.dart';
 import 'package:flutter_app/screens/demo.dart';
-import 'package:flutter_app/screens/register.dart';
-import 'package:flutter_app/screens/login.dart';
-import 'package:flutter_app/screens/account_management.dart';
-import 'package:flutter_app/screens/create_account.dart';
-import 'package:flutter_app/screens/facturar.dart';
-import 'package:flutter_app/screens/generate_qr.dart';
+import 'package:flutter_app/screens/user/register.dart';
+import 'package:flutter_app/screens/user/login.dart';
+import 'package:flutter_app/screens/user/account_management.dart';
+import 'package:flutter_app/screens/user/create_account.dart';
+import 'package:flutter_app/screens/facturacion/facturar.dart';
+import 'package:flutter_app/screens/facturacion/generate_qr.dart';
+import 'package:flutter_app/screens/facturacion/select_account.dart';
+import 'package:flutter_app/screens/facturacion/create_factura.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -26,6 +28,8 @@ class MyApp extends StatelessWidget {
         "/create_account": (BuildContext context) => AgregarCuentaForm(),
         "/facturar": (BuildContext context) => FacturarPage(),
         "/generateQR": (BuildContext context) => QRScreen(),
+        "/select_account": (BuildContext context) => SelectAccountScreen(),
+        "/create_factura": (BuildContext context) => CreateFactura(),
       },
     );
   }
