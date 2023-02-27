@@ -1,0 +1,140 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Api</name>
+    </assembly>
+    <members>
+        <member name="T:Api.Controllers.AuthController">
+            <summary>
+            Controlador para el manejo de la autenticación y registro de usuarios.
+            </summary>
+            <remarks>
+            Este controlador proporciona los metodos para registrarse e iniciar sesión.
+            </remarks>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Api.Controllers.AuthController.Register(Api.Dtos.Usuario.UsuarioRegisterDto)" -->
+        <!-- Badly formed XML comment ignored for member "M:Api.Controllers.AuthController.Login(Api.Dtos.Usuario.UsuarioLoginDto)" -->
+        <member name="T:Api.Controllers.CuentaController">
+            <summary>
+            Controlador para administrar cuentas.
+            </summary>
+            <remarks>
+            Este controlador proporciona las operaciones CRUD (Crear, Leer, Actualizar y Eliminar) para las cuentas.
+            </remarks>
+        </member>
+        <member name="M:Api.Controllers.CuentaController.Get">
+            <summary>
+            Obtiene todas las cuentas almacenadas en la base de datos.
+            </summary>
+            <returns>Una lista de objetos GetCuentaDto encapsulados en un ServiceResponse.</returns>
+        </member>
+        <member name="M:Api.Controllers.CuentaController.GetSingle(System.Int32)">
+            <summary>
+            Obtiene una cuenta específica según el ID proporcionado.
+            </summary>
+            <param name="id">El ID de la cuenta a buscar.</param>
+            <returns>Un objeto GetCuentaDto encapsulado en un ServiceResponse.</returns>
+        </member>
+        <member name="M:Api.Controllers.CuentaController.AddCuenta(Api.Dtos.Cuenta.AddCuentaDto)">
+            <summary>
+            Agrega una nueva cuenta a la base de datos.
+            </summary>
+            <param name="newCuenta">Los detalles de la nueva cuenta a agregar.</param>
+            <returns>Una lista de objetos GetCuentaDto encapsulados en un ServiceResponse.</returns>
+        </member>
+        <member name="M:Api.Controllers.CuentaController.UpdateCuenta(Api.Dtos.Cuenta.UpdateCuentaDto)">
+            <summary>
+            Actualiza una cuenta existente en la base de datos.
+            </summary>
+            <param name="updatedCuenta">Los detalles actualizados de la cuenta a actualizar.</param>
+            <returns>Una lista de objetos GetCuentaDto encapsulados en un ServiceResponse.</returns>
+        </member>
+        <member name="M:Api.Controllers.CuentaController.DeleteCuenta(System.Int32)">
+            <summary>
+            Elimina una cuenta específica de la base de datos.
+            </summary>
+            <param name="id">El ID de la cuenta a eliminar.</param>
+            <returns>Un objeto GetCuentaDto encapsulado en un ServiceResponse.</returns>
+        </member>
+        <member name="M:Api.Controllers.CuentaController.AddCuentaActividad(Api.Dtos.Cuenta.AddCuentaActividadDto)">
+            <summary>
+            Agrega una actividad a la cuenta especificada.
+            </summary>
+            <param name="newCuentaActividad">Objeto AddCuentaActividadDto con la información de la actividad a agregar.</param>
+            <returns>Un ActionResult con un objeto ServiceResponse de tipo GetActividadDto.</returns>
+        </member>
+        <member name="M:Api.Controllers.CuentaController.GetUbicacion(System.String)">
+            <summary>
+            Obtiene la ubicación de una cuenta en base al código de ubicación proporcionado.
+            </summary>
+            <param name="codigoUbicacion">Código de ubicación de la cuenta.</param>
+            <returns>Respuesta de servicio que incluye la ubicación de la cuenta.</returns>
+        </member>
+        <member name="M:Api.Controllers.CuentaController.GetUbicacionProvincias">
+            <summary>
+            Obtiene una lista de provincias con sus respectivos códigos de ubicación.
+            </summary>
+            <returns>Una respuesta de servicio que contiene la lista de provincias con sus códigos de ubicación.</returns>
+        </member>
+        <member name="M:Api.Controllers.CuentaController.GetUbicacionCantones(System.Int32)">
+            <summary>
+            Obtiene una lista de cantones de una provincia específica.
+            </summary>
+            <param name="provincia">El código de la provincia.</param>
+            <returns>Una respuesta HTTP con una lista de objetos GetUbicacionCantonDto.</returns>
+        </member>
+        <member name="M:Api.Controllers.CuentaController.GetUbicacionDistritos(System.Int32,System.Int32)">
+            <summary>
+            Obtiene una lista de objetos GetUbicacionDistritoDto que corresponden a los distritos en el cantón y provincia especificados.
+            </summary>
+            <param name="provincia">El id de la provincia de la que se desean obtener los distritos.</param>
+            <param name="canton">El id del cantón del que se desean obtener los distritos.</param>
+            <returns>Un ActionResult que contiene un objeto ServiceResponse que a su vez contiene una lista de objetos GetUbicacionDistritoDto.</returns>
+        </member>
+        <member name="M:Api.Controllers.CuentaController.GetUbicacionBarrios(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Obtiene la lista de barrios correspondientes a un distrito en una provincia y cantón especificados.
+            </summary>
+            <param name="provincia">El código de la provincia a la que pertenece el distrito.</param>
+            <param name="canton">El código del cantón al que pertenece el distrito.</param>
+            <param name="distrito">El código del distrito del que se quieren obtener los barrios.</param>
+            <returns>Un objeto ServiceResponse que contiene la lista de barrios correspondientes al distrito especificado.</returns>
+        </member>
+        <member name="T:Api.Migrations.InitialCreate">
+            <inheritdoc />
+        </member>
+        <member name="M:Api.Migrations.InitialCreate.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Api.Migrations.InitialCreate.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Api.Migrations.InitialCreate.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Api.Migrations.Actividad">
+            <inheritdoc />
+        </member>
+        <member name="M:Api.Migrations.Actividad.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Api.Migrations.Actividad.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Api.Migrations.Actividad.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Api.Migrations.Ubicacion">
+            <inheritdoc />
+        </member>
+        <member name="M:Api.Migrations.Ubicacion.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Api.Migrations.Ubicacion.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Api.Migrations.Ubicacion.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>
