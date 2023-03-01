@@ -100,6 +100,7 @@ namespace Api.Data
             {
                 new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
                 new Claim(ClaimTypes.Name, usuario.Username)
+                // Hay que agregar los roles eventualmente
             };
 
             var appSettingsToken = _configuration.GetSection("AppSettings:Token").Value;

@@ -5,75 +5,101 @@ use qr_payments_db;
 
 DROP TABLE IF EXISTS usuarios;
 CREATE TABLE usuarios (
-  id INT NOT NULL AUTO_INCREMENT,
-  nombre_usuario VARCHAR(20) NOT NULL UNIQUE,
-  contrasena CHAR(60) NOT NULL,
-  correo VARCHAR(160) NOT NULL,
-  rol TINYINT(2) NOT NULL,
-  PRIMARY KEY (id)
-) ENGINE=InnoDB;
+  Id INT NOT NULL AUTO_INCREMENT,
+  Username VARCHAR(20) NOT NULL UNIQUE,
+  PasswordHash LONGBLOB NOT NULL,
+  PasswordSalt LONGBLOB NOT NULL,
+  Email VARCHAR(160) NOT NULL,
+  Rol TINYINT(2) NOT NULL,
+  PRIMARY KEY (Id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS cuentas;
 CREATE TABLE cuentas (
-  id INT NOT NULL AUTO_INCREMENT,
-  id_usuario INT NOT NULL,
-  cedula_tipo VARCHAR(2) NOT NULL,          -- Acorde a resolucion 4.3
-  cedula_numero VARCHAR(12) NOT NULL,       -- Acorde a resolucion 4.3
-  id_extranjero VARCHAR(20) NOT NULL,       -- Acorde a resolucion 4.3
-  nombre VARCHAR(100) NOT NULL,             -- Acorde a resolucion 4.3
-  nombre_comercial VARCHAR(80) NOT NULL,    -- Acorde a resolucion 4.3
-  tel_codigo_pais VARCHAR(3) NOT NULL,      -- Acorde a resolucion 4.3
-  tel_numero VARCHAR(20) NOT NULL,          -- Acorde a resolucion 4.3
-  fax_codigo_pais VARCHAR(3) NOT NULL,      -- Acorde a resolucion 4.3
-  fax_numero VARCHAR(20) NOT NULL,          -- Acorde a resolucion 4.3
-  correo VARCHAR(160) NOT NULL,             -- Acorde a resolucion 4.3
-  ubicacion_codigo VARCHAR(7) NOT NULL,     -- Acorde a resolucion 4.3
-  ubicacion_senas VARCHAR(250) NOT NULL,    -- Acorde a resolucion 4.3
-  senas_extranjero VARCHAR(300) NOT NULL,   -- Acorde a resolucion 4.3
-  inscrito BOOLEAN NOT NULL DEFAULT 0,
-  PRIMARY KEY (id),
-  FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
-) ENGINE=InnoDB;
+  Id INT NOT NULL AUTO_INCREMENT,
+  IdUsuario INT NOT NULL,
+  CedulaTipo VARCHAR(2) NOT NULL,          -- Acorde a resolucion 4.3
+  CedulaNumero VARCHAR(12) NOT NULL,       -- Acorde a resolucion 4.3
+  IdExtranjero VARCHAR(20) NOT NULL,       -- Acorde a resolucion 4.3
+  Nombre VARCHAR(100) NOT NULL,             -- Acorde a resolucion 4.3
+  NombreComercial VARCHAR(80) NOT NULL,    -- Acorde a resolucion 4.3
+  TelCodigoPais VARCHAR(3) NOT NULL,      -- Acorde a resolucion 4.3
+  TelNumero VARCHAR(20) NOT NULL,          -- Acorde a resolucion 4.3
+  FaxCodigoPais VARCHAR(3) NOT NULL,      -- Acorde a resolucion 4.3
+  FaxNumero VARCHAR(20) NOT NULL,          -- Acorde a resolucion 4.3
+  Correo VARCHAR(160) NOT NULL,             -- Acorde a resolucion 4.3
+  UbicacionCodigo VARCHAR(7) NOT NULL,     -- Acorde a resolucion 4.3
+  UbicacionSenas VARCHAR(250) NOT NULL,    -- Acorde a resolucion 4.3
+  SenasExtranjero VARCHAR(300) NOT NULL,   -- Acorde a resolucion 4.3
+  Inscrito BOOLEAN NOT NULL DEFAULT 0,
+  PRIMARY KEY (Id),
+  FOREIGN KEY (IdUsuario) REFERENCES usuarios(Id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS actividades_comerciales;
-CREATE TABLE actividades_comerciales (
-  id_cuenta INT NOT NULL,
-  codigo_actividad VARCHAR(6) NOT NULL,     -- Acorde a resolucion 4.3
-  PRIMARY KEY (id_cuenta, codigo_actividad),
-  FOREIGN KEY (id_cuenta) REFERENCES cuentas(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+DROP TABLE IF EXISTS actividadcuenta;
+CREATE TABLE actividadcuenta (
+  IdCuenta INT NOT NULL,
+  CodigoActividad VARCHAR(6) NOT NULL,     -- Acorde a resolucion 4.3
+  PRIMARY KEY (IdCuenta, CodigoActividad),
+  FOREIGN KEY (IdCuenta) REFERENCES cuentas(Id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS credenciales_atv;
 CREATE TABLE credenciales_atv (
-  id INT NOT NULL AUTO_INCREMENT,
-  id_cuenta INT NOT NULL,
-  llave_p12 VARCHAR(255) NOT NULL,
-  pin_p12 VARCHAR(10) NOT NULL,
-  usuario VARCHAR(250) NOT NULL,
-  contrasena VARCHAR(60) NOT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (id_cuenta) REFERENCES cuentas(id) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB;
+  Id INT NOT NULL AUTO_INCREMENT,
+  IdCuenta INT NOT NULL,
+  LlaveP12 VARCHAR(255) NOT NULL,
+  PinP12 VARCHAR(10) NOT NULL,
+  Usuario VARCHAR(250) NOT NULL,
+  Contrasena VARCHAR(60) NOT NULL,
+  PRIMARY KEY (Id),
+  FOREIGN KEY (IdCuenta) REFERENCES cuentas(Id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS historico_comprobantes;
-CREATE TABLE historico_comprobantes (
-  id INT NOT NULL AUTO_INCREMENT,
-  id_emisor INT NOT NULL,
-  id_receptor INT NOT NULL,
-  fecha DATE NOT NULL,
-  dispositivo_scan VARCHAR(100) NOT NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (id_emisor) REFERENCES cuentas(id),
-  FOREIGN KEY (id_receptor) REFERENCES cuentas(id)
-) ENGINE=InnoDB;
+DROP TABLE IF EXISTS historicos;
+CREATE TABLE historicos (
+  Id INT NOT NULL AUTO_INCREMENT,
+  IdEmisor INT NOT NULL,
+  IdReceptor INT NOT NULL,
+  Fecha DATE NOT NULL,
+  DispositivoScan VARCHAR(100) NOT NULL,
+  PRIMARY KEY (Id),
+  FOREIGN KEY (IdEmisor) REFERENCES cuentas(Id),
+  FOREIGN KEY (IdReceptor) REFERENCES cuentas(Id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS comprobantes;
 CREATE TABLE comprobantes (
-    id INT NOT NULL AUTO_INCREMENT,
-    id_historico INT NOT NULL,
-    xml VARCHAR(100) NOT NULL,
-    tipo VARCHAR(4) NOT NULL,
-    estado INT(2) NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (id_historico) REFERENCES historico_comprobantes(id)
-) ENGINE=InnoDB;
+    Id INT NOT NULL AUTO_INCREMENT,
+    IdHistorico INT NOT NULL,
+    Xml VARCHAR(100) NOT NULL,
+    Tipo VARCHAR(4) NOT NULL,
+    Estado INT(2) NOT NULL,
+    PRIMARY KEY (Id),
+    FOREIGN KEY (IdHistorico) REFERENCES historicos(Id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS ubicaciones;
+CREATE TABLE ubicaciones (
+    Provincia INT NOT NULL,
+    NombreProvincia VARCHAR(20) CHARACTER SET utf8mb4 NOT NULL,
+    Canton INT NOT NULL,
+    NombreCanton VARCHAR(20) CHARACTER SET utf8mb4 NOT NULL,
+    Distrito INT NOT NULL,
+    NombreDistrito VARCHAR(70) CHARACTER SET utf8mb4 NOT NULL,
+    Barrio INT NOT NULL,
+    NombreBarrio VARCHAR(50) CHARACTER SET utf8mb4 NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE ubicaciones
+ADD CONSTRAINT compuesta_pk PRIMARY KEY (Provincia, Canton, Distrito, Barrio);
+
+DROP TABLE IF EXISTS actividad;
+CREATE TABLE actividad (
+    Codigo INT NOT NULL,
+    Nombre VARCHAR(120) CHARACTER SET utf8mb4 NOT NULL,
+    PRIMARY KEY (Codigo)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
