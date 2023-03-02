@@ -169,5 +169,17 @@ namespace Api.Controllers
         {
             return Ok(await _cuentaService.GetCuentaTemporal(nombreUsuario, id));
         }
+
+        [HttpGet("qr/{id}")]
+        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> GetAccountQr(int id)
+        {
+            return Ok(await _cuentaService.GenerateCuentaQr(id));
+        }
+
+        [HttpGet("cuentabyqr/{codigo}")]
+        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> GetCuentaByQr(string codigo)
+        {
+            return Ok(await _cuentaService.GetCuentaByQR(codigo));
+        }
     }
 }

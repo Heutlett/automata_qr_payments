@@ -10,11 +10,17 @@ namespace Api.Models
     {
         [Key]
         public int Id { get; set; }
+
+        [Required]
+        [MaxLength(36)]
+        public String UID { get; set; } = Guid.NewGuid().ToString();
+        
         [Required]
         [MaxLength(20)]
         public string Username { get; set; } = string.Empty;
         public byte[] PasswordHash { get; set; } = new byte[0];
         public byte[] PasswordSalt { get; set; } = new byte[0];
+
         [Required]
         [MaxLength(160)]
         public string Email { get; set; } = string.Empty;

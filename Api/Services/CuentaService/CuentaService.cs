@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Api.Data;
 using Api.Dtos.Cuenta;
@@ -17,29 +19,33 @@ namespace Api.Services.CuentaService
         private readonly IMapper _mapper;
         private readonly DataContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConfiguration _configuration;
 
-        public CuentaService(IMapper mapper, DataContext context, IHttpContextAccessor httpContextAccessor)
+        private readonly double _qrExpirationTime = 1;
+
+        public CuentaService(IMapper mapper, DataContext context, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
+            _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
             _context = context;
         }
 
-        private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext!.User
-            .FindFirstValue(ClaimTypes.NameIdentifier)!);
+        private string GetUserUid() => _httpContextAccessor.HttpContext!.User
+            .FindFirstValue(ClaimTypes.NameIdentifier)!;
 
         public async Task<ServiceResponse<List<GetCuentaDto>>> AddCuenta(AddCuentaDto newCuenta)
         {
             var serviceResponse = new ServiceResponse<List<GetCuentaDto>>();
             var cuenta = _mapper.Map<Cuenta>(newCuenta);
-            cuenta.Usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == GetUserId());
+            cuenta.Usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
 
             _context.Cuentas.Add(cuenta); // (No es Async) Aun no se llama la db, solo se agrega un Cuenta al dataContext
             await _context.SaveChangesAsync();  // Aqui es donde ya se envia a la db (Async)
 
             serviceResponse.Data =
                 await _context.Cuentas
-                    .Where(c => c.Usuario!.Id == GetUserId())
+                    .Where(c => c.Usuario!.UID == GetUserUid())
                     .Select(c => _mapper.Map<GetCuentaDto>(c))
                     .ToListAsync();
             return serviceResponse;
@@ -53,9 +59,9 @@ namespace Api.Services.CuentaService
             {
                 var cuenta = await _context.Cuentas
                     .Include(c => c.Usuario)
-                    .FirstOrDefaultAsync(c => c.Id == id && c.Usuario!.Id == GetUserId() && c.IsActive);
+                    .FirstOrDefaultAsync(c => c.Id == id && c.Usuario!.UID == GetUserUid() && c.IsActive);
 
-                if (cuenta is null || cuenta.Usuario!.Id != GetUserId())
+                if (cuenta is null || cuenta.Usuario!.UID != GetUserUid())
                     throw new Exception($"No se ha encontrado la cuenta con el Id '{id}'");
 
                 cuenta.IsActive = false;
@@ -63,7 +69,7 @@ namespace Api.Services.CuentaService
 
                 serviceResponse.Data =
                     await _context.Cuentas
-                        .Where(c => c.Usuario!.Id == GetUserId() && c.IsActive)
+                        .Where(c => c.Usuario!.UID == GetUserUid() && c.IsActive)
                         .Select(c => _mapper.Map<GetCuentaDto>(c)).ToListAsync();
             }
             catch (Exception ex)
@@ -80,7 +86,7 @@ namespace Api.Services.CuentaService
             var serviceResponse = new ServiceResponse<List<GetCuentaDto>>();
             var dbCuentas = await _context.Cuentas
                 .Include(c => c.Actividades)
-                .Where(c => c.Usuario!.Id == GetUserId() && c.IsActive).ToListAsync();
+                .Where(c => c.Usuario!.UID == GetUserUid() && c.IsActive).ToListAsync();
 
             serviceResponse.Data = dbCuentas.Select(c => _mapper.Map<GetCuentaDto>(c)).ToList();
             return serviceResponse;
@@ -91,7 +97,7 @@ namespace Api.Services.CuentaService
             var serviceResponse = new ServiceResponse<GetCuentaDto>();
             var dbCuenta = await _context.Cuentas
                 .Include(c => c.Actividades)
-                .FirstOrDefaultAsync(c => c.Id == id && c.Usuario!.Id == GetUserId() && c.IsActive);
+                .FirstOrDefaultAsync(c => c.Id == id && c.Usuario!.UID == GetUserUid() && c.IsActive);
             serviceResponse.Data = _mapper.Map<GetCuentaDto>(dbCuenta);
             return serviceResponse;
         }
@@ -107,7 +113,7 @@ namespace Api.Services.CuentaService
                     .Include(c => c.Usuario)
                     .FirstOrDefaultAsync(c => c.Id == updatedCuenta.Id && c.IsActive);
 
-                if (cuenta is null || cuenta.Usuario!.Id != GetUserId())
+                if (cuenta is null || cuenta.Usuario!.UID != GetUserUid())
                     throw new Exception($"No se ha encontrado la cuenta con el Id '{updatedCuenta.Id}'");
 
                 cuenta.CedulaTipo = updatedCuenta.CedulaTipo;
@@ -144,7 +150,7 @@ namespace Api.Services.CuentaService
                 var cuenta = await _context.Cuentas
                     .Include(c => c.Actividades)
                     .FirstOrDefaultAsync(c => c.Id == newCuentaActividad.CuentaId &&
-                    c.Usuario!.Id == GetUserId());
+                    c.Usuario!.UID == GetUserUid());
 
                 if (cuenta is null)
                 {
@@ -214,7 +220,7 @@ namespace Api.Services.CuentaService
             try
             {
                 var provincias = await _context.Ubicaciones
-                    .Select(u => new GetUbicacionProvinciaDto {Provincia = u.Provincia, NombreProvincia = u.NombreProvincia})
+                    .Select(u => new GetUbicacionProvinciaDto { Provincia = u.Provincia, NombreProvincia = u.NombreProvincia })
                     .Distinct()
                     .ToListAsync();
 
@@ -240,7 +246,7 @@ namespace Api.Services.CuentaService
             {
                 var cantones = await _context.Ubicaciones
                     .Where(u => u.Provincia == provincia)
-                    .Select(u => new GetUbicacionCantonDto {Canton = u.Canton, NombreCanton = u.NombreCanton})
+                    .Select(u => new GetUbicacionCantonDto { Canton = u.Canton, NombreCanton = u.NombreCanton })
                     .Distinct()
                     .ToListAsync();
 
@@ -266,7 +272,7 @@ namespace Api.Services.CuentaService
             {
                 var distritos = await _context.Ubicaciones
                     .Where(u => u.Provincia == provincia && u.Canton == canton)
-                    .Select(u => new GetUbicacionDistritoDto {Distrito = u.Distrito, NombreDistrito = u.NombreDistrito})
+                    .Select(u => new GetUbicacionDistritoDto { Distrito = u.Distrito, NombreDistrito = u.NombreDistrito })
                     .Distinct()
                     .ToListAsync();
 
@@ -292,7 +298,7 @@ namespace Api.Services.CuentaService
             {
                 var barrios = await _context.Ubicaciones
                     .Where(u => u.Provincia == provincia && u.Canton == canton && u.Distrito == distrito)
-                    .Select(u => new GetUbicacionBarrioDto {Barrio = u.Barrio, NombreBarrio = u.NombreBarrio})
+                    .Select(u => new GetUbicacionBarrioDto { Barrio = u.Barrio, NombreBarrio = u.NombreBarrio })
                     .Distinct()
                     .ToListAsync();
 
@@ -318,6 +324,124 @@ namespace Api.Services.CuentaService
                 .FirstOrDefaultAsync(c => c.Id == id && c.Usuario!.Username == nombreUsuario && c.IsActive);
             serviceResponse.Data = _mapper.Map<GetCuentaDto>(dbCuenta);
             return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<string>> GenerateCuentaQr(int idCuenta)
+        {
+            var serviceResponse = new ServiceResponse<string>();
+
+            try
+            {
+                var cuenta = await _context.Cuentas
+                .FirstOrDefaultAsync(c => c.Id == idCuenta && c.Usuario!.UID == GetUserUid() && c.IsActive);
+
+                if (cuenta is null)
+                    throw new Exception($"No se han encontrado la cuenta.");
+
+                var uid = GetUserUid();
+
+                DateTime timestamp = DateTime.UtcNow;
+
+                var secretKey = _configuration.GetSection("AppSettings:Token").Value!;
+
+                string texto = $"{uid},{timestamp.ToString("s")},{idCuenta}";
+
+                string mensajeEncriptado = EncriptarMensaje(texto, secretKey);
+
+                serviceResponse.Data = mensajeEncriptado;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<GetCuentaDto>> GetCuentaByQR(string codigoEncriptado)
+        {
+            var serviceResponse = new ServiceResponse<GetCuentaDto>();
+
+            try
+            {
+                var secretKey = _configuration.GetSection("AppSettings:Token").Value!;
+
+                string mensajeDesencriptado = DesencriptarMensaje(codigoEncriptado, secretKey);
+
+                // Extraer los datos originales de la cadena de texto
+                string[] partes = mensajeDesencriptado.Split(',');
+                var uid = partes[0];
+                var timestamp = DateTime.Parse(partes[1]);
+                var idCuenta = int.Parse(partes[2]);
+
+                DateTime startTime = DateTime.UtcNow;
+
+                TimeSpan duration = startTime.Subtract(timestamp);
+
+                if (duration.TotalMinutes > _qrExpirationTime)
+                {
+                    throw new Exception($"El tiempo del codigo ha expirado.");
+                }
+
+                // Validar el tiempo que ha pasado
+
+                var cuenta = await _context.Cuentas
+                    .Include(c => c.Actividades)
+                    .FirstOrDefaultAsync(c => c.Id == idCuenta && c.Usuario!.UID == uid && c.IsActive);
+
+                if (cuenta is null)
+                    throw new Exception($"El codigo no pertenece a una cuenta.");
+
+                serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuenta);
+
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
+
+
+        // Método para encriptar un mensaje
+        public static string EncriptarMensaje(string mensaje, string clave)
+        {
+            byte[] mensajeBytes = Encoding.UTF8.GetBytes(mensaje);
+            byte[] claveBytes = Encoding.UTF8.GetBytes(clave.PadRight(32, '0').Substring(0, 32)); // Utiliza una clave de 256 bits (32 bytes)
+
+
+            Aes aes = Aes.Create();
+            aes.Key = claveBytes;
+            aes.IV = new byte[aes.BlockSize / 8];
+
+            ICryptoTransform encriptador = aes.CreateEncryptor();
+
+            byte[] mensajeEncriptadoBytes = encriptador.TransformFinalBlock(mensajeBytes, 0, mensajeBytes.Length);
+            string mensajeEncriptado = Convert.ToBase64String(mensajeEncriptadoBytes);
+
+            return mensajeEncriptado;
+        }
+
+        // Método para desencriptar un mensaje
+        public static string DesencriptarMensaje(string mensajeEncriptado, string clave)
+        {
+            byte[] mensajeEncriptadoBytes = Convert.FromBase64String(mensajeEncriptado);
+            byte[] claveBytes = Encoding.UTF8.GetBytes(clave.PadRight(32, '0').Substring(0, 32)); // Utiliza una clave de 256 bits (32 bytes)
+
+
+            Aes aes = Aes.Create();
+            aes.Key = claveBytes;
+            aes.IV = new byte[aes.BlockSize / 8];
+
+            ICryptoTransform desencriptador = aes.CreateDecryptor();
+
+            byte[] mensajeDesencriptadoBytes = desencriptador.TransformFinalBlock(mensajeEncriptadoBytes, 0, mensajeEncriptadoBytes.Length);
+            string mensajeDesencriptado = Encoding.UTF8.GetString(mensajeDesencriptadoBytes);
+
+            return mensajeDesencriptado;
         }
     }
 }

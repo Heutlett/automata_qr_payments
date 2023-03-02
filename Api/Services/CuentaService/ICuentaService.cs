@@ -22,5 +22,7 @@ namespace Api.Services.CuentaService
         Task<ServiceResponse<List<GetUbicacionDistritoDto>>> GetUbicacionDistrito(int provincia, int canton);
         Task<ServiceResponse<List<GetUbicacionBarrioDto>>> GetUbicacionBarrio(int provincia, int canton, int distrito);
         Task<ServiceResponse<GetCuentaDto>> GetCuentaTemporal(string nombreUsuario, int id);
+        Task<ServiceResponse<string>> GenerateCuentaQr(int idCuenta);
+        Task<ServiceResponse<GetCuentaDto>> GetCuentaByQR(string codigo);
     }
 }

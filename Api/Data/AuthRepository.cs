@@ -98,7 +98,7 @@ namespace Api.Data
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, usuario.UID),
                 new Claim(ClaimTypes.Name, usuario.Username)
                 // Hay que agregar los roles eventualmente
             };
