@@ -39,7 +39,7 @@ class FacturarPage extends StatelessWidget {
             SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pushNamed("/generateQR");
+                _showSelectAccountsQr(context);
               },
               child:
                   Text('Generar QR receptor', style: TextStyle(fontSize: 16)),
@@ -51,5 +51,11 @@ class FacturarPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _showSelectAccountsQr(BuildContext context) async {
+    var accounts = await getCuentasList();
+
+    Navigator.of(context).pushNamed("/select_account_qr", arguments: accounts);
   }
 }

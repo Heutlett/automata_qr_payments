@@ -4,6 +4,22 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_app/models/account.dart';
 
+Future<String> getAccountQr(int id) async {
+  final prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('accessToken');
+
+  var url = "http://10.0.2.2:5275/api/Cuenta/qr/$id";
+
+  var headers = {"Authorization": "bearer $token"};
+
+  var response = await http.get(Uri.parse(url), headers: headers);
+
+  var data = jsonDecode(response.body);
+  data = data['data'];
+
+  return data;
+}
+
 Future<http.Response> _getCuentas() async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');

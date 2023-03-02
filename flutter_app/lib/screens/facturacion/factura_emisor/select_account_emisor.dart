@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
 
-class SelectAccountEmisorScreen extends StatefulWidget {
+class SelectAccountEmisorScreen extends StatelessWidget {
   const SelectAccountEmisorScreen({Key? key}) : super(key: key);
 
-  @override
-  State<SelectAccountEmisorScreen> createState() =>
-      _SelectAccountEmisorScreenState();
-}
-
-class _SelectAccountEmisorScreenState extends State<SelectAccountEmisorScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Account> accounts =

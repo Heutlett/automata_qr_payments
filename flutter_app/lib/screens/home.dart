@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/screens/demo.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -39,24 +38,10 @@ class HomePage extends StatelessWidget {
                 fixedSize: Size(200, 60),
               ),
             ),
-            SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () {
-                _showDemoPage(context);
-              },
-              child: Text('Mostrar Demo', style: TextStyle(fontSize: 18)),
-              style: ElevatedButton.styleFrom(
-                fixedSize: Size(200, 60),
-              ),
-            ),
           ],
         ),
       ),
     );
-  }
-
-  void _showDemoPage(BuildContext context) {
-    Navigator.of(context).pushNamed("/demo");
   }
 
   void _showRegistrationPage(BuildContext context) {

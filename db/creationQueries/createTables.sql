@@ -6,6 +6,7 @@ use qr_payments_db;
 DROP TABLE IF EXISTS usuarios;
 CREATE TABLE usuarios (
   Id INT NOT NULL AUTO_INCREMENT,
+  UID VARCHAR(36) NOT NULL,
   Username VARCHAR(20) NOT NULL UNIQUE,
   PasswordHash LONGBLOB NOT NULL,
   PasswordSalt LONGBLOB NOT NULL,
