@@ -4,11 +4,34 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_app/models/account.dart';
 
+const host = '192.168.18.90';
+
+Future<http.Response> _getCuentaByQr(String codigoQr) async {
+  final prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('accessToken');
+
+  final Map<String, dynamic> data = {
+    "codigo": codigoQr,
+  };
+
+  var url = "http://$host/api/Cuenta/cuentabyqr";
+
+  var headers = {
+    "Content-Type": "application/json",
+    "Authorization": "bearer $token"
+  };
+
+  var response = await http.post(Uri.parse(url),
+      headers: headers, body: json.encode(data));
+
+  return response;
+}
+
 Future<String> getAccountQr(int id) async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
 
-  var url = "http://10.0.2.2:5275/api/Cuenta/qr/$id";
+  var url = "http://$host/api/Cuenta/qr/$id";
 
   var headers = {"Authorization": "bearer $token"};
 
@@ -24,7 +47,7 @@ Future<http.Response> _getCuentas() async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
 
-  var url = "http://10.0.2.2:5275/api/Cuenta/GetAll";
+  var url = "http://$host/api/Cuenta/GetAll";
 
   var headers = {"Authorization": "bearer $token"};
 
@@ -34,10 +57,7 @@ Future<http.Response> _getCuentas() async {
 }
 
 Future<http.Response> _getCuentaTemporal(String username, String id) async {
-  final prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('accessToken');
-
-  var url = "http://10.0.2.2:5275/api/Cuenta/cuentaTemporal/$username/$id";
+  var url = "http://$host/api/Cuenta/cuentaTemporal/$username/$id";
 
   var response = await http.get(Uri.parse(url));
 
@@ -93,4 +113,10 @@ Future<Account> getCuentaTemporal(String username, String id) async {
       tipo: data['tipo']);
 
   return account;
+}
+
+Future<http.Response> getCuentaByQr(String codigoQr) async {
+  var response = await _getCuentaByQr(codigoQr);
+
+  return response;
 }

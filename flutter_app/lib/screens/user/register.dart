@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_app/services/usuario/usuario_service.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({Key? key}) : super(key: key);
@@ -20,7 +21,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     final String password = _passwordController.text;
     final String email = _emailController.text;
 
-    var response = await _postRegister(username, password, email);
+    var response = await postRegister(username, password, email);
     var data = jsonDecode(response.body);
 
     if (response.statusCode == 200) {
@@ -28,24 +29,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
     } else {
       showAlertDialog(context, data['success'], data['message']);
     }
-  }
-
-  Future<http.Response> _postRegister(
-      String username, String password, String email) async {
-    var url = "http://10.0.2.2:5275/Auth/Register";
-
-    final Map<String, dynamic> data = {
-      "username": username,
-      "password": password,
-      "email": email
-    };
-
-    var headers = {"Content-Type": "application/json"};
-
-    var response = await http.post(Uri.parse(url),
-        headers: headers, body: json.encode(data));
-
-    return response;
   }
 
   void showAlertDialog(BuildContext context, bool success, String message) {

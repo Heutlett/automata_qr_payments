@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
+import 'package:flutter_app/services/usuario/usuario_service.dart';
 
 class AgregarCuentaForm extends StatefulWidget {
   @override
@@ -277,15 +278,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
     final prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('accessToken');
 
-// Enviar la cuenta al API
-    final response = await http.post(
-      Uri.parse('http://10.0.2.2:5275/api/Cuenta'),
-      body: jsonEncode(cuenta),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'bearer $token'
-      },
-    );
+    var response = await postCreateAccount(cuenta, token);
 
 // Si la respuesta es exitosa, mostrar un mensaje de éxito
     if (response.statusCode == 200) {

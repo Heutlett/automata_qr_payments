@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -48,7 +49,10 @@ class HomePage extends StatelessWidget {
     Navigator.of(context).pushNamed("/register");
   }
 
-  void _showLoginPage(BuildContext context) {
-    Navigator.of(context).pushNamed("/login");
+  void _showLoginPage(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? userName = prefs.getString('lastUsername');
+
+    Navigator.of(context).pushNamed("/login", arguments: userName);
   }
 }

@@ -176,10 +176,10 @@ namespace Api.Controllers
             return Ok(await _cuentaService.GenerateCuentaQr(id));
         }
 
-        [HttpGet("cuentabyqr/{codigo}")]
-        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> GetCuentaByQr(string codigo)
+        [HttpPost("cuentabyqr")]
+        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> GetCuentaByQr(QrBody qrBody)
         {
-            return Ok(await _cuentaService.GetCuentaByQR(codigo));
+            return Ok(await _cuentaService.GetCuentaByQR(qrBody.Codigo));
         }
     }
 }

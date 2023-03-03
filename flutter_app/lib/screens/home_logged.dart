@@ -35,7 +35,7 @@ class HomeLoggedPage extends StatelessWidget {
               child:
                   Text('Administrar cuentas', style: TextStyle(fontSize: 18)),
               style: ElevatedButton.styleFrom(
-                fixedSize: Size(200, 60),
+                fixedSize: Size(250, 60),
               ),
             ),
             SizedBox(height: 20.0),
@@ -45,7 +45,7 @@ class HomeLoggedPage extends StatelessWidget {
               },
               child: Text('Facturar', style: TextStyle(fontSize: 18)),
               style: ElevatedButton.styleFrom(
-                fixedSize: Size(200, 60),
+                fixedSize: Size(250, 60),
               ),
             ),
             SizedBox(height: 20.0),
@@ -55,7 +55,7 @@ class HomeLoggedPage extends StatelessWidget {
               },
               child: Text('Cerrar sesion', style: TextStyle(fontSize: 18)),
               style: ElevatedButton.styleFrom(
-                fixedSize: Size(200, 60),
+                fixedSize: Size(250, 60),
               ),
             ),
           ],

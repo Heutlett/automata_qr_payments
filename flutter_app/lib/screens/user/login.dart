@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_app/services/usuario/usuario_service.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -14,12 +15,14 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _rememberUsername = false;
+  bool _builded = false;
 
   void _submitForm(BuildContext context) async {
     final String username = _usernameController.text;
     final String password = _passwordController.text;
 
-    var response = await _postLogin(username, password);
+    var response = await postLogin(username, password);
     var data = jsonDecode(response.body);
 
     if (response.statusCode == 200) {
@@ -30,6 +33,15 @@ class _LoginPageState extends State<LoginPage> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('accessToken', accessToken);
 
+      if (_rememberUsername) {
+        // Guardar accessToken en SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('lastUsername', _usernameController.text);
+      } else {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('lastUsername', "");
+      }
+
       showAlertDialog(context, "Resultado de inicio sesion", data['success'],
           data['message']);
 
@@ -38,24 +50,6 @@ class _LoginPageState extends State<LoginPage> {
       showAlertDialog(context, "Resultado de inicio sesion", data['success'],
           data['message']);
     }
-  }
-
-  Future<http.Response> _postLogin(String username, String password) async {
-    var url = "http://10.0.2.2:5275/Auth/Login";
-
-    final Map<String, dynamic> data = {
-      "username": username,
-      "password": password
-    };
-
-    var headers = {"Content-Type": "application/json"};
-
-    var response = await http.post(Uri.parse(url),
-        headers: headers, body: json.encode(data));
-
-    print(response.body);
-
-    return response;
   }
 
   void showAlertDialog(
@@ -88,6 +82,15 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final String? lastUsername =
+        ModalRoute.of(context)?.settings.arguments as String?;
+
+    if (lastUsername != null && lastUsername.isNotEmpty && !_builded) {
+      _usernameController.text = lastUsername;
+      _rememberUsername = true;
+      _builded = true;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Inicio de sesión'),
@@ -123,7 +126,19 @@ class _LoginPageState extends State<LoginPage> {
               controller: _passwordController,
               obscureText: true,
             ),
-            SizedBox(height: 40.0),
+            SizedBox(height: 20.0),
+            Row(
+              children: [
+                Checkbox(
+                  value: _rememberUsername,
+                  onChanged: (value) {
+                    recodarUsuario(value);
+                  },
+                ),
+                Text('Recordar nombre de usuario'),
+              ],
+            ),
+            SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
                 _submitForm(context);
@@ -137,5 +152,11 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  void recodarUsuario(bool? value) async {
+    setState(() {
+      _rememberUsername = value!;
+    });
   }
 }

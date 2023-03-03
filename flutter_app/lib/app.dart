@@ -3,7 +3,7 @@ import 'package:flutter_app/screens/home.dart';
 import 'package:flutter_app/screens/home_logged.dart';
 import 'package:flutter_app/screens/user/register.dart';
 import 'package:flutter_app/screens/user/login.dart';
-import 'package:flutter_app/screens/user/account_management.dart';
+import 'package:flutter_app/screens/account_management.dart';
 import 'package:flutter_app/screens/user/create_account.dart';
 import 'package:flutter_app/screens/facturacion/facturar.dart';
 import 'package:flutter_app/screens/facturacion/factura_receptor/generate_qr.dart';
