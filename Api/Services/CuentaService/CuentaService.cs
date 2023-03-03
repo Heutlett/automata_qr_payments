@@ -142,6 +142,34 @@ namespace Api.Services.CuentaService
 
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<GetActividadDto>> GetActividadByCodigo(int codigo)
+        {
+            var response = new ServiceResponse<GetActividadDto>();
+
+            try
+            {
+                var actividad = await _context.Actividades
+                    .FirstOrDefaultAsync(s => s.Codigo == codigo);
+
+                if (actividad is null)
+                {
+                    throw new Exception($"No se ha encontrado la actividad con el codigo {codigo}.");
+                }
+
+                actividad.Nombre = actividad.Nombre.ToUpper();
+                
+                response.Data = _mapper.Map<GetActividadDto>(actividad);
+
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
         public async Task<ServiceResponse<GetCuentaDto>> AddCuentaActividades(AddCuentaActividadesDto newCuentaActividades)
         {
             var response = new ServiceResponse<GetCuentaDto>();
@@ -172,7 +200,7 @@ namespace Api.Services.CuentaService
                     {
                         throw new Exception($"La actividad economica {actividad.Nombre} ya se encuentra registrada en esta cuenta.");
                     }
-
+                    actividad.Nombre = actividad.Nombre.ToUpper();
                     cuenta.Actividades!.Add(actividad);
                     await _context.SaveChangesAsync();
                     response.Data = _mapper.Map<GetCuentaDto>(cuenta);
@@ -448,5 +476,7 @@ namespace Api.Services.CuentaService
 
             return mensajeDesencriptado;
         }
+
+
     }
 }

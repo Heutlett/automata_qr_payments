@@ -90,12 +90,23 @@ namespace Api.Controllers
         }
 
         /// <summary>
+        /// Devuelve una actividad por su codigo.
+        /// </summary>
+        /// <param name="int">Entero con el codigo de la actividad.</param>
+        /// <returns>Un ActionResult con un objeto ServiceResponse de tipo GetActividadDto.</returns>
+        [HttpGet("getActividadByCodigo/{codigo}")]
+        public async Task<ActionResult<ServiceResponse<GetActividadDto>>> GetActividadByCodigo(int codigo)
+        {
+            return Ok(await _cuentaService.GetActividadByCodigo(codigo));
+        }
+
+        /// <summary>
         /// Agrega una actividad a la cuenta especificada.
         /// </summary>
         /// <param name="newCuentaActividad">Objeto AddCuentaActividadDto con la información de la actividad a agregar.</param>
         /// <returns>Un ActionResult con un objeto ServiceResponse de tipo GetActividadDto.</returns>
         [HttpPost("AddCuentaActividades")]
-        public async Task<ActionResult<ServiceResponse<GetActividadDto>>> AddCuentaActividades(AddCuentaActividadesDto newCuentaActividades)
+        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> AddCuentaActividades(AddCuentaActividadesDto newCuentaActividades)
         {
             return Ok(await _cuentaService.AddCuentaActividades(newCuentaActividades));
         }
