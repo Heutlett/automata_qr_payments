@@ -51,6 +51,6 @@ namespace Api.Models
         public string UbicacionSenasExtranjero { get; set; } = String.Empty;
         public bool IsActive { get; set; } = true;
         public TipoCuenta Tipo { get; set; } = TipoCuenta.Receptor;
-        public List<Actividad>? Actividades { get; set; }
+        public List<Actividad> Actividades { get; set; } = new List<Actividad>();
     }
 }

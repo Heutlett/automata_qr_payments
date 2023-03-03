@@ -37,11 +37,35 @@ namespace Api.Services.CuentaService
         public async Task<ServiceResponse<List<GetCuentaDto>>> AddCuenta(AddCuentaDto newCuenta)
         {
             var serviceResponse = new ServiceResponse<List<GetCuentaDto>>();
-            var cuenta = _mapper.Map<Cuenta>(newCuenta);
+            var cuenta =
+                new Cuenta
+                {
+                    CedulaNumero = newCuenta.CedulaNumero,
+                    CedulaTipo = newCuenta.CedulaTipo,
+                    Correo = newCuenta.Correo,
+                    FaxCodigoPais = newCuenta.FaxCodigoPais,
+                    FaxNumero = newCuenta.FaxCodigoPais,
+                    IdExtranjero = newCuenta.IdExtranjero,
+                    Nombre = newCuenta.Nombre,
+                    NombreComercial = newCuenta.NombreComercial,
+                    TelCodigoPais = newCuenta.TelCodigoPais,
+                    TelNumero = newCuenta.TelNumero,
+                    Tipo = newCuenta.Tipo,
+                    UbicacionCodigo = newCuenta.UbicacionCodigo,
+                    UbicacionSenas = newCuenta.UbicacionSenas,
+                    UbicacionSenasExtranjero = newCuenta.UbicacionSenasExtranjero
+                };
+
             cuenta.Usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
 
             _context.Cuentas.Add(cuenta); // (No es Async) Aun no se llama la db, solo se agrega un Cuenta al dataContext
             await _context.SaveChangesAsync();  // Aqui es donde ya se envia a la db (Async)
+
+            var actividades = newCuenta.actividades!;
+
+            var addCuentaActividades = new AddCuentaActividadesDto{CuentaId = cuenta.Id, ActividadesId = actividades};
+
+            await AddCuentaActividades(addCuentaActividades);
 
             serviceResponse.Data =
                 await _context.Cuentas
@@ -158,7 +182,7 @@ namespace Api.Services.CuentaService
                 }
 
                 actividad.Nombre = actividad.Nombre.ToUpper();
-                
+
                 response.Data = _mapper.Map<GetActividadDto>(actividad);
 
             }
