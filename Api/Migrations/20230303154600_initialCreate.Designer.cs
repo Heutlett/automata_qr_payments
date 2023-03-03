@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230223193122_Ubicacion")]
-    partial class Ubicacion
+    [Migration("20230303154600_initialCreate")]
+    partial class initialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,13 +24,13 @@ namespace Api.Migrations
 
             modelBuilder.Entity("ActividadCuenta", b =>
                 {
-                    b.Property<int>("ActividadesId")
+                    b.Property<int>("ActividadesCodigo")
                         .HasColumnType("int");
 
                     b.Property<int>("CuentasId")
                         .HasColumnType("int");
 
-                    b.HasKey("ActividadesId", "CuentasId");
+                    b.HasKey("ActividadesCodigo", "CuentasId");
 
                     b.HasIndex("CuentasId");
 
@@ -39,39 +39,32 @@ namespace Api.Migrations
 
             modelBuilder.Entity("Api.Models.Actividad", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Codigo")
+                    b.Property<int>("Codigo")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("int");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("Id");
+                    b.HasKey("Codigo");
 
                     b.ToTable("Actividades");
 
                     b.HasData(
                         new
                         {
-                            Id = 1,
-                            Codigo = "722003",
+                            Codigo = 722003,
                             Nombre = "DISEÑADOR GRAFICO, DE SOFWARE Y PAGINAS WEB"
                         },
                         new
                         {
-                            Id = 2,
-                            Codigo = "721001",
+                            Codigo = 721001,
                             Nombre = "CONSULTORES INFORMÁTICOS"
                         },
                         new
                         {
-                            Id = 3,
-                            Codigo = "503002",
+                            Codigo = 503002,
                             Nombre = "VENTA DE REPUESTOS USADOS PARA AUTOMOVILES"
                         });
                 });
@@ -163,17 +156,16 @@ namespace Api.Migrations
 
             modelBuilder.Entity("Api.Models.Ubicacion", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("Barrio")
+                    b.Property<int>("Provincia")
                         .HasColumnType("int");
 
                     b.Property<int>("Canton")
                         .HasColumnType("int");
 
                     b.Property<int>("Distrito")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Barrio")
                         .HasColumnType("int");
 
                     b.Property<string>("NombreBarrio")
@@ -192,73 +184,65 @@ namespace Api.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Provincia")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
+                    b.HasKey("Provincia", "Canton", "Distrito", "Barrio");
 
                     b.ToTable("Ubicaciones");
 
                     b.HasData(
                         new
                         {
-                            Id = 1,
-                            Barrio = 1,
+                            Provincia = 1,
                             Canton = 1,
                             Distrito = 1,
+                            Barrio = 1,
                             NombreBarrio = "Amón",
                             NombreCanton = "San José",
                             NombreDistrito = "CARMEN",
-                            NombreProvincia = "San José",
-                            Provincia = 1
+                            NombreProvincia = "San José"
                         },
                         new
                         {
-                            Id = 2,
-                            Barrio = 2,
+                            Provincia = 1,
                             Canton = 1,
                             Distrito = 1,
+                            Barrio = 2,
                             NombreBarrio = "Aranjuez",
                             NombreCanton = "San José",
                             NombreDistrito = "CARMEN",
-                            NombreProvincia = "San José",
-                            Provincia = 1
+                            NombreProvincia = "San José"
                         },
                         new
                         {
-                            Id = 3,
-                            Barrio = 3,
+                            Provincia = 1,
                             Canton = 1,
                             Distrito = 1,
+                            Barrio = 3,
                             NombreBarrio = "California (parte)",
                             NombreCanton = "San José",
                             NombreDistrito = "CARMEN",
-                            NombreProvincia = "San José",
-                            Provincia = 1
+                            NombreProvincia = "San José"
                         },
                         new
                         {
-                            Id = 4,
+                            Provincia = 6,
+                            Canton = 8,
+                            Distrito = 1,
                             Barrio = 1,
-                            Canton = 8,
-                            Distrito = 1,
-                            NombreBarrio = "Danto",
+                            NombreBarrio = "Canada",
                             NombreCanton = "Coto Brus",
                             NombreDistrito = "SAN VITO",
-                            NombreProvincia = "Puntarenas",
-                            Provincia = 6
+                            NombreProvincia = "Puntarenas"
                         },
                         new
                         {
-                            Id = 5,
-                            Barrio = 11,
+                            Provincia = 6,
                             Canton = 8,
                             Distrito = 1,
+                            Barrio = 11,
                             NombreBarrio = "Danto",
                             NombreCanton = "Coto Brus",
                             NombreDistrito = "SAN VITO",
-                            NombreProvincia = "Puntarenas",
-                            Provincia = 6
+                            NombreProvincia = "Puntarenas"
                         });
                 });
 
@@ -284,6 +268,11 @@ namespace Api.Migrations
                     b.Property<int>("Rol")
                         .HasColumnType("int");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("varchar(36)");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -298,7 +287,7 @@ namespace Api.Migrations
                 {
                     b.HasOne("Api.Models.Actividad", null)
                         .WithMany()
-                        .HasForeignKey("ActividadesId")
+                        .HasForeignKey("ActividadesCodigo")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

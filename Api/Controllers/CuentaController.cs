@@ -94,10 +94,10 @@ namespace Api.Controllers
         /// </summary>
         /// <param name="newCuentaActividad">Objeto AddCuentaActividadDto con la información de la actividad a agregar.</param>
         /// <returns>Un ActionResult con un objeto ServiceResponse de tipo GetActividadDto.</returns>
-        [HttpPost("Actividad")]
-        public async Task<ActionResult<ServiceResponse<GetActividadDto>>> AddCuentaActividad(AddCuentaActividadDto newCuentaActividad)
+        [HttpPost("AddCuentaActividades")]
+        public async Task<ActionResult<ServiceResponse<GetActividadDto>>> AddCuentaActividades(AddCuentaActividadesDto newCuentaActividades)
         {
-            return Ok(await _cuentaService.AddCuentaActividad(newCuentaActividad));
+            return Ok(await _cuentaService.AddCuentaActividades(newCuentaActividades));
         }
 
         /// <summary>

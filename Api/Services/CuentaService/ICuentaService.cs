@@ -15,7 +15,7 @@ namespace Api.Services.CuentaService
         Task<ServiceResponse<List<GetCuentaDto>>> AddCuenta(AddCuentaDto newCuenta);
         Task<ServiceResponse<GetCuentaDto>> UpdateCuenta(UpdateCuentaDto updatedCuenta);
         Task<ServiceResponse<List<GetCuentaDto>>> DeleteCuenta(int id);
-        Task<ServiceResponse<GetCuentaDto>> AddCuentaActividad(AddCuentaActividadDto newCuentaActivdad);
+        Task<ServiceResponse<GetCuentaDto>> AddCuentaActividades(AddCuentaActividadesDto newCuentaActivdades);
         Task<ServiceResponse<GetUbicacionDto>> GetUbicacion(string codigoUbicacion);
         Task<ServiceResponse<List<GetUbicacionProvinciaDto>>> GetUbicacionProvincias();
         Task<ServiceResponse<List<GetUbicacionCantonDto>>> GetUbicacionCanton(int provincia);

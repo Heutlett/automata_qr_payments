@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Api.Dtos.Cuenta
 {
-    public class AddCuentaActividadDto
+    public class AddCuentaActividadesDto
     {
         public int CuentaId { get; set; }
-        public int ActividadId { get; set; }
+        public List<int> ActividadesId { get; set; } = new List<int>();
     }
 }

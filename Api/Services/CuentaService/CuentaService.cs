@@ -142,36 +142,41 @@ namespace Api.Services.CuentaService
 
             return serviceResponse;
         }
-        public async Task<ServiceResponse<GetCuentaDto>> AddCuentaActividad(AddCuentaActividadDto newCuentaActividad)
+        public async Task<ServiceResponse<GetCuentaDto>> AddCuentaActividades(AddCuentaActividadesDto newCuentaActividades)
         {
             var response = new ServiceResponse<GetCuentaDto>();
             try
             {
                 var cuenta = await _context.Cuentas
                     .Include(c => c.Actividades)
-                    .FirstOrDefaultAsync(c => c.Id == newCuentaActividad.CuentaId &&
+                    .FirstOrDefaultAsync(c => c.Id == newCuentaActividades.CuentaId &&
                     c.Usuario!.UID == GetUserUid());
 
                 if (cuenta is null)
                 {
-                    response.Success = false;
-                    response.Message = "No se ha encontrado la cuenta.";
-                    return response;
+                    throw new Exception($"No se ha encontrado la cuenta.");
                 }
-
-                var actividad = await _context.Actividades
-                    .FirstOrDefaultAsync(s => s.Id == newCuentaActividad.ActividadId);
-
-                if (actividad is null)
+                for (int i = 0; i < newCuentaActividades.ActividadesId.Count; i++)
                 {
-                    response.Success = false;
-                    response.Message = "No se ha encontrado la actividad";
-                    return response;
-                }
+                    var actividad = await _context.Actividades
+                    .FirstOrDefaultAsync(s => s.Codigo == newCuentaActividades.ActividadesId[i]);
 
-                cuenta.Actividades!.Add(actividad);
-                await _context.SaveChangesAsync();
-                response.Data = _mapper.Map<GetCuentaDto>(cuenta);
+                    if (actividad is null)
+                    {
+                        throw new Exception($"No se ha encontrado la actividad.");
+                    }
+
+                    var isRepeated = cuenta.Actividades!.Contains(actividad);
+
+                    if (isRepeated)
+                    {
+                        throw new Exception($"La actividad economica {actividad.Nombre} ya se encuentra registrada en esta cuenta.");
+                    }
+
+                    cuenta.Actividades!.Add(actividad);
+                    await _context.SaveChangesAsync();
+                    response.Data = _mapper.Map<GetCuentaDto>(cuenta);
+                }
             }
             catch (Exception ex)
             {

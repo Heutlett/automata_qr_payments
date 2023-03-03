@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230302174157_uid2")]
-    partial class uid2
+    [Migration("20230303155432_removePopuplation")]
+    partial class removePopuplation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,13 +24,13 @@ namespace Api.Migrations
 
             modelBuilder.Entity("ActividadCuenta", b =>
                 {
-                    b.Property<int>("ActividadesId")
+                    b.Property<int>("ActividadesCodigo")
                         .HasColumnType("int");
 
                     b.Property<int>("CuentasId")
                         .HasColumnType("int");
 
-                    b.HasKey("ActividadesId", "CuentasId");
+                    b.HasKey("ActividadesCodigo", "CuentasId");
 
                     b.HasIndex("CuentasId");
 
@@ -39,41 +39,17 @@ namespace Api.Migrations
 
             modelBuilder.Entity("Api.Models.Actividad", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("Codigo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    b.Property<string>("Codigo")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("Id");
+                    b.HasKey("Codigo");
 
                     b.ToTable("Actividades");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Codigo = "722003",
-                            Nombre = "DISEÑADOR GRAFICO, DE SOFWARE Y PAGINAS WEB"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Codigo = "721001",
-                            Nombre = "CONSULTORES INFORMÁTICOS"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Codigo = "503002",
-                            Nombre = "VENTA DE REPUESTOS USADOS PARA AUTOMOVILES"
-                        });
                 });
 
             modelBuilder.Entity("Api.Models.Cuenta", b =>
@@ -163,17 +139,16 @@ namespace Api.Migrations
 
             modelBuilder.Entity("Api.Models.Ubicacion", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("Barrio")
+                    b.Property<int>("Provincia")
                         .HasColumnType("int");
 
                     b.Property<int>("Canton")
                         .HasColumnType("int");
 
                     b.Property<int>("Distrito")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Barrio")
                         .HasColumnType("int");
 
                     b.Property<string>("NombreBarrio")
@@ -192,74 +167,9 @@ namespace Api.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Provincia")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
+                    b.HasKey("Provincia", "Canton", "Distrito", "Barrio");
 
                     b.ToTable("Ubicaciones");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Barrio = 1,
-                            Canton = 1,
-                            Distrito = 1,
-                            NombreBarrio = "Amón",
-                            NombreCanton = "San José",
-                            NombreDistrito = "CARMEN",
-                            NombreProvincia = "San José",
-                            Provincia = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Barrio = 2,
-                            Canton = 1,
-                            Distrito = 1,
-                            NombreBarrio = "Aranjuez",
-                            NombreCanton = "San José",
-                            NombreDistrito = "CARMEN",
-                            NombreProvincia = "San José",
-                            Provincia = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Barrio = 3,
-                            Canton = 1,
-                            Distrito = 1,
-                            NombreBarrio = "California (parte)",
-                            NombreCanton = "San José",
-                            NombreDistrito = "CARMEN",
-                            NombreProvincia = "San José",
-                            Provincia = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Barrio = 1,
-                            Canton = 8,
-                            Distrito = 1,
-                            NombreBarrio = "Canada",
-                            NombreCanton = "Coto Brus",
-                            NombreDistrito = "SAN VITO",
-                            NombreProvincia = "Puntarenas",
-                            Provincia = 6
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Barrio = 11,
-                            Canton = 8,
-                            Distrito = 1,
-                            NombreBarrio = "Danto",
-                            NombreCanton = "Coto Brus",
-                            NombreDistrito = "SAN VITO",
-                            NombreProvincia = "Puntarenas",
-                            Provincia = 6
-                        });
                 });
 
             modelBuilder.Entity("Api.Models.Usuario", b =>
@@ -303,7 +213,7 @@ namespace Api.Migrations
                 {
                     b.HasOne("Api.Models.Actividad", null)
                         .WithMany()
-                        .HasForeignKey("ActividadesId")
+                        .HasForeignKey("ActividadesCodigo")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

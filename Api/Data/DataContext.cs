@@ -16,12 +16,8 @@ namespace Api.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Actividad>().HasData(
-                new Actividad { Id = 1, Codigo = "722003", Nombre = "DISEÑADOR GRAFICO, DE SOFWARE Y PAGINAS WEB" },
-                new Actividad { Id = 2, Codigo = "721001", Nombre = "CONSULTORES INFORMÁTICOS" },
-                new Actividad { Id = 3, Codigo = "503002", Nombre = "VENTA DE REPUESTOS USADOS PARA AUTOMOVILES" }
-            );
-            modelBuilder.Entity<Ubicacion>().HasData(Population.Ubicaciones);
+            modelBuilder.Entity<Ubicacion>()
+             .HasKey(u => new { u.Provincia, u.Canton, u.Distrito, u.Barrio});
         }
         public DbSet<Usuario> Usuarios => Set<Usuario>();
         public DbSet<Cuenta> Cuentas => Set<Cuenta>();

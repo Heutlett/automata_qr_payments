@@ -7,7 +7,7 @@ namespace Api.Dtos.Cuenta
 {
     public class GetActividadDto
     {
-        public string Codigo { get; set; } = string.Empty;
+        public int Codigo { get; set; }
         public string Nombre { get; set; } = string.Empty;
     }
 }
