@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_app/models/account.dart';
 
+import '../../models/actividad.dart';
+
 const host = '192.168.18.90';
 
 Future<http.Response> postLogin(String username, String password) async {
@@ -42,9 +44,12 @@ Future<http.Response> postRegister(
   return response;
 }
 
-Future<http.Response> postCreateAccount(Object? cuenta, String? token) async {
-// Enviar la cuenta al API
-  var response = await http.post(
+Future<http.Response> postCreateAccount(
+    Object? cuenta, List<Actividad> actividades) async {
+  final prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('accessToken');
+
+  var responseCreateAcc = await http.post(
     Uri.parse('http://$host/api/Cuenta'),
     body: jsonEncode(cuenta),
     headers: {
@@ -52,5 +57,24 @@ Future<http.Response> postCreateAccount(Object? cuenta, String? token) async {
       'Authorization': 'bearer $token'
     },
   );
-  return response;
+
+  // if (responseCreateAcc.statusCode == 200) {
+
+  //   var request = {
+  //     "cuentaId" =
+  //   }
+
+  //   var responseAddActividades = await http.post(
+  //     Uri.parse('http://$host/api/Cuenta/AddCuentaActividades'),
+  //     body: jsonEncode(actividades),
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Authorization': 'bearer $token'
+  //     },
+  //   );
+
+  //   print(responseAddActividades);
+  // }
+
+  return responseCreateAcc;
 }

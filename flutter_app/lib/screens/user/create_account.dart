@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 import 'package:flutter_app/services/usuario/usuario_service.dart';
+import '../../models/actividad.dart';
 
 class AgregarCuentaForm extends StatefulWidget {
   @override
@@ -12,6 +14,8 @@ class AgregarCuentaForm extends StatefulWidget {
 
 class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
   final _formKey = GlobalKey<FormState>();
+
+  final List<Actividad> actividades = [];
 
   String? _cedulaTipo;
   String? _tipoCuenta;
@@ -39,6 +43,8 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
   final _ubicacionSenasController = TextEditingController();
   final _ubicacionSenasExtranjeroController = TextEditingController();
 
+  final _codigoActividadController = TextEditingController();
+
   @override
   void dispose() {
     _cedulaNumeroController.dispose();
@@ -53,6 +59,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
     _ubicacionCodigoController.dispose();
     _ubicacionSenasController.dispose();
     _ubicacionSenasExtranjeroController.dispose();
+    _codigoActividadController.dispose();
     super.dispose();
   }
 
@@ -213,6 +220,90 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                     return null;
                   },
                 ),
+                SizedBox(
+                  height: 20,
+                ),
+                SizedBox(height: 16.0),
+                Container(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Agregar actividades económicas",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        SizedBox(height: 16.0),
+                        Container(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _codigoActividadController,
+                                  keyboardType: TextInputType
+                                      .number, // Esto cambiará el tipo de teclado a numérico
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  decoration: InputDecoration(
+                                      labelText: 'Codigo de actividad'),
+                                ),
+                              ),
+                              SizedBox(width: 16.0),
+                              Expanded(
+                                flex: 1,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    addActivity(context);
+                                  },
+                                  child: Text("Agregar actividad"),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 16.0),
+                        actividades.isEmpty
+                            ? SizedBox(width: 16.0)
+                            : Column(
+                                children: actividades.map((act) {
+                                  return Container(
+                                    child: Card(
+                                      child: Container(
+                                          child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  act.codigoActividad,
+                                                  style:
+                                                      TextStyle(fontSize: 15),
+                                                ),
+                                              ),
+                                              SizedBox(width: 16.0),
+                                              Expanded(
+                                                flex: 1,
+                                                child: ElevatedButton(
+                                                  onPressed: () {},
+                                                  child: Text("Eliminar"),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Text(
+                                            act.nombre,
+                                            style: TextStyle(fontSize: 15),
+                                          ),
+                                        ],
+                                      )),
+                                    ),
+                                  );
+                                }).toList(),
+                              )
+                      ]),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: ElevatedButton(
@@ -270,53 +361,66 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
       "ubicacionCodigo": ubicacionCodigo,
       "ubicacionSenas": ubicacionSenas,
       "ubicacionSenasExtranjero": ubicacionSenasExtranjero,
-      "tipo": tipo
+      "tipo": tipo,
+      "actividades": actividades.map((act) => act.codigoActividad).toList()
     };
 
-    print(cuenta);
+    var response = await postCreateAccount(cuenta, actividades);
 
-    final prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('accessToken');
-
-    var response = await postCreateAccount(cuenta, token);
-
-// Si la respuesta es exitosa, mostrar un mensaje de éxito
     if (response.statusCode == 200) {
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: Text('Cuenta agregada'),
-          content: Text('La cuenta se agregó exitosamente.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-                _showAccountManagement(context);
-              },
-              child: Text('Aceptar'),
-            ),
-          ],
-        ),
-      );
+      _showDialog(context, 'Cuenta agregada',
+          'La cuenta se agregó exitosamente.', 'Aceptar');
     } else {
-      // Si la respuesta no es exitosa, mostrar un mensaje de error
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: Text('Error al agregar cuenta'),
-          content: Text('Ocurrió un error al agregar la cuenta.'),
-          actions: [
+      _showDialog(context, 'Error al agregar cuenta',
+          'Ocurrió un error al agregar la cuenta.', 'Aceptar');
+    }
+  }
+
+  void _showDialog(
+      BuildContext context, String title, String content, String textButton) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
             TextButton(
+              child: Text(textButton),
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Aceptar'),
             ),
           ],
-        ),
-      );
+        );
+      },
+    );
+  }
+
+  void addActivity(BuildContext context) async {
+    Actividad? actividad =
+        await getActividadByCode(int.parse(_codigoActividadController.text));
+
+    if (actividad != null) {
+      bool containsActividad = actividades.contains(actividad);
+
+      if (!containsActividad) {
+        setState(() {
+          actividades.add(actividad);
+        });
+
+        _showDialog(context, 'Resultado',
+            'La actividad se agregó exitosamente.', 'Aceptar');
+      } else {
+        _showDialog(context, 'Error',
+            'No se puede agregar una actividad economica repetida.', 'Aceptar');
+      }
+    } else {
+      _showDialog(
+          context,
+          'Error',
+          'No se ha encontrado la actividad economica asociada a ese codigo.',
+          'Aceptar');
     }
   }
 }

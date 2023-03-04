@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import 'actividad.dart';
+
 class Account {
   final String id;
   final String cedulaTipo;
@@ -16,7 +18,7 @@ class Account {
   final String ubicacionSenas;
   final String ubicacionSenasExtranjero;
   final String tipo;
-  //final List<dynamic> actividades;
+  final List<Actividad>? actividades;
 
   Account({
     required this.id,
@@ -34,6 +36,6 @@ class Account {
     required this.ubicacionSenas,
     required this.ubicacionSenasExtranjero,
     required this.tipo,
-    //required this.actividades,
+    required this.actividades,
   });
 }

@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_app/models/account.dart';
 
+import '../../models/actividad.dart';
+
 const host = '192.168.18.90';
 
 Future<http.Response> _getCuentaByQr(String codigoQr) async {
@@ -43,6 +45,45 @@ Future<String> getAccountQr(int id) async {
   return data;
 }
 
+// Future<String> postCuentaActividades(int id) async {
+//   final prefs = await SharedPreferences.getInstance();
+//   String? token = prefs.getString('accessToken');
+
+//   var url = "http://$host/api/Cuenta/qr/$id";
+
+//   var headers = {"Authorization": "bearer $token"};
+
+//   var response = await http.get(Uri.parse(url), headers: headers);
+
+//   var data = jsonDecode(response.body);
+//   data = data['data'];
+
+//   return data;
+// }
+
+Future<Actividad?> getActividadByCode(int code) async {
+  final prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('accessToken');
+
+  var url = "http://$host/api/Cuenta/getActividadByCodigo/$code";
+
+  var headers = {"Authorization": "bearer $token"};
+
+  var response = await http.get(Uri.parse(url), headers: headers);
+
+  var data = jsonDecode(response.body);
+
+  if (data['success']) {
+    data = data['data'];
+
+    var actividad = Actividad(
+        codigoActividad: data['codigo'].toString(), nombre: data['nombre']);
+
+    return actividad;
+  }
+  return null;
+}
+
 Future<http.Response> _getCuentas() async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
@@ -71,22 +112,33 @@ Future<List<Account>> getCuentasList() async {
   List<Account> accounts = [];
 
   for (var i = 0; i < data.length; i++) {
+    List<dynamic> dataActividades = data[i]['actividades'];
+    List<Actividad> actividades = [];
+
+    for (var e = 0; e < dataActividades.length; e++) {
+      actividades.add(Actividad(
+          codigoActividad: dataActividades[i]['codigo'].toString(),
+          nombre: dataActividades[i]['nombre']));
+    }
+
     accounts.add(Account(
-        id: data[i]['id'].toString(),
-        cedulaTipo: data[i]['cedulaTipo'],
-        cedulaNumero: data[i]['cedulaNumero'],
-        idExtranjero: data[i]['idExtranjero'],
-        nombre: data[i]['nombre'],
-        nombreComercial: data[i]['nombreComercial'],
-        telCodigoPais: data[i]['telCodigoPais'],
-        telNumero: data[i]['telNumero'],
-        faxCodigoPais: data[i]['faxCodigoPais'],
-        faxNumero: data[i]['faxNumero'],
-        correo: data[i]['correo'],
-        ubicacionCodigo: data[i]['ubicacionCodigo'],
-        ubicacionSenas: data[i]['ubicacionSenas'],
-        ubicacionSenasExtranjero: data[i]['ubicacionSenasExtranjero'],
-        tipo: data[i]['tipo']));
+      id: data[i]['id'].toString(),
+      cedulaTipo: data[i]['cedulaTipo'],
+      cedulaNumero: data[i]['cedulaNumero'],
+      idExtranjero: data[i]['idExtranjero'],
+      nombre: data[i]['nombre'],
+      nombreComercial: data[i]['nombreComercial'],
+      telCodigoPais: data[i]['telCodigoPais'],
+      telNumero: data[i]['telNumero'],
+      faxCodigoPais: data[i]['faxCodigoPais'],
+      faxNumero: data[i]['faxNumero'],
+      correo: data[i]['correo'],
+      ubicacionCodigo: data[i]['ubicacionCodigo'],
+      ubicacionSenas: data[i]['ubicacionSenas'],
+      ubicacionSenasExtranjero: data[i]['ubicacionSenasExtranjero'],
+      tipo: data[i]['tipo'],
+      actividades: actividades,
+    ));
   }
   return accounts;
 }
@@ -96,21 +148,23 @@ Future<Account> getCuentaTemporal(String username, String id) async {
   var data = jsonDecode(response.body);
   data = data['data'];
   Account account = Account(
-      id: data['id'].toString(),
-      cedulaTipo: data['cedulaTipo'],
-      cedulaNumero: data['cedulaNumero'],
-      idExtranjero: data['idExtranjero'],
-      nombre: data['nombre'],
-      nombreComercial: data['nombreComercial'],
-      telCodigoPais: data['telCodigoPais'],
-      telNumero: data['telNumero'],
-      faxCodigoPais: data['faxCodigoPais'],
-      faxNumero: data['faxNumero'],
-      correo: data['correo'],
-      ubicacionCodigo: data['ubicacionCodigo'],
-      ubicacionSenas: data['ubicacionSenas'],
-      ubicacionSenasExtranjero: data['ubicacionSenasExtranjero'],
-      tipo: data['tipo']);
+    id: data['id'].toString(),
+    cedulaTipo: data['cedulaTipo'],
+    cedulaNumero: data['cedulaNumero'],
+    idExtranjero: data['idExtranjero'],
+    nombre: data['nombre'],
+    nombreComercial: data['nombreComercial'],
+    telCodigoPais: data['telCodigoPais'],
+    telNumero: data['telNumero'],
+    faxCodigoPais: data['faxCodigoPais'],
+    faxNumero: data['faxNumero'],
+    correo: data['correo'],
+    ubicacionCodigo: data['ubicacionCodigo'],
+    ubicacionSenas: data['ubicacionSenas'],
+    ubicacionSenasExtranjero: data['ubicacionSenasExtranjero'],
+    tipo: data['tipo'],
+    actividades: data['actividades'],
+  );
 
   return account;
 }

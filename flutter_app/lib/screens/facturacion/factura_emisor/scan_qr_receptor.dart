@@ -204,21 +204,23 @@ class _SelectAccountReceptorScreenState
 
     data = data['data'];
     Account accountReceptor = Account(
-        id: data['id'].toString(),
-        cedulaTipo: data['cedulaTipo'],
-        cedulaNumero: data['cedulaNumero'],
-        idExtranjero: data['idExtranjero'],
-        nombre: data['nombre'],
-        nombreComercial: data['nombreComercial'],
-        telCodigoPais: data['telCodigoPais'],
-        telNumero: data['telNumero'],
-        faxCodigoPais: data['faxCodigoPais'],
-        faxNumero: data['faxNumero'],
-        correo: data['correo'],
-        ubicacionCodigo: data['ubicacionCodigo'],
-        ubicacionSenas: data['ubicacionSenas'],
-        ubicacionSenasExtranjero: data['ubicacionSenasExtranjero'],
-        tipo: data['tipo']);
+      id: data['id'].toString(),
+      cedulaTipo: data['cedulaTipo'],
+      cedulaNumero: data['cedulaNumero'],
+      idExtranjero: data['idExtranjero'],
+      nombre: data['nombre'],
+      nombreComercial: data['nombreComercial'],
+      telCodigoPais: data['telCodigoPais'],
+      telNumero: data['telNumero'],
+      faxCodigoPais: data['faxCodigoPais'],
+      faxNumero: data['faxNumero'],
+      correo: data['correo'],
+      ubicacionCodigo: data['ubicacionCodigo'],
+      ubicacionSenas: data['ubicacionSenas'],
+      ubicacionSenasExtranjero: data['ubicacionSenasExtranjero'],
+      tipo: data['tipo'],
+      actividades: data['actividades'],
+    );
 
     final Account account_emisor =
         ModalRoute.of(context)?.settings.arguments as Account;
