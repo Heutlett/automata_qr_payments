@@ -117,8 +117,10 @@ Future<List<Account>> getCuentasList() async {
 
     for (var e = 0; e < dataActividades.length; e++) {
       actividades.add(Actividad(
-          codigoActividad: dataActividades[i]['codigo'].toString(),
-          nombre: dataActividades[i]['nombre']));
+          codigoActividad: dataActividades[e]['codigo'].toString(),
+          nombre: dataActividades[e]['nombre']));
+      print(actividades.toString());
+      print("\n");
     }
 
     accounts.add(Account(
