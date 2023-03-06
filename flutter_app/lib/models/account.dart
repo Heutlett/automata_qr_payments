@@ -19,6 +19,10 @@ class Account {
   final String ubicacionSenasExtranjero;
   final String tipo;
   final List<Actividad>? actividades;
+  String? nombreProvincia;
+  String? nombreCanton;
+  String? nombreDistrito;
+  String? nombreBarrio;
 
   Account({
     required this.id,
@@ -37,5 +41,9 @@ class Account {
     required this.ubicacionSenasExtranjero,
     required this.tipo,
     required this.actividades,
+    this.nombreProvincia,
+    this.nombreCanton,
+    this.nombreDistrito,
+    this.nombreBarrio,
   });
 }

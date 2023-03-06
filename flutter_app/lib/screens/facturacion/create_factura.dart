@@ -51,9 +51,12 @@ class _CreateFacturaState extends State<CreateFactura> {
               account: accountReceptor,
             ),
             SizedBox(
-              height: 25,
+              height: 15,
             ),
-            ElevatedButton(onPressed: () {}, child: Text('Crear factura'))
+            ElevatedButton(onPressed: () {}, child: Text('Crear factura')),
+            SizedBox(
+              height: 15,
+            ),
           ],
         ),
       ),

@@ -6,6 +6,8 @@ import 'package:flutter_app/models/account.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 
+import '../../../models/serverResponse.dart';
+
 class SelectAccountReceptorScreen extends StatefulWidget {
   const SelectAccountReceptorScreen({Key? key}) : super(key: key);
 
@@ -23,7 +25,6 @@ class _SelectAccountReceptorScreenState
   Future<void> scanQR(BuildContext context) async {
     String barcodeScanRes;
 
-    print("prueba");
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
@@ -113,61 +114,34 @@ class _SelectAccountReceptorScreenState
                     onPressed: () {
                       scanQR(context);
                     },
-                    child: Text('Escanear QR de receptor'),
+                    child: Center(
+                      child: Container(
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              'Escanear QR de receptor',
+                              style: TextStyle(fontSize: 25),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Icon(
+                              Icons.qr_code_scanner,
+                              size: 100,
+                            ),
+                            SizedBox(height: 10),
+                          ],
+                        ),
+                      ),
+                    ),
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(Colors.green)),
                   ),
                 ),
-                SizedBox(
-                  height: 50,
-                ),
-                Container(
-                  color: Colors.red[100],
-                  //width: double.infinity,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            showSelectAccountManagementTemporal(context);
-                          },
-                          child: Text('Simular escaneo QR de receptor'),
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.red)),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  labelText: 'Nombre de usuario',
-                                ),
-                                controller: _usernameController,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 15,
-                            ),
-                            Expanded(
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  labelText: 'Id cuenta',
-                                ),
-                                controller: _idCuentaController,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                )
               ],
             ),
           ],
@@ -176,59 +150,23 @@ class _SelectAccountReceptorScreenState
     );
   }
 
-  void showSelectAccountManagementTemporal(BuildContext context) async {
-    final String username = _usernameController.text;
-    final String idCuenta = _idCuentaController.text;
-
-    var account_receptor = await getCuentaTemporal(username, idCuenta);
-
-    final Account account_emisor =
-        ModalRoute.of(context)?.settings.arguments as Account;
-
-    List<Account> cuentas = [account_emisor, account_receptor];
-
-    Navigator.of(context)
-        .pushNamed("/select_account_management", arguments: cuentas);
-  }
-
   void showSelectAccountManagement(
       BuildContext context, String codigoQr) async {
-    var response = await getCuentaByQr(codigoQr);
+    ServerResponse<Account?> getCuenta = await getCuentaByQr(codigoQr);
 
-    var data = jsonDecode(response.body);
+    Account? accountReceptor = getCuenta.data;
 
-    if (!data['success']) {
-      showAlertDialog(context, "Resultado", data['success'], data['message']);
-      return;
+    if (accountReceptor == null || !getCuenta.success) {
+      showAlertDialog(context, 'Error', false, getCuenta.message);
+    } else {
+      final Account account_emisor =
+          ModalRoute.of(context)?.settings.arguments as Account;
+
+      List<Account> cuentas = [account_emisor, accountReceptor];
+
+      Navigator.of(context)
+          .pushNamed("/select_account_management", arguments: cuentas);
     }
-
-    data = data['data'];
-    Account accountReceptor = Account(
-      id: data['id'].toString(),
-      cedulaTipo: data['cedulaTipo'],
-      cedulaNumero: data['cedulaNumero'],
-      idExtranjero: data['idExtranjero'],
-      nombre: data['nombre'],
-      nombreComercial: data['nombreComercial'],
-      telCodigoPais: data['telCodigoPais'],
-      telNumero: data['telNumero'],
-      faxCodigoPais: data['faxCodigoPais'],
-      faxNumero: data['faxNumero'],
-      correo: data['correo'],
-      ubicacionCodigo: data['ubicacionCodigo'],
-      ubicacionSenas: data['ubicacionSenas'],
-      ubicacionSenasExtranjero: data['ubicacionSenasExtranjero'],
-      tipo: data['tipo'],
-      actividades: data['actividades'],
-    );
-
-    final Account account_emisor =
-        ModalRoute.of(context)?.settings.arguments as Account;
-
-    List<Account> cuentas = [account_emisor, accountReceptor];
-
-    Navigator.of(context)
-        .pushNamed("/select_account_management", arguments: cuentas);
   }
 
   void showAlertDialog(

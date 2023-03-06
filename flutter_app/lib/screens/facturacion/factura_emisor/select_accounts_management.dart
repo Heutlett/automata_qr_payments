@@ -29,107 +29,121 @@ class _SelectAccountManagementScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Cuenta emisor',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            Container(
+              decoration:
+                  BoxDecoration(border: Border.all(color: Colors.black)),
+              padding: EdgeInsets.all(8),
+              margin: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Cuenta emisor',
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    child: Card(
+                      elevation: 5,
+                      color: account_emisor.cedulaTipo == 'Juridica'
+                          ? Color.fromARGB(255, 163, 152, 245)
+                          : Color.fromARGB(255, 152, 207, 245),
+                      margin: EdgeInsets.all(8),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              account_emisor.cedulaTipo,
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              account_emisor.cedulaNumero,
+                              style: TextStyle(fontSize: 13),
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              account_emisor.nombre,
+                              style: TextStyle(fontSize: 13),
+                            ),
+                            SizedBox(height: 16),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: double.infinity,
-                  child: Card(
-                    elevation: 5,
-                    color: account_emisor.cedulaTipo == 'Juridica'
-                        ? Color.fromARGB(255, 163, 152, 245)
-                        : Color.fromARGB(255, 152, 207, 245),
-                    margin: EdgeInsets.all(8),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            account_emisor.cedulaTipo,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            account_emisor.cedulaNumero,
-                            style: TextStyle(fontSize: 13),
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            account_emisor.nombre,
-                            style: TextStyle(fontSize: 13),
-                          ),
-                          SizedBox(height: 16),
-                        ],
+            Container(
+                decoration:
+                    BoxDecoration(border: Border.all(color: Colors.black)),
+                padding: EdgeInsets.all(8),
+                margin: EdgeInsets.all(16),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Cuenta receptor',
+                          style: TextStyle(
+                              fontSize: 25, fontWeight: FontWeight.bold),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 50,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
+                      Container(
+                        width: double.infinity,
+                        child: Card(
+                          elevation: 5,
+                          color: account_receptor.cedulaTipo == 'Juridica'
+                              ? Color.fromARGB(255, 163, 152, 245)
+                              : Color.fromARGB(255, 152, 207, 245),
+                          margin: EdgeInsets.all(8),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  account_receptor.cedulaTipo,
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(height: 16),
+                                Text(
+                                  account_receptor.cedulaNumero,
+                                  style: TextStyle(fontSize: 13),
+                                ),
+                                SizedBox(height: 16),
+                                Text(
+                                  account_receptor.nombre,
+                                  style: TextStyle(fontSize: 13),
+                                ),
+                                SizedBox(height: 16),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ])),
+            Center(
+              child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/create_factura',
+                        arguments: [account_emisor, account_receptor]);
+                  },
                   child: Text(
-                    'Cuenta receptor',
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Container(
-                  width: double.infinity,
-                  child: Card(
-                    elevation: 5,
-                    color: account_receptor.cedulaTipo == 'Juridica'
-                        ? Color.fromARGB(255, 163, 152, 245)
-                        : Color.fromARGB(255, 152, 207, 245),
-                    margin: EdgeInsets.all(8),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            account_receptor.cedulaTipo,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            account_receptor.cedulaNumero,
-                            style: TextStyle(fontSize: 13),
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            account_receptor.nombre,
-                            style: TextStyle(fontSize: 13),
-                          ),
-                          SizedBox(height: 16),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/create_factura',
-                            arguments: [account_emisor, account_receptor]);
-                      },
-                      child: Text('Crear factura')),
-                )
-              ],
+                    'Crear factura',
+                    style: TextStyle(fontSize: 20),
+                  )),
             ),
           ],
         ),

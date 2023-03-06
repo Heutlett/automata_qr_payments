@@ -37,12 +37,20 @@ CREATE TABLE cuentas (
   FOREIGN KEY (IdUsuario) REFERENCES usuarios(Id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS actividades;
+CREATE TABLE actividades (
+    Codigo INT NOT NULL,
+    Nombre VARCHAR(120) CHARACTER SET utf8mb4 NOT NULL,
+    PRIMARY KEY (Codigo)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 DROP TABLE IF EXISTS actividadcuenta;
 CREATE TABLE actividadcuenta (
   IdCuenta INT NOT NULL,
-  CodigoActividad VARCHAR(6) NOT NULL,     -- Acorde a resolucion 4.3
+  CodigoActividad INT NOT NULL,     -- Acorde a resolucion 4.3
   PRIMARY KEY (IdCuenta, CodigoActividad),
-  FOREIGN KEY (IdCuenta) REFERENCES cuentas(Id) ON DELETE CASCADE
+  FOREIGN KEY (IdCuenta) REFERENCES cuentas(Id) ON DELETE CASCADE,
+  FOREIGN KEY (CodigoActividad) REFERENCES actividades(Codigo) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS credenciales_atv;
@@ -94,13 +102,6 @@ CREATE TABLE ubicaciones (
 
 ALTER TABLE ubicaciones
 ADD CONSTRAINT compuesta_pk PRIMARY KEY (Provincia, Canton, Distrito, Barrio);
-
-DROP TABLE IF EXISTS actividad;
-CREATE TABLE actividad (
-    Codigo INT NOT NULL,
-    Nombre VARCHAR(120) CHARACTER SET utf8mb4 NOT NULL,
-    PRIMARY KEY (Codigo)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
