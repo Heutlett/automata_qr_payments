@@ -114,35 +114,36 @@ class AccountForm extends StatelessWidget {
                                     width: double.infinity,
                                     child: Card(
                                       child: Container(
-                                          child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  act.codigoActividad,
-                                                  style:
-                                                      TextStyle(fontSize: 15),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    act.codigoActividad,
+                                                    style:
+                                                        TextStyle(fontSize: 15),
+                                                  ),
                                                 ),
-                                              ),
-                                              SizedBox(width: 16.0),
-                                              Expanded(
-                                                flex: 1,
-                                                child: ElevatedButton(
-                                                  onPressed: () {},
-                                                  child: Text("Seleccionar"),
+                                                SizedBox(width: 16.0),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: ElevatedButton(
+                                                    onPressed: () {},
+                                                    child: Text("Seleccionar"),
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                          Text(
-                                            act.nombre,
-                                            style: TextStyle(fontSize: 13),
-                                          ),
-                                        ],
-                                      )),
+                                              ],
+                                            ),
+                                            Text(
+                                              act.nombre,
+                                              style: TextStyle(fontSize: 13),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   );
                                 },
@@ -153,7 +154,8 @@ class AccountForm extends StatelessWidget {
                               child: Text(
                                 'No cuenta con actividades económicas',
                                 style: TextStyle(color: Colors.red),
-                              )),
+                              ),
+                            ),
                     ],
                   ),
                 ),
