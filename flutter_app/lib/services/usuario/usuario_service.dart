@@ -57,24 +57,5 @@ Future<http.Response> postCreateAccount(
       'Authorization': 'bearer $token'
     },
   );
-
-  // if (responseCreateAcc.statusCode == 200) {
-
-  //   var request = {
-  //     "cuentaId" =
-  //   }
-
-  //   var responseAddActividades = await http.post(
-  //     Uri.parse('http://$host/api/Cuenta/AddCuentaActividades'),
-  //     body: jsonEncode(actividades),
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Authorization': 'bearer $token'
-  //     },
-  //   );
-
-  //   print(responseAddActividades);
-  // }
-
   return responseCreateAcc;
 }

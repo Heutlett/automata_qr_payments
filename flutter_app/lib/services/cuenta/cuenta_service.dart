@@ -6,7 +6,7 @@ import 'package:flutter_app/models/account.dart';
 
 import '../../models/actividad.dart';
 import '../../models/serverResponse.dart';
-import '../../models/ubicacion.dart';
+import '../../models/ubicacion/ubicacion.dart';
 
 const host = '192.168.18.90';
 
@@ -74,14 +74,13 @@ Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
         acc.nombreBarrio = ubicacion.data!.barrio;
       }
 
-      serverResponse =
-          new ServerResponse(data: acc, message: '', success: true);
+      serverResponse = ServerResponse(data: acc, message: '', success: true);
     } else {
-      serverResponse = new ServerResponse(
-          data: null, message: data['message'], success: true);
+      serverResponse =
+          ServerResponse(data: null, message: data['message'], success: true);
     }
   } else {
-    serverResponse = new ServerResponse(
+    serverResponse = ServerResponse(
         data: null,
         message: 'Ha ocurrido un error, probablemente el token ha expirado',
         success: false);
@@ -232,8 +231,8 @@ Future<ServerResponse<Ubicacion>> getUbicacion(String codigo) async {
     var data = jsonDecode(response.body);
     if (data['success']) {
       data = data['data'];
-      serverResponse = new ServerResponse(
-        data: new Ubicacion(
+      serverResponse = ServerResponse(
+        data: Ubicacion(
             provincia: data['nombreProvincia'],
             canton: data['nombreCanton'],
             distrito: data['nombreDistrito'],
@@ -242,14 +241,163 @@ Future<ServerResponse<Ubicacion>> getUbicacion(String codigo) async {
         success: true,
       );
     } else {
-      serverResponse = new ServerResponse(
+      serverResponse = ServerResponse(
         data: null,
         message: data['message'],
         success: false,
       );
     }
   } else {
-    serverResponse = new ServerResponse(
+    serverResponse = ServerResponse(
+      data: null,
+      message: 'Ha ocurrido un error al obtener la informacion de la ubicacion',
+      success: false,
+    );
+  }
+
+  return serverResponse;
+}
+
+Future<ServerResponse<List<Map<String, dynamic>>>> getProvincias() async {
+  ServerResponse<List<Map<String, dynamic>>> serverResponse;
+
+  var url = "http://$host/api/Cuenta/UbicacionProvincias";
+
+  var response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    var responseDecoded = jsonDecode(response.body);
+
+    if (responseDecoded['success']) {
+      var data = responseDecoded['data'];
+      List<Map<String, dynamic>> provincias = data.cast<Map<String, dynamic>>();
+      serverResponse = ServerResponse(
+        data: provincias,
+        message: responseDecoded['message'],
+        success: true,
+      );
+    } else {
+      serverResponse = ServerResponse(
+        data: null,
+        message: responseDecoded['message'],
+        success: false,
+      );
+    }
+  } else {
+    serverResponse = ServerResponse(
+      data: null,
+      message: 'Ha ocurrido un error al obtener la informacion de la ubicacion',
+      success: false,
+    );
+  }
+
+  return serverResponse;
+}
+
+Future<ServerResponse<List<Map<String, dynamic>>>> getCantones(
+    int provincia) async {
+  ServerResponse<List<Map<String, dynamic>>> serverResponse;
+
+  var url = "http://$host/api/Cuenta/UbicacionCantones?provincia=$provincia";
+
+  var response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    var responseDecoded = jsonDecode(response.body);
+
+    if (responseDecoded['success']) {
+      var data = responseDecoded['data'];
+      List<Map<String, dynamic>> cantones = data.cast<Map<String, dynamic>>();
+      serverResponse = ServerResponse(
+        data: cantones,
+        message: responseDecoded['message'],
+        success: true,
+      );
+    } else {
+      serverResponse = ServerResponse(
+        data: null,
+        message: responseDecoded['message'],
+        success: false,
+      );
+    }
+  } else {
+    serverResponse = ServerResponse(
+      data: null,
+      message: 'Ha ocurrido un error al obtener la informacion de la ubicacion',
+      success: false,
+    );
+  }
+
+  return serverResponse;
+}
+
+Future<ServerResponse<List<Map<String, dynamic>>>> getDistritos(
+    int provincia, int canton) async {
+  ServerResponse<List<Map<String, dynamic>>> serverResponse;
+
+  var url =
+      "http://$host/api/Cuenta/UbicacionDistritos?provincia=$provincia&canton=$canton";
+
+  var response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    var responseDecoded = jsonDecode(response.body);
+
+    if (responseDecoded['success']) {
+      var data = responseDecoded['data'];
+      List<Map<String, dynamic>> distritos = data.cast<Map<String, dynamic>>();
+      serverResponse = ServerResponse(
+        data: distritos,
+        message: responseDecoded['message'],
+        success: true,
+      );
+    } else {
+      serverResponse = ServerResponse(
+        data: null,
+        message: responseDecoded['message'],
+        success: false,
+      );
+    }
+  } else {
+    serverResponse = ServerResponse(
+      data: null,
+      message: 'Ha ocurrido un error al obtener la informacion de la ubicacion',
+      success: false,
+    );
+  }
+
+  return serverResponse;
+}
+
+Future<ServerResponse<List<Map<String, dynamic>>>> getBarrios(
+    int provincia, int canton, int distrito) async {
+  ServerResponse<List<Map<String, dynamic>>> serverResponse;
+
+  var url =
+      "http://$host/api/Cuenta/UbicacionBarrios?provincia=$provincia&canton=$canton&distrito=$distrito";
+
+  var response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    var responseDecoded = jsonDecode(response.body);
+
+    if (responseDecoded['success']) {
+      var data = responseDecoded['data'];
+      List<Map<String, dynamic>> barrios = data.cast<Map<String, dynamic>>();
+      serverResponse = ServerResponse(
+        data: barrios,
+        message: responseDecoded['message'],
+        success: true,
+      );
+    } else {
+      serverResponse = ServerResponse(
+        data: null,
+        message: responseDecoded['message'],
+        success: false,
+      );
+    }
+  } else {
+    serverResponse = ServerResponse(
       data: null,
       message: 'Ha ocurrido un error al obtener la informacion de la ubicacion',
       success: false,

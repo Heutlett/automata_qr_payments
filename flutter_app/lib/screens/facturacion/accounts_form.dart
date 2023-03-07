@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/serverResponse.dart';
-import '../../models/ubicacion.dart';
+import '../../models/ubicacion/ubicacion.dart';
 import '/models/account.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 

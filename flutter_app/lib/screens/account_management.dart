@@ -1,6 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
+
+import '../services/cuenta/cuenta_service.dart';
 
 class AccountManagementScreen extends StatefulWidget {
   const AccountManagementScreen({Key? key}) : super(key: key);
@@ -91,8 +92,36 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
     );
   }
 
-  void _createAccount() {
-    Navigator.of(context).pushNamed("/create_account");
+  void _showDialog(
+      BuildContext context, String title, String content, String textButton) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              child: Text(textButton),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _createAccount() async {
+    var cantonesResponse = await getProvincias();
+    if (cantonesResponse.success) {
+      var cantonesList = cantonesResponse.data;
+      Navigator.of(context)
+          .pushNamed("/create_account", arguments: cantonesList);
+    } else {
+      _showDialog(context, 'Error', cantonesResponse.message, 'Aceptar');
+    }
   }
 
   void _editAccount() {
