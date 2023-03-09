@@ -1,12 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 
-import '../../../models/serverResponse.dart';
+import '../../models/serverResponse.dart';
+import '../utils.dart';
 
 class SelectAccountReceptorScreen extends StatefulWidget {
   const SelectAccountReceptorScreen({Key? key}) : super(key: key);
@@ -157,7 +156,7 @@ class _SelectAccountReceptorScreenState
     Account? accountReceptor = getCuenta.data;
 
     if (accountReceptor == null || !getCuenta.success) {
-      showAlertDialog(context, 'Error', false, getCuenta.message);
+      showAlertDialog(context, 'Error', getCuenta.message, 'Ok');
     } else {
       final Account account_emisor =
           ModalRoute.of(context)?.settings.arguments as Account;
@@ -167,33 +166,5 @@ class _SelectAccountReceptorScreenState
       Navigator.of(context)
           .pushNamed("/select_account_management", arguments: cuentas);
     }
-  }
-
-  void showAlertDialog(
-      BuildContext context, String title, bool success, String message) {
-    // set up the button
-    Widget okButton = TextButton(
-      child: Text("OK"),
-      onPressed: () {
-        Navigator.of(context).pop();
-      },
-    );
-
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text(title),
-      content: Text(message),
-      actions: [
-        okButton,
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
   }
 }

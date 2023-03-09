@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
 
-import '../services/cuenta/cuenta_service.dart';
+import '../../services/cuenta/cuenta_service.dart';
 
 class AccountManagementScreen extends StatefulWidget {
   const AccountManagementScreen({Key? key}) : super(key: key);
@@ -101,23 +101,6 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                                         style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {},
-                                        child: Container(
-                                          child: Row(
-                                            children: [
-                                              Icon(Icons.add_circle,
-                                                  color: Colors.green),
-                                              SizedBox(width: 8),
-                                              Text(
-                                                "Agregar",
-                                                style: TextStyle(
-                                                    color: Colors.green),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
                                       ),
                                     ],
                                   ),

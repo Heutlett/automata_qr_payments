@@ -1,3 +1,4 @@
+
 class Ubicacion {
   String provincia;
   String canton;

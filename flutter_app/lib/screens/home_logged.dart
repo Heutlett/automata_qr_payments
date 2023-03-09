@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 
-class HomeLoggedPage extends StatelessWidget {
-  HomeLoggedPage({Key? key}) : super(key: key);
+import 'widgets/my_button.dart';
+import 'widgets/my_text.dart';
 
-  void _showAccountManagement(BuildContext context) async {
-    List<Account> accounts = await getCuentasList();
-    Navigator.of(context).pushNamed("/account_management", arguments: accounts);
-  }
+class HomeLoggedPage extends StatelessWidget {
+  const HomeLoggedPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,51 +14,55 @@ class HomeLoggedPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('QR Payments'),
+        title: const Text('QR Payments'),
         automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              '¡Bienvenido ${message}!',
-              style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
+            MyText(
+              text: '¡Bienvenido $message!',
+              fontSize: 28.0,
+              fontWeight: FontWeight.bold,
             ),
-            SizedBox(height: 40.0),
-            ElevatedButton(
-              onPressed: () {
-                _showAccountManagement(context);
-              },
-              child:
-                  Text('Administrar cuentas', style: TextStyle(fontSize: 18)),
-              style: ElevatedButton.styleFrom(
-                fixedSize: Size(250, 60),
-              ),
+            const SizedBox(height: 40.0),
+            MyButton(
+              text: 'Administrar cuentas',
+              function: _showAccountManagementPage,
+              size: const Size(250, 60),
             ),
-            SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed("/facturar");
-              },
-              child: Text('Facturar', style: TextStyle(fontSize: 18)),
-              style: ElevatedButton.styleFrom(
-                fixedSize: Size(250, 60),
-              ),
+            const SizedBox(height: 20.0),
+            MyButton(
+              text: 'Facturar',
+              function: _showFacturarPage,
+              size: const Size(250, 60),
             ),
-            SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed("/");
-              },
-              child: Text('Cerrar sesion', style: TextStyle(fontSize: 18)),
-              style: ElevatedButton.styleFrom(
-                fixedSize: Size(250, 60),
-              ),
+            const SizedBox(height: 20.0),
+            MyButton(
+              text: 'Cerrar sesion',
+              function: _showHomePage,
+              size: const Size(250, 60),
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _showHomePage(BuildContext context) {
+    Navigator.of(context).pushNamed("/");
+  }
+
+  void _showFacturarPage(BuildContext context) {
+    Navigator.of(context).pushNamed("/facturar");
+  }
+
+  Future<void> _showAccountManagementPage(BuildContext context) async {
+    List<Account> accounts = await getCuentasList();
+    if (context.mounted) {
+      Navigator.of(context)
+          .pushNamed("/account_management", arguments: accounts);
+    }
   }
 }

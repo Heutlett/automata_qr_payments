@@ -6,7 +6,7 @@ import 'package:flutter_app/models/account.dart';
 
 import '../../models/actividad.dart';
 import '../../models/serverResponse.dart';
-import '../../models/ubicacion/ubicacion.dart';
+import '../../models/ubicacion.dart';
 
 const host = '192.168.18.90';
 
