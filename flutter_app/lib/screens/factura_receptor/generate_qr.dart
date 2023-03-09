@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/screens/widgets/account/account_info_header.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import '../../models/account.dart';
+import '../widgets/general/my_button.dart';
+import '../widgets/general/my_text.dart';
 
 class QRScreen extends StatefulWidget {
+  const QRScreen({super.key});
+
   @override
-  _QRScreenState createState() => _QRScreenState();
+  State<QRScreen> createState() => _QRScreenState();
 }
 
 class _QRScreenState extends State<QRScreen> {
   final TextEditingController _textController = TextEditingController();
-
-  String _qrData = "";
 
   @override
   void dispose() {
@@ -26,64 +28,40 @@ class _QRScreenState extends State<QRScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Código QR generado"),
+        title: const Text("Código QR generado"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'Cuenta seleccionada:',
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            const MyText(
+              text: 'Cuenta seleccionada:',
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
             ),
-            SizedBox(height: 10),
-            Container(
-              width: double.infinity,
-              child: Card(
+            const SizedBox(height: 20),
+            Card(
                 elevation: 5,
+                margin: const EdgeInsets.all(8),
                 color: args[0] == 'Juridica'
-                    ? Color.fromARGB(255, 163, 152, 245)
-                    : Color.fromARGB(255, 152, 207, 245),
-                margin: EdgeInsets.all(8),
+                    ? const Color.fromARGB(255, 180, 193, 255)
+                    : const Color.fromARGB(255, 180, 234, 255),
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        args[0],
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        args[1],
-                        style: TextStyle(fontSize: 13),
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        args[2],
-                        style: TextStyle(fontSize: 13),
-                      ),
-                      SizedBox(height: 16),
-                    ],
+                  padding: const EdgeInsets.all(8.0),
+                  child: AccountInfoCardHeader(
+                    cedulaTipo: args[0],
+                    cedulaNumero: args[1],
+                    nombre: args[2],
                   ),
-                ),
-              ),
-            ),
-            SizedBox(height: 36),
-            Center(
-              child: Text(
-                'Código QR generado',
-                style: TextStyle(
-                  fontSize: 24,
-                ),
-              ),
+                )),
+            const SizedBox(height: 20),
+            const MyText(
+              text: 'Código QR generado',
+              fontSize: 24,
             ),
             if (args[3].isNotEmpty) ...[
-              SizedBox(height: 26),
+              const SizedBox(height: 26),
               Center(
                 child: QrImage(
                   data: args[3],
@@ -92,24 +70,23 @@ class _QRScreenState extends State<QRScreen> {
                 ),
               ),
             ],
-            SizedBox(height: 16),
-            Center(
-                child: Text(
-              'Tiempo de expiración: 1 minuto',
-              style: TextStyle(fontSize: 18),
-            )),
-            SizedBox(height: 76),
-            Center(
-                child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Volver al inicio')))
+            const SizedBox(height: 16),
+            const MyText(
+              text: 'Tiempo de expiración: 1 minuto',
+              fontSize: 18,
+            ),
+            const SizedBox(height: 76),
+            MyButton(
+                function: () => _showHome(context), text: 'Volver al inicio')
           ],
         ),
       ),
     );
+  }
+
+  void _showHome(BuildContext context) {
+    Navigator.of(context).pop();
+    Navigator.of(context).pop();
+    Navigator.of(context).pop();
   }
 }

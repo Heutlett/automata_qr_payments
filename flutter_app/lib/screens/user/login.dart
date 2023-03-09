@@ -4,9 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_app/services/usuario/usuario_service.dart';
 
 import '../utils.dart';
-import '../widgets/my_button.dart';
-import '../widgets/my_text.dart';
-import '../widgets/my_text_field.dart';
+import '../widgets/general/my_button.dart';
+import '../widgets/general/my_text.dart';
+import '../widgets/general/my_text_field.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -80,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20.0),
             MyButton(
               text: 'Iniciar sesión',
-              function: _submitForm,
+              function: () => _submitForm(context),
             ),
           ],
         ),

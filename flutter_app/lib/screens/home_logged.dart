@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 
-import 'widgets/my_button.dart';
-import 'widgets/my_text.dart';
+import 'widgets/general/my_button.dart';
+import 'widgets/general/my_text.dart';
 
 class HomeLoggedPage extends StatelessWidget {
   const HomeLoggedPage({Key? key}) : super(key: key);
@@ -29,19 +29,19 @@ class HomeLoggedPage extends StatelessWidget {
             const SizedBox(height: 40.0),
             MyButton(
               text: 'Administrar cuentas',
-              function: _showAccountManagementPage,
+              function: () => _showAccountManagementPage(context),
               size: const Size(250, 60),
             ),
             const SizedBox(height: 20.0),
             MyButton(
               text: 'Facturar',
-              function: _showFacturarPage,
+              function: () => _showFacturarPage(context),
               size: const Size(250, 60),
             ),
             const SizedBox(height: 20.0),
             MyButton(
               text: 'Cerrar sesion',
-              function: _showHomePage,
+              function: () => _showHomePage(context),
               size: const Size(250, 60),
             ),
           ],

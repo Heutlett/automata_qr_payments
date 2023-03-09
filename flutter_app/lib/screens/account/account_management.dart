@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
-
 import '../../services/cuenta/cuenta_service.dart';
+import '../widgets/general/my_button.dart';
+import '../widgets/account/account_info_card.dart';
+import '../widgets/account/account_info_card_buttons.dart';
 
 class AccountManagementScreen extends StatefulWidget {
   const AccountManagementScreen({Key? key}) : super(key: key);
@@ -19,208 +21,42 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Container(
-            child: Row(
+        title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Mis cuentas'),
-            ElevatedButton(
-                onPressed: () {
-                  _createAccount();
-                },
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.green)),
-                child: Row(
-                  children: [
-                    Icon(Icons.add_circle),
-                    SizedBox(
-                      width: 9,
-                    ),
-                    Text('Crear'),
-                  ],
-                ))
+            const Text('Mis cuentas'),
+            MyButton(
+              text: 'Crear',
+              function: () => _createAccount(context),
+              icon: Icons.add_circle,
+              size: const Size(120, 40),
+              backgroundColor: Colors.green,
+            ),
           ],
-        )),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
-          children: [
-            Column(
-              children: accounts.map((acc) {
-                return Container(
-                  width: double.infinity,
-                  child: Card(
-                    elevation: 5,
-                    color: acc.cedulaTipo == 'Juridica'
-                        ? Color.fromARGB(255, 180, 193, 255)
-                        : Color.fromARGB(255, 180, 234, 255),
-                    margin: EdgeInsets.all(8),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Card(
-                            child: Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.all(8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    acc.cedulaTipo,
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  SizedBox(height: 16),
-                                  Text(
-                                    acc.cedulaNumero,
-                                    style: TextStyle(fontSize: 15),
-                                  ),
-                                  SizedBox(height: 16),
-                                  Text(
-                                    acc.nombre,
-                                    style: TextStyle(fontSize: 15),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Card(
-                            child: Container(
-                              padding: EdgeInsets.all(8),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Actividades económicas',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                  Container(
-                                    child: acc.actividades!.length != 0
-                                        ? Column(
-                                            children: acc.actividades!.map(
-                                              (act) {
-                                                return Container(
-                                                  width: double.infinity,
-                                                  child: Card(
-                                                    child: Container(
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              Expanded(
-                                                                child: Text(
-                                                                  act.codigoActividad,
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          13),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Text(
-                                                            act.nombre,
-                                                            style: TextStyle(
-                                                                fontSize: 12),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            ).toList(),
-                                          )
-                                        : Container(
-                                            width: double.infinity,
-                                            child: Text(
-                                              'No cuenta con actividades económicas',
-                                              style:
-                                                  TextStyle(color: Colors.red),
-                                            ),
-                                          ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Card(
-                            child: Container(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  TextButton(
-                                    onPressed: () {},
-                                    child: Container(
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.open_in_full),
-                                          SizedBox(width: 8),
-                                          Text("Expandir"),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {},
-                                    child: Container(
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.edit,
-                                            color: Colors.amber[900],
-                                          ),
-                                          SizedBox(width: 8),
-                                          Text(
-                                            "Editar",
-                                            style: TextStyle(
-                                              color: Colors.amber[900],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {},
-                                    child: Container(
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.delete, color: Colors.red),
-                                          SizedBox(width: 8),
-                                          Text(
-                                            "Eliminar",
-                                            style: TextStyle(color: Colors.red),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+          children: accounts.map(
+            (acc) {
+              return Card(
+                margin: const EdgeInsets.all(8),
+                elevation: 5,
+                color: acc.cedulaTipo == 'Juridica'
+                    ? const Color.fromARGB(255, 180, 193, 255)
+                    : const Color.fromARGB(255, 180, 234, 255),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      AccountInfoCard(account: acc),
+                      const AccountInfoCardButtons()
+                    ],
                   ),
-                );
-              }).toList(),
-            ),
-          ],
+                ),
+              );
+            },
+          ).toList(),
         ),
       ),
     );
@@ -247,14 +83,17 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
     );
   }
 
-  void _createAccount() async {
+  void _createAccount(BuildContext context) async {
     var cantonesResponse = await getProvincias();
-    if (cantonesResponse.success) {
-      var cantonesList = cantonesResponse.data;
-      Navigator.of(context)
-          .pushNamed("/create_account", arguments: cantonesList);
-    } else {
-      _showDialog(context, 'Error', cantonesResponse.message, 'Aceptar');
+
+    if (context.mounted) {
+      if (cantonesResponse.success) {
+        var cantonesList = cantonesResponse.data;
+        Navigator.of(context)
+            .pushNamed("/create_account", arguments: cantonesList);
+      } else {
+        _showDialog(context, 'Error', cantonesResponse.message, 'Aceptar');
+      }
     }
   }
 

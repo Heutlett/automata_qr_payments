@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/models/serverResponse.dart';
-import '../../models/ubicacion.dart';
 import '/models/account.dart';
-import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 
 class AccountForm extends StatelessWidget {
   final String titulo;
   final Account account;
 
-  AccountForm({
+  const AccountForm({
+    super.key,
     required this.titulo,
     required this.account,
   });

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/screens/widgets/my_button.dart';
-import 'package:flutter_app/screens/widgets/my_text_field.dart';
+import 'package:flutter_app/screens/widgets/general/my_button.dart';
+import 'package:flutter_app/screens/widgets/general/my_text_field.dart';
 import 'dart:convert';
 import 'package:flutter_app/services/usuario/usuario_service.dart';
 
 import '../utils.dart';
-import '../widgets/my_text.dart';
+import '../widgets/general/my_text.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({Key? key}) : super(key: key);
@@ -61,7 +61,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             const SizedBox(height: 40.0),
             MyButton(
               text: 'Registrarse',
-              function: _submitForm,
+              function: () => _submitForm(context),
             ),
           ],
         ),

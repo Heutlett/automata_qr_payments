@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
+import 'package:flutter_app/screens/widgets/general/my_button.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
+
+import '../widgets/account/account_info_card.dart';
 
 class SelectAccountQrPage extends StatelessWidget {
   const SelectAccountQrPage({super.key});
@@ -12,61 +15,37 @@ class SelectAccountQrPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Facturación modo receptor'),
+        title: const Text('Seleccione su cuenta receptor'),
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Seleccione su cuenta receptor',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-              ),
-            ),
             Column(
               children: accounts.map((acc) {
-                return Container(
-                  width: double.infinity,
-                  child: Card(
-                    elevation: 5,
-                    color: acc.cedulaTipo == 'Juridica'
-                        ? Color.fromARGB(255, 163, 152, 245)
-                        : Color.fromARGB(255, 152, 207, 245),
-                    margin: EdgeInsets.all(8),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
+                return Column(
+                  children: [
+                    Card(
+                      margin: const EdgeInsets.all(8.0),
+                      elevation: 5,
+                      color: acc.cedulaTipo == 'Juridica'
+                          ? const Color.fromARGB(255, 180, 193, 255)
+                          : const Color.fromARGB(255, 180, 234, 255),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            acc.cedulaTipo,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: AccountInfoCard(account: acc),
                           ),
-                          SizedBox(height: 16),
-                          Text(
-                            acc.cedulaNumero,
-                            style: TextStyle(fontSize: 13),
+                          MyButton(
+                            text: 'Seleccionar',
+                            function: () => _showGenerateQr(context, acc),
                           ),
-                          SizedBox(height: 16),
-                          Text(
-                            acc.nombre,
-                            style: TextStyle(fontSize: 13),
-                          ),
-                          SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () {
-                              _showGenerateQr(context, acc);
-                            },
-                            child: Text('Seleccionar'),
-                          ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 20),
                         ],
                       ),
                     ),
-                  ),
+                  ],
                 );
               }).toList(),
             ),
@@ -85,6 +64,8 @@ class SelectAccountQrPage extends StatelessWidget {
       codigoQR
     ];
 
-    Navigator.of(context).pushNamed("/generate_qr", arguments: args);
+    if (context.mounted) {
+      Navigator.of(context).pushNamed("/generate_qr", arguments: args);
+    }
   }
 }

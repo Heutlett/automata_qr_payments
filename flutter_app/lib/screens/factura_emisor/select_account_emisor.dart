@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
+import 'package:flutter_app/screens/widgets/general/my_button.dart';
+
+import '../widgets/account/account_info_card.dart';
 
 class SelectAccountEmisorScreen extends StatelessWidget {
   const SelectAccountEmisorScreen({Key? key}) : super(key: key);
@@ -11,69 +14,40 @@ class SelectAccountEmisorScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Creación de factura emisor'),
+        title: const Text('Seleccione su cuenta emisor'),
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Seleccione su cuenta emisor',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Column(
-              children: accounts.map((acc) {
-                return Container(
-                  width: double.infinity,
-                  child: Card(
-                    elevation: 5,
-                    color: acc.cedulaTipo == 'Juridica'
-                        ? Color.fromARGB(255, 163, 152, 245)
-                        : Color.fromARGB(255, 152, 207, 245),
-                    margin: EdgeInsets.all(8),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            acc.cedulaTipo,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            acc.cedulaNumero,
-                            style: TextStyle(fontSize: 13),
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            acc.nombre,
-                            style: TextStyle(fontSize: 13),
-                          ),
-                          SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).pushNamed(
-                                  "/select_account_receptor",
-                                  arguments: acc);
-                            },
-                            child: Text('Seleccionar'),
-                          ),
-                          SizedBox(height: 16),
-                        ],
-                      ),
+          children: accounts.map((account) {
+            return Card(
+              margin: const EdgeInsets.all(8.0),
+              elevation: 5,
+              color: account.cedulaTipo == 'Juridica'
+                  ? const Color.fromARGB(255, 180, 193, 255)
+                  : const Color.fromARGB(255, 180, 234, 255),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    AccountInfoCard(account: account),
+                    MyButton(
+                      text: 'Seleccionar',
+                      function: () =>
+                          _showSelectReceptorAccount(context, account),
+                      size: const Size(160, 40),
                     ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
         ),
       ),
     );
+  }
+
+  void _showSelectReceptorAccount(BuildContext context, Account account) {
+    Navigator.of(context)
+        .pushNamed("/select_account_receptor", arguments: account);
   }
 }
