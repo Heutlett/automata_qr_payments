@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
 import '../../services/cuenta/cuenta_service.dart';
-import '../widgets/account/account_info_expand.dart';
 import '../widgets/general/my_button.dart';
 import '../widgets/account/account_info_card.dart';
-import '../widgets/account/account_info_card_buttons.dart';
 
 class AccountManagementScreen extends StatefulWidget {
   const AccountManagementScreen({Key? key}) : super(key: key);
@@ -94,13 +92,5 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
         _showDialog(context, 'Error', cantonesResponse.message, 'Aceptar');
       }
     }
-  }
-
-  void _editAccount() {
-    // Aquí implementa la lógica para editar una cuenta existente
-  }
-
-  void _deleteAccount() {
-    // Aquí implementa la lógica para borrar una cuenta existente
   }
 }

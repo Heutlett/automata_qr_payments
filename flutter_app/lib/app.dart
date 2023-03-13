@@ -30,14 +30,14 @@ class MyApp extends StatelessWidget {
             const AccountManagementScreen(),
         "/create_account": (BuildContext context) => const AgregarCuentaForm(),
         "/facturar": (BuildContext context) => const FacturarPage(),
-        "/generate_qr": (BuildContext context) => QRScreen(),
+        "/generate_qr": (BuildContext context) => const QRScreen(),
         "/select_account_emisor": (BuildContext context) =>
             const SelectAccountEmisorScreen(),
         "/select_account_receptor": (BuildContext context) =>
             const SelectAccountReceptorScreen(),
         "/select_account_management": (BuildContext context) =>
             const SelectAccountManagementScreen(),
-        "/create_factura": (BuildContext context) => CreateFactura(),
+        "/create_factura": (BuildContext context) => const CreateFactura(),
         "/select_account_qr": (BuildContext context) =>
             const SelectAccountQrPage(),
       },

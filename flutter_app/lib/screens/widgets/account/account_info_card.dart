@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/screens/widgets/general/my_button.dart';
 
 import '../../../models/account.dart';
-import '../general/my_text_button.dart';
 import 'account_info_activities.dart';
 import 'account_info_card_buttons.dart';
 import 'account_info_expand.dart';
@@ -41,17 +39,18 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
           cedulaNumero: widget.account.cedulaNumero,
           nombre: widget.account.nombre,
         ),
-        isExpand == true ? AccountInfoCardExpand(account: account) : SizedBox(),
+        isExpand == true
+            ? AccountInfoCardExpand(account: account)
+            : const SizedBox(),
         AccountInfoCardActivities(activities: widget.account.actividades),
         addButtons == true
             ? AccountInfoCardButtons(expandInfo: expandInfo)
-            : SizedBox(),
+            : const SizedBox(),
       ],
     );
   }
 
   void expandInfo() {
-    print('Prueba');
     setState(() {
       if (isExpand) {
         isExpand = false;

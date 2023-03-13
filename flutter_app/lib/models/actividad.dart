@@ -1,9 +1,6 @@
-import 'package:flutter/foundation.dart';
-
 class Actividad {
   final String codigoActividad;
   final String nombre;
-  //final List<dynamic> actividades;
 
   Actividad({
     required this.codigoActividad,

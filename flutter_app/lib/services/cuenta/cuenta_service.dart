@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_app/models/account.dart';
 
 import '../../models/actividad.dart';
-import '../../models/serverResponse.dart';
+import '../../models/server_response.dart';
 import '../../models/ubicacion.dart';
 
 const host = '192.168.18.90';
@@ -137,14 +137,6 @@ Future<http.Response> _getCuentas() async {
   var headers = {"Authorization": "bearer $token"};
 
   var response = await http.get(Uri.parse(url), headers: headers);
-
-  return response;
-}
-
-Future<http.Response> _getCuentaTemporal(String username, String id) async {
-  var url = "http://$host/api/Cuenta/cuentaTemporal/$username/$id";
-
-  var response = await http.get(Uri.parse(url));
 
   return response;
 }

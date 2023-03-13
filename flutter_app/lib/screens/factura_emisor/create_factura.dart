@@ -1,28 +1,24 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import '../account/accounts_form.dart';
-import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 import 'package:flutter_app/models/account.dart';
 
 class CreateFactura extends StatefulWidget {
+  const CreateFactura({super.key});
+
   @override
-  _CreateFacturaState createState() => _CreateFacturaState();
+  State<CreateFactura> createState() => _CreateFacturaState();
 }
 
 class _CreateFacturaState extends State<CreateFactura> {
-  final _formKey = GlobalKey<FormState>();
-
-  String? _cedulaTipo;
-  String? _tipoCuenta;
-  final List<String> _cedulaTipos = [
+  String? cedulaTipo;
+  String? tipoCuenta;
+  final List<String> cedulaTipos = [
     'Fisica',
     'Juridica',
     'DIMEX',
     'NITE',
   ];
-  final List<String> _tiposCuenta = [
+  final List<String> tiposCuenta = [
     'Receptor',
     'Emisor',
   ];
@@ -36,7 +32,7 @@ class _CreateFacturaState extends State<CreateFactura> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Creación de factura emisor'),
+        title: const Text('Creación de factura emisor'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -50,18 +46,13 @@ class _CreateFacturaState extends State<CreateFactura> {
               titulo: 'Datos receptor',
               account: accountReceptor,
             ),
-            SizedBox(
-              height: 15,
-            ),
-            ElevatedButton(onPressed: () {}, child: Text('Crear factura')),
-            SizedBox(
-              height: 15,
-            ),
+            const SizedBox(height: 15),
+            ElevatedButton(
+                onPressed: () {}, child: const Text('Crear factura')),
+            const SizedBox(height: 15),
           ],
         ),
       ),
     );
   }
-
-  void _submitForm() async {}
 }

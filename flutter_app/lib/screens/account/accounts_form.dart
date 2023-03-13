@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/general/my_text.dart';
 import '/models/account.dart';
 
 class AccountForm extends StatelessWidget {
@@ -19,135 +20,134 @@ class AccountForm extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(5),
+            padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
-                color: Color.fromARGB(255, 232, 232, 232),
+                color: const Color.fromARGB(255, 232, 232, 232),
                 border: Border.all(color: Colors.black)),
             child: Column(
               children: [
-                Text(
-                  titulo,
-                  style: TextStyle(
-                    fontSize: 26.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+                MyText(
+                  text: titulo,
+                  fontSize: 26.0,
+                  fontWeight: FontWeight.bold,
                 ),
-                SizedBox(height: 8.0),
+                const SizedBox(height: 8.0),
                 Container(
-                  padding: EdgeInsets.all(8),
-                  color: Color.fromARGB(255, 255, 255, 255),
+                  padding: const EdgeInsets.all(8),
+                  color: const Color.fromARGB(255, 255, 255, 255),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 8.0),
-                      Text(
-                        'Identificacion',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      const SizedBox(height: 8.0),
+                      const MyText(
+                        text: 'Identificacion',
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
                       ),
-                      SizedBox(height: 8.0),
+                      const SizedBox(height: 8.0),
                       TextFormField(
                         initialValue: account.cedulaTipo,
                         enabled: false,
-                        decoration: InputDecoration(labelText: 'Tipo Cedula'),
+                        decoration:
+                            const InputDecoration(labelText: 'Tipo Cedula'),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       TextFormField(
                         initialValue: account.cedulaNumero,
                         enabled: false,
-                        decoration: InputDecoration(labelText: 'Numero Cedula'),
+                        decoration:
+                            const InputDecoration(labelText: 'Numero Cedula'),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       TextFormField(
                         initialValue: account.idExtranjero,
                         enabled: false,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                             labelText: 'Identificacion extranjero'),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       TextFormField(
                         initialValue: account.nombre,
                         enabled: false,
-                        decoration: InputDecoration(labelText: 'Nombre'),
+                        decoration: const InputDecoration(labelText: 'Nombre'),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       TextFormField(
                         initialValue: account.nombreComercial,
                         enabled: false,
-                        decoration:
-                            InputDecoration(labelText: 'Nombre comercial'),
+                        decoration: const InputDecoration(
+                            labelText: 'Nombre comercial'),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       TextFormField(
                         initialValue: account.tipo,
                         enabled: false,
-                        decoration: InputDecoration(labelText: 'Tipo cuenta'),
+                        decoration:
+                            const InputDecoration(labelText: 'Tipo cuenta'),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 Container(
-                  padding: EdgeInsets.all(8),
-                  color: Color.fromARGB(255, 255, 255, 255),
+                  padding: const EdgeInsets.all(8),
+                  color: const Color.fromARGB(255, 255, 255, 255),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 8.0),
-                      Text(
+                      const SizedBox(height: 8.0),
+                      const Text(
                         'Actividades economicas',
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 8.0),
-                      account.actividades!.length != 0
+                      const SizedBox(height: 8.0),
+                      account.actividades!.isNotEmpty
                           ? Column(
                               children: account.actividades!.map(
                                 (act) {
-                                  return Container(
+                                  return SizedBox(
                                     width: double.infinity,
                                     child: Card(
-                                      child: Container(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    act.codigoActividad,
-                                                    style:
-                                                        TextStyle(fontSize: 15),
-                                                  ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  act.codigoActividad,
+                                                  style: const TextStyle(
+                                                      fontSize: 15),
                                                 ),
-                                                SizedBox(width: 16.0),
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: ElevatedButton(
-                                                    onPressed: () {},
-                                                    child: Text("Seleccionar"),
-                                                  ),
+                                              ),
+                                              const SizedBox(width: 16.0),
+                                              Expanded(
+                                                flex: 1,
+                                                child: ElevatedButton(
+                                                  onPressed: () {},
+                                                  child:
+                                                      const Text("Seleccionar"),
                                                 ),
-                                              ],
-                                            ),
-                                            Text(
-                                              act.nombre,
-                                              style: TextStyle(fontSize: 13),
-                                            ),
-                                          ],
-                                        ),
+                                              ),
+                                            ],
+                                          ),
+                                          Text(
+                                            act.nombre,
+                                            style:
+                                                const TextStyle(fontSize: 13),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   );
                                 },
                               ).toList(),
                             )
-                          : Container(
+                          : const SizedBox(
                               width: double.infinity,
                               child: Text(
                                 'No cuenta con actividades económicas',
@@ -157,78 +157,74 @@ class AccountForm extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 Container(
-                  padding: EdgeInsets.all(8),
-                  color: Color.fromARGB(255, 255, 255, 255),
+                  padding: const EdgeInsets.all(8),
+                  color: const Color.fromARGB(255, 255, 255, 255),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Telefono',
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Container(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextFormField(
-                                initialValue: account.telCodigoPais,
-                                enabled: false,
-                                decoration: InputDecoration(
-                                    labelText: 'Codigo de pais'),
-                              ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              initialValue: account.telCodigoPais,
+                              enabled: false,
+                              decoration: const InputDecoration(
+                                  labelText: 'Codigo de pais'),
                             ),
-                            SizedBox(width: 16.0),
-                            Expanded(
-                              flex: 2,
-                              child: TextFormField(
-                                initialValue: account.telNumero,
-                                enabled: false,
-                                decoration:
-                                    InputDecoration(labelText: 'Numero'),
-                              ),
+                          ),
+                          const SizedBox(width: 16.0),
+                          Expanded(
+                            flex: 2,
+                            child: TextFormField(
+                              initialValue: account.telNumero,
+                              enabled: false,
+                              decoration:
+                                  const InputDecoration(labelText: 'Numero'),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 16.0),
-                      Text(
+                      const SizedBox(height: 16.0),
+                      const Text(
                         'Fax',
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Container(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextFormField(
-                                initialValue: account.faxCodigoPais,
-                                enabled: false,
-                                decoration: InputDecoration(
-                                    labelText: 'Codigo de pais'),
-                              ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              initialValue: account.faxCodigoPais,
+                              enabled: false,
+                              decoration: const InputDecoration(
+                                  labelText: 'Codigo de pais'),
                             ),
-                            SizedBox(width: 16.0),
-                            Expanded(
-                              flex: 2,
-                              child: TextFormField(
-                                initialValue: account.faxNumero,
-                                enabled: false,
-                                decoration:
-                                    InputDecoration(labelText: 'Numero'),
-                              ),
+                          ),
+                          const SizedBox(width: 16.0),
+                          Expanded(
+                            flex: 2,
+                            child: TextFormField(
+                              initialValue: account.faxNumero,
+                              enabled: false,
+                              decoration:
+                                  const InputDecoration(labelText: 'Numero'),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 16.0),
-                      Text(
+                      const SizedBox(height: 16.0),
+                      const Text(
                         'Correo electrónico',
                         style: TextStyle(
                           fontSize: 16.0,
@@ -239,59 +235,62 @@ class AccountForm extends StatelessWidget {
                         initialValue: account.correo,
                         enabled: false,
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                     ],
                   ),
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 Container(
-                  color: Color.fromARGB(255, 255, 255, 255),
+                  color: const Color.fromARGB(255, 255, 255, 255),
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Ubicación',
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       TextFormField(
                         initialValue: account.nombreProvincia,
                         enabled: false,
-                        decoration: InputDecoration(labelText: 'Provincia'),
+                        decoration:
+                            const InputDecoration(labelText: 'Provincia'),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       TextFormField(
                         initialValue: account.nombreCanton,
                         enabled: false,
-                        decoration: InputDecoration(labelText: 'Canton'),
+                        decoration: const InputDecoration(labelText: 'Canton'),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       TextFormField(
                         initialValue: account.nombreDistrito,
                         enabled: false,
-                        decoration: InputDecoration(labelText: 'Distrito'),
+                        decoration:
+                            const InputDecoration(labelText: 'Distrito'),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       TextFormField(
                         initialValue: account.nombreBarrio,
                         enabled: false,
-                        decoration: InputDecoration(labelText: 'Barrio'),
+                        decoration: const InputDecoration(labelText: 'Barrio'),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       TextFormField(
                         initialValue: account.ubicacionSenas,
                         enabled: false,
-                        decoration: InputDecoration(labelText: 'Otras señas'),
+                        decoration:
+                            const InputDecoration(labelText: 'Otras señas'),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       TextFormField(
                         initialValue: account.ubicacionSenasExtranjero,
                         enabled: false,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                             labelText: 'Otras señas extranjero'),
                       ),
                     ],

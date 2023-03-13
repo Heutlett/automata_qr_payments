@@ -6,7 +6,7 @@ import 'package:flutter_app/screens/widgets/general/my_button.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 
-import '../../models/serverResponse.dart';
+import '../../models/server_response.dart';
 import '../utils.dart';
 import '../widgets/general/my_text.dart';
 

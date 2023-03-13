@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 import 'actividad.dart';
 
 class Account {

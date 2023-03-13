@@ -29,10 +29,10 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
   int _idDistrito = 0;
   int _idBarrio = 0;
 
-  List<Map<String, dynamic>>? _provinciasMap;
-  List<Map<String, dynamic>>? _cantonesMap;
-  List<Map<String, dynamic>>? _distritosMap;
-  List<Map<String, dynamic>>? _barriosMap;
+  List<Map<String, dynamic>>? provinciasMap;
+  List<Map<String, dynamic>>? cantonesMap;
+  List<Map<String, dynamic>>? distritosMap;
+  List<Map<String, dynamic>>? barriosMap;
 
   final List<String> _cedulaTipos = [
     'Fisica',
@@ -83,15 +83,15 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
 
   @override
   Widget build(BuildContext context) {
-    _provinciasMap = ModalRoute.of(context)?.settings.arguments
+    provinciasMap = ModalRoute.of(context)?.settings.arguments
         as List<Map<String, dynamic>>?;
-    _provincias = _provinciasMap!
+    _provincias = provinciasMap!
         .map((mapa) => mapa['nombreProvincia'] as String)
         .toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Agregar cuenta'),
+        title: const Text('Agregar cuenta'),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -102,20 +102,20 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: EdgeInsets.all(5),
+                  padding: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 232, 232, 232),
+                      color: const Color.fromARGB(255, 232, 232, 232),
                       border: Border.all(color: Colors.black)),
                   child: Column(
                     children: [
-                      SizedBox(height: 8.0),
+                      const SizedBox(height: 8.0),
                       Container(
-                        padding: EdgeInsets.all(8),
-                        color: Color.fromARGB(255, 255, 255, 255),
+                        padding: const EdgeInsets.all(8),
+                        color: const Color.fromARGB(255, 255, 255, 255),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               'Identificacion',
                               style: TextStyle(
                                 fontSize: 16.0,
@@ -124,7 +124,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                             ),
                             DropdownButtonFormField<String>(
                               value: _cedulaTipo,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Tipo de cédula',
                               ),
                               items: _cedulaTipos
@@ -147,7 +147,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                             ),
                             TextFormField(
                               controller: _cedulaNumeroController,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                   labelText: 'Número de cédula'),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -158,12 +158,13 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                             ),
                             TextFormField(
                               controller: _idExtranjeroController,
-                              decoration:
-                                  InputDecoration(labelText: 'ID extranjero'),
+                              decoration: const InputDecoration(
+                                  labelText: 'ID extranjero'),
                             ),
                             TextFormField(
                               controller: _nombreController,
-                              decoration: InputDecoration(labelText: 'Nombre'),
+                              decoration:
+                                  const InputDecoration(labelText: 'Nombre'),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Este campo es obligatorio.';
@@ -173,12 +174,12 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                             ),
                             TextFormField(
                               controller: _nombreComercialController,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                   labelText: 'Nombre comercial'),
                             ),
                             DropdownButtonFormField<String>(
                               value: _tipoCuenta,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Tipo de cuenta',
                               ),
                               items: _tiposCuenta
@@ -202,88 +203,82 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       Container(
-                          padding: EdgeInsets.all(8),
-                          color: Color.fromARGB(255, 255, 255, 255),
+                          padding: const EdgeInsets.all(8),
+                          color: const Color.fromARGB(255, 255, 255, 255),
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   'Teléfono',
                                   style: TextStyle(
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: TextFormField(
-                                          controller: _telCodigoPaisController,
-                                          decoration: InputDecoration(
-                                              labelText: 'Código de país'),
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Este campo es obligatorio.';
-                                            }
-                                            return null;
-                                          },
-                                        ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: _telCodigoPaisController,
+                                        decoration: const InputDecoration(
+                                            labelText: 'Código de país'),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Este campo es obligatorio.';
+                                          }
+                                          return null;
+                                        },
                                       ),
-                                      SizedBox(width: 16.0),
-                                      Expanded(
-                                        flex: 2,
-                                        child: TextFormField(
-                                          controller: _telNumeroController,
-                                          decoration: InputDecoration(
-                                              labelText: 'Número de télefono'),
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Este campo es obligatorio.';
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                    ),
+                                    const SizedBox(width: 16.0),
+                                    Expanded(
+                                      flex: 2,
+                                      child: TextFormField(
+                                        controller: _telNumeroController,
+                                        decoration: const InputDecoration(
+                                            labelText: 'Número de télefono'),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Este campo es obligatorio.';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                SizedBox(height: 16.0),
-                                Text(
+                                const SizedBox(height: 16.0),
+                                const Text(
                                   'Fax',
                                   style: TextStyle(
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: TextFormField(
-                                          controller: _faxCodigoPaisController,
-                                          decoration: InputDecoration(
-                                              labelText: 'Código de país'),
-                                        ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: _faxCodigoPaisController,
+                                        decoration: const InputDecoration(
+                                            labelText: 'Código de país'),
                                       ),
-                                      SizedBox(width: 16.0),
-                                      Expanded(
-                                        flex: 2,
-                                        child: TextFormField(
-                                          controller: _faxNumeroController,
-                                          decoration: InputDecoration(
-                                              labelText: 'Número de fax'),
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                    ),
+                                    const SizedBox(width: 16.0),
+                                    Expanded(
+                                      flex: 2,
+                                      child: TextFormField(
+                                        controller: _faxNumeroController,
+                                        decoration: const InputDecoration(
+                                            labelText: 'Número de fax'),
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                SizedBox(height: 16.0),
-                                Text(
+                                const SizedBox(height: 16.0),
+                                const Text(
                                   'Correo electrónico',
                                   style: TextStyle(
                                     fontSize: 16.0,
@@ -292,7 +287,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                 ),
                                 TextFormField(
                                   controller: _correoController,
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                       labelText: 'Correo electrónico'),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -302,14 +297,14 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                   },
                                 ),
                               ])),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       Container(
-                        padding: EdgeInsets.all(8),
-                        color: Color.fromARGB(255, 255, 255, 255),
+                        padding: const EdgeInsets.all(8),
+                        color: const Color.fromARGB(255, 255, 255, 255),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               'Ubicación',
                               style: TextStyle(
                                 fontSize: 16.0,
@@ -318,7 +313,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                             ),
                             DropdownButtonFormField<String>(
                               value: _ubicacionProvincia,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Provincia',
                               ),
                               items: _provincias
@@ -346,7 +341,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                             ),
                             DropdownButtonFormField<String>(
                               value: _ubicacionCanton,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Cantón',
                               ),
                               items: _cantones
@@ -374,7 +369,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                             ),
                             DropdownButtonFormField<String>(
                               value: _ubicacionDistrito,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Distrito',
                               ),
                               items: _distritos
@@ -402,7 +397,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                             ),
                             DropdownButtonFormField<String>(
                               value: _ubicacionBarrio,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Barrio',
                               ),
                               items: _barrios
@@ -429,8 +424,8 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                             ),
                             TextFormField(
                               controller: _ubicacionSenasController,
-                              decoration:
-                                  InputDecoration(labelText: 'Otras señas'),
+                              decoration: const InputDecoration(
+                                  labelText: 'Otras señas'),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Este campo es obligatorio.';
@@ -440,115 +435,101 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                             ),
                             TextFormField(
                               controller: _ubicacionSenasExtranjeroController,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                   labelText: 'Otras señas (extranjero)'),
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       Container(
-                        padding: EdgeInsets.all(8),
-                        color: Color.fromARGB(255, 255, 255, 255),
+                        padding: const EdgeInsets.all(8),
+                        color: const Color.fromARGB(255, 255, 255, 255),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               'Actividades economicas',
                               style: TextStyle(
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(height: 8.0),
-                            Container(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: TextFormField(
-                                            controller:
-                                                _codigoActividadController,
-                                            keyboardType: TextInputType
-                                                .number, // Esto cambiará el tipo de teclado a numérico
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly
-                                            ],
-                                            decoration: InputDecoration(
-                                                labelText:
-                                                    'Codigo de actividad'),
-                                          ),
-                                        ),
-                                        SizedBox(width: 16.0),
-                                        Expanded(
-                                          flex: 1,
-                                          child: ElevatedButton(
-                                            onPressed: () {
-                                              addActivity(context);
-                                            },
-                                            child: Text("Agregar actividad"),
-                                          ),
-                                        ),
-                                      ],
+                            const SizedBox(height: 8.0),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: _codigoActividadController,
+                                        keyboardType: TextInputType
+                                            .number, // Esto cambiará el tipo de teclado a numérico
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.digitsOnly
+                                        ],
+                                        decoration: const InputDecoration(
+                                            labelText: 'Codigo de actividad'),
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(height: 16.0),
-                                  actividades.isEmpty
-                                      ? SizedBox(width: 16.0)
-                                      : Column(
-                                          children: actividades.map(
-                                            (act) {
-                                              return Container(
-                                                child: Card(
-                                                  child: Container(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Row(
-                                                          children: [
-                                                            Expanded(
-                                                              child: Text(
-                                                                act.codigoActividad,
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        15),
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                                width: 16.0),
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child:
-                                                                  ElevatedButton(
-                                                                onPressed:
-                                                                    () {},
-                                                                child: Text(
-                                                                    "Eliminar"),
-                                                              ),
-                                                            ),
-                                                          ],
+                                    const SizedBox(width: 16.0),
+                                    Expanded(
+                                      flex: 1,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          addActivity(context);
+                                        },
+                                        child: const Text("Agregar actividad"),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16.0),
+                                actividades.isEmpty
+                                    ? const SizedBox(width: 16.0)
+                                    : Column(
+                                        children: actividades.map(
+                                          (act) {
+                                            return Card(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: Text(
+                                                          act.codigoActividad,
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 15),
                                                         ),
-                                                        Text(
-                                                          act.nombre,
-                                                          style: TextStyle(
-                                                              fontSize: 15),
+                                                      ),
+                                                      const SizedBox(
+                                                          width: 16.0),
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: ElevatedButton(
+                                                          onPressed: () {},
+                                                          child: const Text(
+                                                              "Eliminar"),
                                                         ),
-                                                      ],
-                                                    ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                ),
-                                              );
-                                            },
-                                          ).toList(),
-                                        )
-                                ],
-                              ),
+                                                  Text(
+                                                    act.nombre,
+                                                    style: const TextStyle(
+                                                        fontSize: 15),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        ).toList(),
+                                      )
+                              ],
                             ),
                           ],
                         ),
@@ -567,9 +548,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                   "Corregir");
                             }
                           },
-                          child: Container(
-                            child: Text('Agregar cuenta'),
-                          ),
+                          child: const Text('Agregar cuenta'),
                         ),
                       ),
                     ],
@@ -583,14 +562,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
     );
   }
 
-  void _showAccountManagement(BuildContext context) async {
-    var cuentas = await getCuentasList();
-
-    Navigator.of(context).pushNamed("/account_management", arguments: cuentas);
-  }
-
   void _submitForm(BuildContext context) async {
-// Obtener los valores de los campos del formulario
     final cedulaTipo = _cedulaTipo;
     final cedulaNumero = _cedulaNumeroController.text;
     final idExtranjero = _idExtranjeroController.text;
@@ -610,7 +582,6 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
         _idDistrito.toString().padLeft(2, '0') +
         _idBarrio.toString().padLeft(2, '0');
 
-    // Crear un mapa con los valores de la cuenta
     final cuenta = {
       "cedulaTipo": cedulaTipo,
       "cedulaNumero": cedulaNumero,
@@ -631,14 +602,16 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
 
     var response = await postCreateAccount(cuenta, actividades);
 
-    if (response.statusCode == 200) {
-      _showDialog(context, 'Cuenta agregada',
-          'La cuenta se agregó exitosamente.', 'Aceptar');
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
-    } else {
-      _showDialog(context, 'Error al agregar cuenta',
-          'Ocurrió un error al agregar la cuenta.', 'Aceptar');
+    if (context.mounted) {
+      if (response.statusCode == 200) {
+        _showDialog(context, 'Cuenta agregada',
+            'La cuenta se agregó exitosamente.', 'Aceptar');
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      } else {
+        _showDialog(context, 'Error al agregar cuenta',
+            'Ocurrió un error al agregar la cuenta.', 'Aceptar');
+      }
     }
   }
 
@@ -664,14 +637,14 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
   }
 
   void showCantones() async {
-    _idProvincia = _provinciasMap!.firstWhere(
+    _idProvincia = provinciasMap!.firstWhere(
         (prov) => prov['nombreProvincia'] == _ubicacionProvincia)['provincia'];
 
     var cantonesResponse = await getCantones(_idProvincia);
     if (cantonesResponse.success) {
       var cantonesList = cantonesResponse.data;
       if (cantonesList != null) {
-        _cantonesMap = cantonesList;
+        cantonesMap = cantonesList;
         _cantones.clear();
         for (var canton in cantonesList) {
           setState(() {
@@ -681,7 +654,9 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
         }
       }
     } else {
-      _showDialog(context, 'Error', cantonesResponse.message, 'Aceptar');
+      if (context.mounted) {
+        _showDialog(context, 'Error', cantonesResponse.message, 'Aceptar');
+      }
     }
   }
 
@@ -690,7 +665,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
     if (distritosResponse.success) {
       var distritosList = distritosResponse.data;
       if (distritosList != null) {
-        _distritosMap = distritosList;
+        distritosMap = distritosList;
         _distritos.clear();
         for (var distrito in distritosList) {
           setState(() {
@@ -700,7 +675,9 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
         }
       }
     } else {
-      _showDialog(context, 'Error', distritosResponse.message, 'Aceptar');
+      if (context.mounted) {
+        _showDialog(context, 'Error', distritosResponse.message, 'Aceptar');
+      }
     }
   }
 
@@ -719,7 +696,9 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
         }
       }
     } else {
-      _showDialog(context, 'Error', barriosResponse.message, 'Aceptar');
+      if (context.mounted) {
+        _showDialog(context, 'Error', barriosResponse.message, 'Aceptar');
+      }
     }
   }
 
@@ -727,26 +706,31 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
     Actividad? actividad =
         await getActividadByCode(int.parse(_codigoActividadController.text));
 
-    if (actividad != null) {
-      bool containsActividad = actividades.contains(actividad);
+    if (context.mounted) {
+      if (actividad != null) {
+        bool containsActividad = actividades.contains(actividad);
 
-      if (!containsActividad) {
-        setState(() {
-          actividades.add(actividad);
-        });
+        if (!containsActividad) {
+          setState(() {
+            actividades.add(actividad);
+          });
 
-        _showDialog(context, 'Resultado',
-            'La actividad se agregó exitosamente.', 'Aceptar');
+          _showDialog(context, 'Resultado',
+              'La actividad se agregó exitosamente.', 'Aceptar');
+        } else {
+          _showDialog(
+              context,
+              'Error',
+              'No se puede agregar una actividad economica repetida.',
+              'Aceptar');
+        }
       } else {
-        _showDialog(context, 'Error',
-            'No se puede agregar una actividad economica repetida.', 'Aceptar');
+        _showDialog(
+            context,
+            'Error',
+            'No se ha encontrado la actividad economica asociada a ese codigo.',
+            'Aceptar');
       }
-    } else {
-      _showDialog(
-          context,
-          'Error',
-          'No se ha encontrado la actividad economica asociada a ese codigo.',
-          'Aceptar');
     }
   }
 }
