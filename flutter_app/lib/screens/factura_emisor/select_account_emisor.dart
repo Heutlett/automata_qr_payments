@@ -29,7 +29,7 @@ class SelectAccountEmisorScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    AccountInfoCard(account: account),
+                    AccountInfoCard(account: account, addButtons: 1),
                     MyButton(
                       text: 'Seleccionar',
                       function: () =>

@@ -47,7 +47,7 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      AccountInfoCard(account: acc, addButtons: true),
+                      AccountInfoCard(account: acc, addButtons: 2),
                     ],
                   ),
                 ),

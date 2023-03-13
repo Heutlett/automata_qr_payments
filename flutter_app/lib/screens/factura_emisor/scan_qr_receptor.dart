@@ -47,7 +47,7 @@ class _SelectAccountReceptorScreenState
                   : const Color.fromARGB(255, 180, 234, 255),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: AccountInfoCard(account: accountEmisor),
+                child: AccountInfoCard(account: accountEmisor, addButtons: 1),
               ),
             ),
             const SizedBox(height: 50),

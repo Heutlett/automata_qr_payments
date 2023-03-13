@@ -35,7 +35,7 @@ class SelectAccountQrPage extends StatelessWidget {
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: AccountInfoCard(account: acc),
+                            child: AccountInfoCard(account: acc, addButtons: 1),
                           ),
                           MyButton(
                             text: 'Seleccionar',

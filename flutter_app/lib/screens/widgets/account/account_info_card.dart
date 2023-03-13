@@ -8,10 +8,10 @@ import 'account_info_header.dart';
 
 class AccountInfoCard extends StatefulWidget {
   final Account account;
-  final bool addButtons;
+  final int addButtons;
 
   const AccountInfoCard(
-      {super.key, required this.account, this.addButtons = false});
+      {super.key, required this.account, this.addButtons = 0});
 
   @override
   State<AccountInfoCard> createState() => _AccountInfoCardState();
@@ -21,7 +21,7 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
   bool isExpand = false;
 
   late Account account;
-  late bool addButtons;
+  late int addButtons;
 
   @override
   void initState() {
@@ -43,8 +43,11 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
             ? AccountInfoCardExpand(account: account)
             : const SizedBox(),
         AccountInfoCardActivities(activities: widget.account.actividades),
-        addButtons == true
-            ? AccountInfoCardButtons(expandInfo: expandInfo)
+        addButtons != 0
+            ? AccountInfoCardButtons(
+                expandInfo: expandInfo,
+                buttons: addButtons,
+              )
             : const SizedBox(),
       ],
     );

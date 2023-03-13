@@ -37,7 +37,6 @@ class AccountInfoCardExpand extends StatelessWidget {
               decoration: const InputDecoration(labelText: 'Tipo cuenta'),
             ),
             Container(
-              padding: const EdgeInsets.all(8),
               color: const Color.fromARGB(255, 255, 255, 255),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,7 +113,6 @@ class AccountInfoCardExpand extends StatelessWidget {
             const SizedBox(height: 16.0),
             Container(
               color: const Color.fromARGB(255, 255, 255, 255),
-              padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
