@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/widgets/general/my_text_button.dart';
 
-class AccountInfoCardButtons extends StatelessWidget {
-  const AccountInfoCardButtons({super.key});
+class AccountInfoCardButtons extends StatefulWidget {
+  const AccountInfoCardButtons({super.key, required this.expandInfo});
+  final VoidCallback expandInfo;
 
+  @override
+  State<AccountInfoCardButtons> createState() => _AccountInfoCardButtonsState();
+}
+
+class _AccountInfoCardButtonsState extends State<AccountInfoCardButtons> {
+  String expandName = 'Expandir';
+  IconData expandIcon = Icons.open_in_full;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -11,9 +19,9 @@ class AccountInfoCardButtons extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           MyTextButton(
-            text: 'Expandir',
-            function: () {},
-            icon: Icons.open_in_full,
+            text: expandName,
+            function: expandAction,
+            icon: expandIcon,
           ),
           MyTextButton(
             text: 'Editar',
@@ -30,5 +38,18 @@ class AccountInfoCardButtons extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void expandAction() {
+    setState(() {
+      if (expandName == 'Expandir') {
+        expandName = 'Contraer';
+        expandIcon = Icons.close_fullscreen;
+      } else {
+        expandName = 'Expandir';
+        expandIcon = Icons.open_in_full;
+      }
+    });
+    widget.expandInfo();
   }
 }

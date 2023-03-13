@@ -4,7 +4,7 @@ import 'my_text.dart';
 
 class MyTextButton extends StatelessWidget {
   final String text;
-  final Function function;
+  final VoidCallback function;
   final double fontSize;
   final Size size;
   final Color backgroundColor;
@@ -25,7 +25,7 @@ class MyTextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: () {},
+      onPressed: function,
       style: TextButton.styleFrom(
         fixedSize: size,
         backgroundColor: backgroundColor,

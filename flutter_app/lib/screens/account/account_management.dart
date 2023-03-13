@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
 import '../../services/cuenta/cuenta_service.dart';
+import '../widgets/account/account_info_expand.dart';
 import '../widgets/general/my_button.dart';
 import '../widgets/account/account_info_card.dart';
 import '../widgets/account/account_info_card_buttons.dart';
 
 class AccountManagementScreen extends StatefulWidget {
   const AccountManagementScreen({Key? key}) : super(key: key);
-
   @override
   State<AccountManagementScreen> createState() =>
       _AccountManagementScreenState();
@@ -49,8 +49,7 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      AccountInfoCard(account: acc),
-                      const AccountInfoCardButtons()
+                      AccountInfoCard(account: acc, addButtons: true),
                     ],
                   ),
                 ),
