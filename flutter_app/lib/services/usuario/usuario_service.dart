@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/actividad.dart';
 
-const host = '192.168.18.90';
+const host = '192.168.18.187';
 
 Future<http.Response> postLogin(String username, String password) async {
   var url = "http://$host/Auth/Login";

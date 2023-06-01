@@ -8,7 +8,7 @@ import '../../models/actividad.dart';
 import '../../models/server_response.dart';
 import '../../models/ubicacion.dart';
 
-const host = '192.168.18.90';
+const host = '192.168.18.187';
 
 Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
   final prefs = await SharedPreferences.getInstance();

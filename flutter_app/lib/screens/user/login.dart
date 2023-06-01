@@ -120,8 +120,8 @@ class _LoginPageState extends State<LoginPage> {
       }
     } else {
       if (context.mounted) {
-        showAlertDialog(context, "Resultado de inicio sesion", data['success'],
-            data['message']);
+        showAlertDialog(
+            context, "Resultado de inicio sesion", data['message'], 'Ok');
       }
     }
   }
