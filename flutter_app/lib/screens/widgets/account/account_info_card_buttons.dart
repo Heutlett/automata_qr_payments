@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/widgets/general/my_text_button.dart';
+import '/models/account.dart';
 
 class AccountInfoCardButtons extends StatefulWidget {
   const AccountInfoCardButtons(
-      {super.key, required this.expandInfo, this.buttons = 0});
+      {super.key,
+      required this.expandInfo,
+      required this.editAcc,
+      required this.account,
+      this.buttons = 0});
   final VoidCallback expandInfo;
+  final VoidCallback editAcc;
   final int buttons;
+  final Account account;
 
   @override
   State<AccountInfoCardButtons> createState() => _AccountInfoCardButtonsState();
@@ -40,7 +47,7 @@ class _AccountInfoCardButtonsState extends State<AccountInfoCardButtons> {
           buttons == 2
               ? MyTextButton(
                   text: 'Editar',
-                  function: () {},
+                  function: editAction,
                   icon: Icons.edit,
                   foregroundColor: Colors.amber.shade800,
                 )
@@ -69,5 +76,9 @@ class _AccountInfoCardButtonsState extends State<AccountInfoCardButtons> {
       }
     });
     widget.expandInfo();
+  }
+
+  void editAction() {
+    widget.editAcc();
   }
 }

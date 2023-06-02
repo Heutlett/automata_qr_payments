@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             const SizedBox(height: 20.0),
             const MyText(
-              text: 'Bienvenido de nuevo!',
+              text: 'Bienvenido a QR Payments!',
               fontSize: 24.0,
               fontWeight: FontWeight.bold,
             ),
