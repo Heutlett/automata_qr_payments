@@ -1,30 +1,88 @@
 # .NET build files
-Api/bin/
-Api/obj/
+*/bin/
+*/obj/
 
 # Visual Studio files
-Api/.vs/
-Api/*.suo
-Api/*.user
-Api/*.userprefs
-Api/*.vscode
+*/.vs/
+*.suo
+*.user
+*.userprefs
+*.vscode
 
 # NuGet packages
-Api/*.nuget.props
-Api/*.nuget.targets
-Api/*.nuget.cache
+*.nuget.props
+*.nuget.targets
+*.nuget.cache
 
 # MSTest test Results
-Api/[Tt]est[Rr]esult*/
+[Tt]est[Rr]esult*/
 
 # Build results
-Api/[Dd]ebug/
-Api/[Rr]elease/
+[Dd]ebug/
+[Rr]elease/
 
 # Logs and databases
-Api/*.log
-Api/*.sqlite
+*.log
+*.sqlite
 
 # OS generated files
-Api/.DS_Store
-Api/Thumbs.db
+.DS_Store
+Thumbs.db
+
+
+# Flutter specific
+**/android/**/gradle-wrapper.jar
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/AppFrameworkInfo.plist
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/Flutter.podspec
+**/macos/Flutter/Flutter.podspec
+**/macos/Flutter/Generated.xcconfig
+**/macos/Flutter/AppFrameworkInfo.plist
+**/web/flutter_service_worker.js
+
+# Android
+**/android/gradlew
+**/android/gradle.properties
+**/android/gradle-wrapper.properties
+**/android/local.properties
+**/android/*.iml
+**/android/.gradle
+**/android/captures/
+
+# iOS
+**/ios/*.mode1v3
+**/ios/Runner/GeneratedPluginRegistrant.*
+
+# Build
+**/build/
+**/ios/Flutter/App.framework/
+**/ios/Flutter/Flutter.framework/
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Pods/
+**/ios/Runner/GeneratedPluginRegistrant.*
+
+# Dart
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.idea/
+**/*.iml
+**/*.metadata
+**/*.lock
+**/pubspec.lock
+**/pubspec.yaml
+**/test/*.dart
+
+# Generated files
+**/lib/generated_*
+
+# macOS specific
+**/macos/Flutter/App.framework/
+
+# Web specific
+**/web/assets/
+**/web/packages/
