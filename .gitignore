@@ -1,0 +1,88 @@
+# .NET build files
+*/bin/
+*/obj/
+
+# Visual Studio files
+*/.vs/
+*.suo
+*.user
+*.userprefs
+*.vscode
+
+# NuGet packages
+*.nuget.props
+*.nuget.targets
+*.nuget.cache
+
+# MSTest test Results
+[Tt]est[Rr]esult*/
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+
+# Logs and databases
+*.log
+*.sqlite
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+
+# Flutter specific
+**/android/**/gradle-wrapper.jar
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/AppFrameworkInfo.plist
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/Flutter.podspec
+**/macos/Flutter/Flutter.podspec
+**/macos/Flutter/Generated.xcconfig
+**/macos/Flutter/AppFrameworkInfo.plist
+**/web/flutter_service_worker.js
+
+# Android
+**/android/gradlew
+**/android/gradle.properties
+**/android/gradle-wrapper.properties
+**/android/local.properties
+**/android/*.iml
+**/android/.gradle
+**/android/captures/
+
+# iOS
+**/ios/*.mode1v3
+**/ios/Runner/GeneratedPluginRegistrant.*
+
+# Build
+**/build/
+**/ios/Flutter/App.framework/
+**/ios/Flutter/Flutter.framework/
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Pods/
+**/ios/Runner/GeneratedPluginRegistrant.*
+
+# Dart
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.idea/
+**/*.iml
+**/*.metadata
+**/*.lock
+**/pubspec.lock
+**/pubspec.yaml
+**/test/*.dart
+
+# Generated files
+**/lib/generated_*
+
+# macOS specific
+**/macos/Flutter/App.framework/
+
+# Web specific
+**/web/assets/
+**/web/packages/

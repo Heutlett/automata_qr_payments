@@ -8,7 +8,8 @@ import '../../models/actividad.dart';
 import '../../models/server_response.dart';
 import '../../models/ubicacion.dart';
 
-const host = '192.168.18.187';
+// const host = '192.168.18.187'; // Adrian
+const host = '192.168.18.68'; // Shakime
 
 Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
   final prefs = await SharedPreferences.getInstance();
