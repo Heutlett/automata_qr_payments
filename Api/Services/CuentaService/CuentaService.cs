@@ -63,7 +63,7 @@ namespace Api.Services.CuentaService
 
             var actividades = newCuenta.actividades!;
 
-            var addCuentaActividades = new AddCuentaActividadesDto{CuentaId = cuenta.Id, ActividadesId = actividades};
+            var addCuentaActividades = new AddCuentaActividadesDto { CuentaId = cuenta.Id, ActividadesId = actividades };
 
             await AddCuentaActividades(addCuentaActividades);
 
@@ -158,10 +158,11 @@ namespace Api.Services.CuentaService
                 await _context.SaveChangesAsync();
                 serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuenta);
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
             {
                 serviceResponse.Success = false;
-                serviceResponse.Message = ex.Message;
+                // serviceResponse.Message = ex.Message;
+                serviceResponse.Message = "Error al guardar los cambios en la base de datos: " + ex.InnerException?.Message;
             }
 
             return serviceResponse;
