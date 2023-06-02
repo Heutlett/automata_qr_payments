@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 class Config {
-  static Future<String> load(String selected_host) async {
+  static Future<String> load(String selectedHost) async {
     try {
       final configString = await rootBundle.loadString('assets/config.json');
       final config = jsonDecode(configString);
-      return config[selected_host];
+      return config[selectedHost];
     } catch (e) {
       print('Error al cargar la configuración: $e');
       return "Error";
