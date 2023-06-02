@@ -1,0 +1,30 @@
+# .NET build files
+Api/bin/
+Api/obj/
+
+# Visual Studio files
+Api/.vs/
+Api/*.suo
+Api/*.user
+Api/*.userprefs
+Api/*.vscode
+
+# NuGet packages
+Api/*.nuget.props
+Api/*.nuget.targets
+Api/*.nuget.cache
+
+# MSTest test Results
+Api/[Tt]est[Rr]esult*/
+
+# Build results
+Api/[Dd]ebug/
+Api/[Rr]elease/
+
+# Logs and databases
+Api/*.log
+Api/*.sqlite
+
+# OS generated files
+Api/.DS_Store
+Api/Thumbs.db
