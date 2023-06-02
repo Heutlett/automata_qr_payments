@@ -4,15 +4,89 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_app/models/account.dart';
 
-import '../../models/actividad.dart';
-import '../../models/server_response.dart';
-import '../../models/ubicacion.dart';
+import 'package:flutter_app/models/actividad.dart';
+import 'package:flutter_app/models/server_response.dart';
+import 'package:flutter_app/models/ubicacion.dart';
 
-const host = '192.168.18.187';
+import 'package:flutter_app/utils/config.dart';
+
+const String selected_host = "host_shakime";
+
+Future<http.Response> postCreateAccount(
+    Object? cuenta, List<Actividad> actividades) async {
+  final prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('accessToken');
+  String host = await Config.load(selected_host);
+
+  var responseCreateAcc = await http.post(
+    Uri.parse('http://$host/api/Cuenta'),
+    body: jsonEncode(cuenta),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'bearer $token'
+    },
+  );
+  return responseCreateAcc;
+}
+
+Future<http.Response> putEditAccount(
+    String id, Object? cuenta, List<Actividad> actividades) async {
+  final prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('accessToken');
+  String host = await Config.load(selected_host);
+
+  var responseCreateAcc = await http.put(
+    Uri.parse('http://$host/api/Cuenta'),
+    body: jsonEncode(cuenta),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'bearer $token'
+    },
+  );
+  return responseCreateAcc;
+}
+
+Future<ServerResponse<String>> deleteAccount(String id) async {
+  final prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('accessToken');
+  String host = await Config.load(selected_host);
+
+  var responseDeleteAcc = await http.delete(
+    Uri.parse('http://$host/api/Cuenta/$id'),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'bearer $token'
+    },
+  );
+
+  ServerResponse<String> serverResponse;
+
+  if (responseDeleteAcc.statusCode == 200) {
+    var data = jsonDecode(responseDeleteAcc.body);
+
+    if (data['success']) {
+      data = data['data'];
+
+      serverResponse =
+          ServerResponse(data: "Success", message: '', success: true);
+    } else {
+      serverResponse =
+          ServerResponse(data: null, message: data['message'], success: true);
+    }
+  } else {
+    serverResponse = ServerResponse(
+        data: null,
+        message: 'Ha ocurrido un error, probablemente el token ha expirado',
+        success: false);
+  }
+
+  return serverResponse;
+}
 
 Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
+  String host = await Config.load(selected_host);
 
   final Map<String, dynamic> body = {
     "codigo": codigoQr,
@@ -92,6 +166,7 @@ Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
 Future<String> getAccountQr(int id) async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
+  String host = await Config.load(selected_host);
 
   var url = "http://$host/api/Cuenta/qr/$id";
 
@@ -108,6 +183,7 @@ Future<String> getAccountQr(int id) async {
 Future<Actividad?> getActividadByCode(int code) async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
+  String host = await Config.load(selected_host);
 
   var url = "http://$host/api/Cuenta/getActividadByCodigo/$code";
 
@@ -131,6 +207,7 @@ Future<Actividad?> getActividadByCode(int code) async {
 Future<http.Response> _getCuentas() async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
+  String host = await Config.load(selected_host);
 
   var url = "http://$host/api/Cuenta/GetAll";
 
@@ -214,6 +291,7 @@ Future<ServerResponse<Account?>> getCuentaByQr(String codigoQr) async {
 }
 
 Future<ServerResponse<Ubicacion>> getUbicacion(String codigo) async {
+  String host = await Config.load(selected_host);
   var url = "http://$host/api/Cuenta/Ubicacion/$codigo";
 
   var response = await http.get(Uri.parse(url));
@@ -252,6 +330,7 @@ Future<ServerResponse<Ubicacion>> getUbicacion(String codigo) async {
 
 Future<ServerResponse<List<Map<String, dynamic>>>> getProvincias() async {
   ServerResponse<List<Map<String, dynamic>>> serverResponse;
+  String host = await Config.load(selected_host);
 
   var url = "http://$host/api/Cuenta/UbicacionProvincias";
 
@@ -289,7 +368,7 @@ Future<ServerResponse<List<Map<String, dynamic>>>> getProvincias() async {
 Future<ServerResponse<List<Map<String, dynamic>>>> getCantones(
     int provincia) async {
   ServerResponse<List<Map<String, dynamic>>> serverResponse;
-
+  String host = await Config.load(selected_host);
   var url = "http://$host/api/Cuenta/UbicacionCantones?provincia=$provincia";
 
   var response = await http.get(Uri.parse(url));
@@ -326,6 +405,7 @@ Future<ServerResponse<List<Map<String, dynamic>>>> getCantones(
 Future<ServerResponse<List<Map<String, dynamic>>>> getDistritos(
     int provincia, int canton) async {
   ServerResponse<List<Map<String, dynamic>>> serverResponse;
+  String host = await Config.load(selected_host);
 
   var url =
       "http://$host/api/Cuenta/UbicacionDistritos?provincia=$provincia&canton=$canton";
@@ -365,6 +445,7 @@ Future<ServerResponse<List<Map<String, dynamic>>>> getBarrios(
     int provincia, int canton, int distrito) async {
   ServerResponse<List<Map<String, dynamic>>> serverResponse;
 
+  String host = await Config.load(selected_host);
   var url =
       "http://$host/api/Cuenta/UbicacionBarrios?provincia=$provincia&canton=$canton&distrito=$distrito";
 

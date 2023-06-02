@@ -584,7 +584,7 @@ class _EditAccountState extends State<EditAccount> {
                         child: ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              _submitForm(context);
+                              _submitForm(context, account.id);
                             } else {
                               showAlertDialog(
                                   context,
@@ -607,7 +607,7 @@ class _EditAccountState extends State<EditAccount> {
     );
   }
 
-  void _submitForm(BuildContext context) async {
+  void _submitForm(BuildContext context, String accountId) async {
     final cedulaTipo = _cedulaTipo;
     final cedulaNumero = _cedulaNumeroController.text;
     final idExtranjero = _idExtranjeroController.text;
@@ -628,6 +628,7 @@ class _EditAccountState extends State<EditAccount> {
         _idBarrio.toString().padLeft(2, '0');
 
     final cuenta = {
+      "id": accountId,
       "cedulaTipo": cedulaTipo,
       "cedulaNumero": cedulaNumero,
       "idExtranjero": idExtranjero,
@@ -645,19 +646,19 @@ class _EditAccountState extends State<EditAccount> {
       "actividades": actividades.map((act) => act.codigoActividad).toList()
     };
 
-    // var response = await postCreateAccount(cuenta, actividades);
+    var response = await putEditAccount(accountId, cuenta, actividades);
 
-    // if (context.mounted) {
-    //   if (response.statusCode == 200) {
-    //     _showDialog(context, 'Cuenta agregada',
-    //         'La cuenta se agregó exitosamente.', 'Aceptar');
-    //     Navigator.of(context).pop();
-    //     Navigator.of(context).pop();
-    //   } else {
-    //     _showDialog(context, 'Error al agregar cuenta',
-    //         'Ocurrió un error al agregar la cuenta.', 'Aceptar');
-    //   }
-    // }
+    if (context.mounted) {
+      if (response.statusCode == 200) {
+        showAlertDialog(context, 'Cuenta editada correctamente',
+            'La cuenta se editó exitosamente.', 'Aceptar');
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      } else {
+        showAlertDialog(context, 'Error al editar cuenta',
+            'Ocurrió un error al editar la cuenta.', 'Aceptar');
+      }
+    }
   }
 
   void showCantones() async {
