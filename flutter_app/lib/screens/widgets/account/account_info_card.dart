@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../services/cuenta/cuenta_service.dart';
-import '../../../models/account.dart';
+import 'package:flutter_app/services/cuenta/cuenta_service.dart';
+import 'package:flutter_app/models/account.dart';
 import 'account_info_activities.dart';
 import 'account_info_card_buttons.dart';
 import 'account_info_expand.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
-import '../../services/cuenta/cuenta_service.dart';
-import '../widgets/general/my_button.dart';
-import '../widgets/account/account_info_card.dart';
+import 'package:flutter_app/services/cuenta/cuenta_service.dart';
+import 'package:flutter_app/screens/widgets/general/my_button.dart';
+import 'package:flutter_app/screens/widgets/account/account_info_card.dart';
 
 class AccountManagementScreen extends StatefulWidget {
   const AccountManagementScreen({Key? key}) : super(key: key);

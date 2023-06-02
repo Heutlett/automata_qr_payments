@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
-import 'package:flutter_app/services/usuario/usuario_service.dart';
-import '../../models/actividad.dart';
-import '/models/account.dart';
+import 'package:flutter_app/models/actividad.dart';
+import 'package:flutter_app/models/account.dart';
+import 'package:flutter_app/utils/utils.dart';
 
 class EditAccount extends StatefulWidget {
   const EditAccount({super.key});
@@ -586,7 +586,7 @@ class _EditAccountState extends State<EditAccount> {
                             if (_formKey.currentState!.validate()) {
                               _submitForm(context);
                             } else {
-                              _showDialog(
+                              showAlertDialog(
                                   context,
                                   "Error",
                                   "Error, hay campos obligatorios sin llenar",
@@ -660,27 +660,6 @@ class _EditAccountState extends State<EditAccount> {
     // }
   }
 
-  void _showDialog(
-      BuildContext context, String title, String content, String textButton) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: <Widget>[
-            TextButton(
-              child: Text(textButton),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void showCantones() async {
     _idProvincia = provinciasMap!.firstWhere(
         (prov) => prov['nombreProvincia'] == _ubicacionProvincia)['provincia'];
@@ -700,7 +679,7 @@ class _EditAccountState extends State<EditAccount> {
       }
     } else {
       if (context.mounted) {
-        _showDialog(context, 'Error', cantonesResponse.message, 'Aceptar');
+        showAlertDialog(context, 'Error', cantonesResponse.message, 'Aceptar');
       }
     }
   }
@@ -721,7 +700,7 @@ class _EditAccountState extends State<EditAccount> {
       }
     } else {
       if (context.mounted) {
-        _showDialog(context, 'Error', distritosResponse.message, 'Aceptar');
+        showAlertDialog(context, 'Error', distritosResponse.message, 'Aceptar');
       }
     }
   }
@@ -742,7 +721,7 @@ class _EditAccountState extends State<EditAccount> {
       }
     } else {
       if (context.mounted) {
-        _showDialog(context, 'Error', barriosResponse.message, 'Aceptar');
+        showAlertDialog(context, 'Error', barriosResponse.message, 'Aceptar');
       }
     }
   }
@@ -768,17 +747,17 @@ class _EditAccountState extends State<EditAccount> {
             actividades.add(actividad);
           });
 
-          _showDialog(context, 'Resultado',
+          showAlertDialog(context, 'Resultado',
               'La actividad se agregó exitosamente.', 'Aceptar');
         } else {
-          _showDialog(
+          showAlertDialog(
               context,
               'Error',
               'No se puede agregar una actividad economica repetida.',
               'Aceptar');
         }
       } else {
-        _showDialog(
+        showAlertDialog(
             context,
             'Error',
             'No se ha encontrado la actividad economica asociada a ese codigo.',

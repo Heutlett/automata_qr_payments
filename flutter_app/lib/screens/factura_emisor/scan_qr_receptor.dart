@@ -6,9 +6,9 @@ import 'package:flutter_app/screens/widgets/general/my_button.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 
-import '../../models/server_response.dart';
-import '../utils.dart';
-import '../widgets/general/my_text.dart';
+import 'package:flutter_app/models/server_response.dart';
+import 'package:flutter_app/utils/utils.dart';
+import 'package:flutter_app/screens/widgets/general/my_text.dart';
 
 class SelectAccountReceptorScreen extends StatefulWidget {
   const SelectAccountReceptorScreen({Key? key}) : super(key: key);
