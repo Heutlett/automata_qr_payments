@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_app/services/usuario/usuario_service.dart';
 
-import '../utils.dart';
-import '../widgets/general/my_button.dart';
-import '../widgets/general/my_text.dart';
-import '../widgets/general/my_text_field.dart';
+import 'package:flutter_app/utils/utils.dart';
+import 'package:flutter_app/screens/widgets/general/my_button.dart';
+import 'package:flutter_app/screens/widgets/general/my_text.dart';
+import 'package:flutter_app/screens/widgets/general/my_text_field.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../services/cuenta/cuenta_service.dart';
-import '../../../models/account.dart';
+import 'package:flutter_app/services/cuenta/cuenta_service.dart';
+import 'package:flutter_app/models/account.dart';
 import 'account_info_activities.dart';
 import 'account_info_card_buttons.dart';
 import 'account_info_expand.dart';
 import 'account_info_header.dart';
+import 'package:flutter_app/utils/utils.dart';
 
 class AccountInfoCard extends StatefulWidget {
   final Account account;
@@ -49,6 +50,9 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
                 editAcc: () {
                   editAcc(context);
                 },
+                deleteAcc: () {
+                  deleteAcc(context, account.id);
+                },
                 buttons: addButtons,
                 account: account,
               )
@@ -67,27 +71,6 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
     });
   }
 
-  void _showDialog(
-      BuildContext context, String title, String content, String textButton) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: <Widget>[
-            TextButton(
-              child: Text(textButton),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void editAcc(BuildContext context) async {
     var cantonesResponse = await getProvincias();
 
@@ -97,7 +80,19 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
         Navigator.of(context)
             .pushNamed("/edit_account", arguments: [cantonesList, account]);
       } else {
-        _showDialog(context, 'Error', cantonesResponse.message, 'Aceptar');
+        showAlertDialog(context, 'Error', cantonesResponse.message, 'Aceptar');
+      }
+    }
+  }
+
+  void deleteAcc(BuildContext context, String accountId) async {
+    var deleteResponse = await deleteAccount(accountId);
+    if (context.mounted) {
+      if (deleteResponse.success) {
+        showAlertDialog(
+            context, 'Cuenta eliminada', deleteResponse.message, 'Aceptar');
+      } else {
+        showAlertDialog(context, 'Error', deleteResponse.message, 'Aceptar');
       }
     }
   }

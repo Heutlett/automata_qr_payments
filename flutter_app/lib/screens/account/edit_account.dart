@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
-import 'package:flutter_app/services/usuario/usuario_service.dart';
-import '../../models/actividad.dart';
-import '/models/account.dart';
+import 'package:flutter_app/models/actividad.dart';
+import 'package:flutter_app/models/account.dart';
+import 'package:flutter_app/utils/utils.dart';
 
 class EditAccount extends StatefulWidget {
   const EditAccount({super.key});
@@ -584,9 +584,9 @@ class _EditAccountState extends State<EditAccount> {
                         child: ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              _submitForm(context);
+                              _submitForm(context, account.id);
                             } else {
-                              _showDialog(
+                              showAlertDialog(
                                   context,
                                   "Error",
                                   "Error, hay campos obligatorios sin llenar",
@@ -607,7 +607,7 @@ class _EditAccountState extends State<EditAccount> {
     );
   }
 
-  void _submitForm(BuildContext context) async {
+  void _submitForm(BuildContext context, String accountId) async {
     final cedulaTipo = _cedulaTipo;
     final cedulaNumero = _cedulaNumeroController.text;
     final idExtranjero = _idExtranjeroController.text;
@@ -628,6 +628,7 @@ class _EditAccountState extends State<EditAccount> {
         _idBarrio.toString().padLeft(2, '0');
 
     final cuenta = {
+      "id": accountId,
       "cedulaTipo": cedulaTipo,
       "cedulaNumero": cedulaNumero,
       "idExtranjero": idExtranjero,
@@ -645,40 +646,19 @@ class _EditAccountState extends State<EditAccount> {
       "actividades": actividades.map((act) => act.codigoActividad).toList()
     };
 
-    // var response = await postCreateAccount(cuenta, actividades);
+    var response = await putEditAccount(accountId, cuenta, actividades);
 
-    // if (context.mounted) {
-    //   if (response.statusCode == 200) {
-    //     _showDialog(context, 'Cuenta agregada',
-    //         'La cuenta se agregó exitosamente.', 'Aceptar');
-    //     Navigator.of(context).pop();
-    //     Navigator.of(context).pop();
-    //   } else {
-    //     _showDialog(context, 'Error al agregar cuenta',
-    //         'Ocurrió un error al agregar la cuenta.', 'Aceptar');
-    //   }
-    // }
-  }
-
-  void _showDialog(
-      BuildContext context, String title, String content, String textButton) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: <Widget>[
-            TextButton(
-              child: Text(textButton),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+    if (context.mounted) {
+      if (response.statusCode == 200) {
+        showAlertDialog(context, 'Cuenta editada correctamente',
+            'La cuenta se editó exitosamente.', 'Aceptar');
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      } else {
+        showAlertDialog(context, 'Error al editar cuenta',
+            'Ocurrió un error al editar la cuenta.', 'Aceptar');
+      }
+    }
   }
 
   void showCantones() async {
@@ -700,7 +680,7 @@ class _EditAccountState extends State<EditAccount> {
       }
     } else {
       if (context.mounted) {
-        _showDialog(context, 'Error', cantonesResponse.message, 'Aceptar');
+        showAlertDialog(context, 'Error', cantonesResponse.message, 'Aceptar');
       }
     }
   }
@@ -721,7 +701,7 @@ class _EditAccountState extends State<EditAccount> {
       }
     } else {
       if (context.mounted) {
-        _showDialog(context, 'Error', distritosResponse.message, 'Aceptar');
+        showAlertDialog(context, 'Error', distritosResponse.message, 'Aceptar');
       }
     }
   }
@@ -742,7 +722,7 @@ class _EditAccountState extends State<EditAccount> {
       }
     } else {
       if (context.mounted) {
-        _showDialog(context, 'Error', barriosResponse.message, 'Aceptar');
+        showAlertDialog(context, 'Error', barriosResponse.message, 'Aceptar');
       }
     }
   }
@@ -768,17 +748,17 @@ class _EditAccountState extends State<EditAccount> {
             actividades.add(actividad);
           });
 
-          _showDialog(context, 'Resultado',
+          showAlertDialog(context, 'Resultado',
               'La actividad se agregó exitosamente.', 'Aceptar');
         } else {
-          _showDialog(
+          showAlertDialog(
               context,
               'Error',
               'No se puede agregar una actividad economica repetida.',
               'Aceptar');
         }
       } else {
-        _showDialog(
+        showAlertDialog(
             context,
             'Error',
             'No se ha encontrado la actividad economica asociada a ese codigo.',

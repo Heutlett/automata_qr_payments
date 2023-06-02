@@ -4,8 +4,8 @@ import 'package:flutter_app/screens/widgets/general/my_text_field.dart';
 import 'dart:convert';
 import 'package:flutter_app/services/usuario/usuario_service.dart';
 
-import '../utils.dart';
-import '../widgets/general/my_text.dart';
+import 'package:flutter_app/utils/utils.dart';
+import 'package:flutter_app/screens/widgets/general/my_text.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({Key? key}) : super(key: key);

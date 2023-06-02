@@ -7,10 +7,12 @@ class AccountInfoCardButtons extends StatefulWidget {
       {super.key,
       required this.expandInfo,
       required this.editAcc,
+      required this.deleteAcc,
       required this.account,
       this.buttons = 0});
   final VoidCallback expandInfo;
   final VoidCallback editAcc;
+  final VoidCallback deleteAcc;
   final int buttons;
   final Account account;
 
@@ -55,7 +57,7 @@ class _AccountInfoCardButtonsState extends State<AccountInfoCardButtons> {
           buttons == 2
               ? MyTextButton(
                   text: 'Eliminar',
-                  function: () {},
+                  function: deleteAction,
                   icon: Icons.delete,
                   foregroundColor: Colors.red,
                 )
@@ -80,5 +82,9 @@ class _AccountInfoCardButtonsState extends State<AccountInfoCardButtons> {
 
   void editAction() {
     widget.editAcc();
+  }
+
+  void deleteAction() {
+    widget.deleteAcc();
   }
 }
