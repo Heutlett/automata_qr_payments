@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
-import 'package:flutter_app/services/usuario/usuario_service.dart';
 import '../../models/actividad.dart';
 
 class AgregarCuentaForm extends StatefulWidget {
