@@ -1,0 +1,26 @@
+Instalar
+
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+dotnet add package MySql.Data.EntityFrameworkCore
+
+# Aplicar scaffold
+
+La carpeta Scaffold debe estar vacia
+dotnet ef dbcontext scaffold "Name=ConnectionStrings:DefaultConnection" MySql.EntityFrameworkCore -o Scaffold
+
+# Database
+
+En MySQL: la convención de nomenclatura más comúnmente utilizada para las tablas es el uso de nombres en minúsculas y separación de palabras mediante guiones bajos (_) "snake_case".
+
+Se emplean nombres en singular para los nombres de las tablas para poder generar automáticamente el código de los modelos de DBContext en el API.
+
+Las columnas de la tabla van en "PascalCase" siguiendo el estandar de C#.
+
+# API
+
+Se emplea "camelCase" para nombre de las variables
+Se emplea "PascalCase" para nombre de las clases
+
+# Comando
+dotnet ef dbcontext scaffold "Name=ConnectionStrings:DefaultConnection" MySql.EntityFrameworkCore -o Scaffold
+

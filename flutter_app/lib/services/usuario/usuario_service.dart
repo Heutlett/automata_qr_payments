@@ -5,7 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/actividad.dart';
 
-const host = '192.168.18.187';
+// const host = '192.168.18.187'; // Adrian
+const host = '192.168.18.68'; // Shakime
 
 Future<http.Response> postLogin(String username, String password) async {
   var url = "http://$host/Auth/Login";
