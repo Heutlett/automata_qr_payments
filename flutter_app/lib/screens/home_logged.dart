@@ -40,7 +40,13 @@ class HomeLoggedPage extends StatelessWidget {
             ),
             const SizedBox(height: 20.0),
             MyButton(
-              text: 'Cerrar sesion',
+              text: 'Historial de pagos',
+              function: () => _showRecordsPage(context),
+              size: const Size(250, 60),
+            ),
+            const SizedBox(height: 20.0),
+            MyButton(
+              text: 'Cerrar sesión',
               function: () => _showHomePage(context),
               size: const Size(250, 60),
             ),
@@ -56,6 +62,10 @@ class HomeLoggedPage extends StatelessWidget {
 
   void _showFacturarPage(BuildContext context) {
     Navigator.of(context).pushNamed("/facturar");
+  }
+
+  void _showRecordsPage(BuildContext context) {
+    Navigator.of(context).pushNamed("/records");
   }
 
   Future<void> _showAccountManagementPage(BuildContext context) async {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/screens/widgets/general/my_text_button.dart';
 import '/models/account.dart';
 
 class AccountInfoCardButtons extends StatefulWidget {
@@ -9,10 +8,12 @@ class AccountInfoCardButtons extends StatefulWidget {
       required this.editAcc,
       required this.deleteAcc,
       required this.account,
+      required this.shareAcc,
       this.buttons = 0});
   final VoidCallback expandInfo;
   final VoidCallback editAcc;
   final VoidCallback deleteAcc;
+  final VoidCallback shareAcc;
   final int buttons;
   final Account account;
 
@@ -36,30 +37,34 @@ class _AccountInfoCardButtonsState extends State<AccountInfoCardButtons> {
     return Card(
       child: Row(
         mainAxisAlignment: buttons == 2
-            ? MainAxisAlignment.spaceEvenly
+            ? MainAxisAlignment.spaceAround
             : MainAxisAlignment.center,
         children: [
           buttons == 1 || buttons == 2
-              ? MyTextButton(
-                  text: expandName,
-                  function: expandAction,
-                  icon: expandIcon,
+              ? IconButton(
+                  onPressed: expandAction,
+                  icon: Icon(expandIcon),
+                  color: Colors.blue)
+              : const SizedBox(),
+          buttons == 2
+              ? IconButton(
+                  onPressed: editAction,
+                  icon: Icon(Icons.edit),
+                  color: Colors.amber.shade800,
                 )
               : const SizedBox(),
           buttons == 2
-              ? MyTextButton(
-                  text: 'Editar',
-                  function: editAction,
-                  icon: Icons.edit,
-                  foregroundColor: Colors.amber.shade800,
+              ? IconButton(
+                  onPressed: shareAction,
+                  icon: Icon(Icons.share),
+                  color: Colors.green,
                 )
               : const SizedBox(),
           buttons == 2
-              ? MyTextButton(
-                  text: 'Eliminar',
-                  function: deleteAction,
-                  icon: Icons.delete,
-                  foregroundColor: Colors.red,
+              ? IconButton(
+                  onPressed: deleteAction,
+                  icon: Icon(Icons.delete),
+                  color: Colors.red,
                 )
               : const SizedBox(),
         ],
@@ -86,5 +91,9 @@ class _AccountInfoCardButtonsState extends State<AccountInfoCardButtons> {
 
   void deleteAction() {
     widget.deleteAcc();
+  }
+
+  void shareAction() {
+    widget.shareAcc();
   }
 }

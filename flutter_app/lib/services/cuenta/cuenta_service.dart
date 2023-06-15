@@ -10,7 +10,7 @@ import 'package:flutter_app/models/ubicacion.dart';
 
 import 'package:flutter_app/utils/config.dart';
 
-const String selected_host = "host_shakime";
+const String selected_host = "host_adrian";
 
 Future<http.Response> postCreateAccount(
     Object? cuenta, List<Actividad> actividades) async {

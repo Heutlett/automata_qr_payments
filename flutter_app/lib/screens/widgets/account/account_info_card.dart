@@ -53,6 +53,9 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
                 deleteAcc: () {
                   deleteAcc(context, account.id);
                 },
+                shareAcc: () {
+                  shareAcc(context);
+                },
                 buttons: addButtons,
                 account: account,
               )
@@ -85,12 +88,18 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
     }
   }
 
+  void shareAcc(BuildContext context) async {
+    if (context.mounted) {
+      Navigator.of(context).pushNamed("/share_account", arguments: account);
+    }
+  }
+
   void deleteAcc(BuildContext context, String accountId) async {
     var deleteResponse = await deleteAccount(accountId);
     if (context.mounted) {
       if (deleteResponse.success) {
-        showAlertDialog(
-            context, 'Cuenta eliminada', deleteResponse.message, 'Aceptar');
+        showAlertDialog(context, 'Cuenta eliminada',
+            'La cuenta ha sido eliminada correctamente.', 'Aceptar');
       } else {
         showAlertDialog(context, 'Error', deleteResponse.message, 'Aceptar');
       }

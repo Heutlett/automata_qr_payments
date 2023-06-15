@@ -22,13 +22,20 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Mis cuentas'),
             MyButton(
-              text: 'Crear',
+              text: 'Crear cuenta',
+              fontSize: 16,
               function: () => _createAccount(context),
-              icon: Icons.add_circle,
-              size: const Size(120, 40),
+              size: const Size(130, 40),
               backgroundColor: Colors.green,
+            ),
+            MyButton(
+              text: 'Agregar cuenta compartida',
+              fontSize: 16,
+              foregroundColor: Colors.black,
+              function: () => {},
+              size: const Size(180, 40),
+              backgroundColor: Colors.yellow,
             ),
           ],
         ),
