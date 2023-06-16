@@ -3,7 +3,6 @@ import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 import 'package:flutter_app/screens/widgets/general/my_button.dart';
 import 'package:flutter_app/screens/widgets/account/account_info_card.dart';
-import 'package:flutter_app/utils/utils.dart';
 
 class AccountManagementScreen extends StatefulWidget {
   const AccountManagementScreen({Key? key}) : super(key: key);
@@ -56,7 +55,7 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: accounts == null
-              ? [CircularProgressIndicator()] // Indicador de carga
+              ? const [CircularProgressIndicator()] // Indicador de carga
               : accounts!.map((acc) {
                   return Card(
                     margin: const EdgeInsets.all(8),
@@ -80,17 +79,6 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
   }
 
   void _createAccount(BuildContext context) async {
-    var provinciasResponse = await getProvincias();
-
-    if (context.mounted) {
-      if (provinciasResponse.success) {
-        var provinciasList = provinciasResponse.data;
-        Navigator.of(context)
-            .pushNamed("/create_account", arguments: provinciasList);
-      } else {
-        showAlertDialog(
-            context, 'Error', provinciasResponse.message, 'Aceptar');
-      }
-    }
+    Navigator.of(context).pushNamed("/create_account");
   }
 }

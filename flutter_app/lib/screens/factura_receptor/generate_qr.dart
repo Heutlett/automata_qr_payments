@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/widgets/account/account_info_header.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import '../widgets/general/my_button.dart';
-import '../widgets/general/my_text.dart';
+import 'package:flutter_app/screens/widgets/general/my_button.dart';
+import 'package:flutter_app/screens/widgets/general/my_text.dart';
 
 class QRScreen extends StatefulWidget {
   const QRScreen({super.key});

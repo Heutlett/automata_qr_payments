@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 import 'package:flutter_app/models/account.dart';
-import 'account_info_activities.dart';
-import 'account_info_card_buttons.dart';
-import 'account_info_expand.dart';
-import 'account_info_header.dart';
+import 'package:flutter_app/screens/widgets/account/account_info_activities.dart';
+import 'package:flutter_app/screens/widgets/account/account_info_card_buttons.dart';
+import 'package:flutter_app/screens/widgets/account/account_info_expand.dart';
+import 'package:flutter_app/screens/widgets/account/account_info_header.dart';
 import 'package:flutter_app/models/ubicacion.dart';
 import 'package:flutter_app/utils/utils.dart';
 

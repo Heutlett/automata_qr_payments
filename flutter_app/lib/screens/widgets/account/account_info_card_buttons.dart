@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '/models/account.dart';
+import 'package:flutter_app/models/account.dart';
 
 class AccountInfoCardButtons extends StatefulWidget {
   const AccountInfoCardButtons(
@@ -49,21 +49,21 @@ class _AccountInfoCardButtonsState extends State<AccountInfoCardButtons> {
           buttons == 2
               ? IconButton(
                   onPressed: editAction,
-                  icon: Icon(Icons.edit),
+                  icon: const Icon(Icons.edit),
                   color: Colors.amber.shade800,
                 )
               : const SizedBox(),
           buttons == 2
               ? IconButton(
                   onPressed: shareAction,
-                  icon: Icon(Icons.share),
+                  icon: const Icon(Icons.share),
                   color: Colors.green,
                 )
               : const SizedBox(),
           buttons == 2
               ? IconButton(
                   onPressed: deleteAction,
-                  icon: Icon(Icons.delete),
+                  icon: const Icon(Icons.delete),
                   color: Colors.red,
                 )
               : const SizedBox(),

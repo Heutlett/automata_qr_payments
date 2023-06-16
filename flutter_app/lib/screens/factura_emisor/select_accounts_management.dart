@@ -3,7 +3,7 @@ import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/screens/widgets/account/account_info_card.dart';
 import 'package:flutter_app/screens/widgets/general/my_button.dart';
 
-import '../widgets/general/my_text.dart';
+import 'package:flutter_app/screens/widgets/general/my_text.dart';
 
 class SelectAccountManagementScreen extends StatefulWidget {
   const SelectAccountManagementScreen({Key? key}) : super(key: key);

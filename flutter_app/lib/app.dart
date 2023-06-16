@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
         "/select_account_qr": (BuildContext context) =>
             const SelectAccountQrPage(),
         "/edit_account": (BuildContext context) => const EditAccount(),
-        "/records": (BuildContext context) => RecordsPage(),
+        "/records": (BuildContext context) => const RecordsPage(),
         "/share_account": (BuildContext context) => const ShareAccountScreen(),
       },
     );

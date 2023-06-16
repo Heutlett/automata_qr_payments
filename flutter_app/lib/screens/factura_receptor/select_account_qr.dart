@@ -3,7 +3,7 @@ import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/screens/widgets/general/my_button.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 
-import '../widgets/account/account_info_card.dart';
+import 'package:flutter_app/screens/widgets/account/account_info_card.dart';
 
 class SelectAccountQrPage extends StatelessWidget {
   const SelectAccountQrPage({super.key});

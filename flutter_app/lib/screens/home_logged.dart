@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/models/account.dart';
-import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 
 import 'widgets/general/my_button.dart';
 import 'widgets/general/my_text.dart';
@@ -19,7 +17,7 @@ class HomeLoggedPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            MyText(
+            const MyText(
               text: '¡Bienvenido a QR Payments!',
               fontSize: 28.0,
               fontWeight: FontWeight.bold,
@@ -39,7 +37,7 @@ class HomeLoggedPage extends StatelessWidget {
             const SizedBox(height: 20.0),
             MyButton(
               text: 'Historial de pagos',
-              function: () => _createAccount(context),
+              function: () => _showRecordsPage(context),
               size: const Size(250, 60),
             ),
             const SizedBox(height: 20.0),
@@ -52,17 +50,6 @@ class HomeLoggedPage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void _createAccount(BuildContext context) async {
-    var provinciasResponse = await getProvincias();
-
-    if (context.mounted) {
-      if (provinciasResponse.success) {
-        var provinciasList = provinciasResponse.data;
-        Navigator.of(context).pushNamed("/records", arguments: provinciasList);
-      }
-    }
   }
 
   void _showHomePage(BuildContext context) {
@@ -78,10 +65,8 @@ class HomeLoggedPage extends StatelessWidget {
   }
 
   Future<void> _showAccountManagementPage(BuildContext context) async {
-    List<Account> accounts = await getCuentasList();
     if (context.mounted) {
-      Navigator.of(context)
-          .pushNamed("/account_management", arguments: accounts);
+      Navigator.of(context).pushNamed("/account_management");
     }
   }
 }

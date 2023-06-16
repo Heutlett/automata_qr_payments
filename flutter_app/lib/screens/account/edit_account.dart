@@ -737,7 +737,6 @@ class _EditAccountState extends State<EditAccount> {
     }
   }
 
-  // Simula la carga de los cantones para la provincia seleccionada
   void loadCantones(BuildContext context) async {
     if (selectedProvincia != null) {
       var cantonesResponse = await getCantones(selectedProvincia!.id);
@@ -765,7 +764,6 @@ class _EditAccountState extends State<EditAccount> {
     }
   }
 
-// Simula la carga de los distritos para el cantón seleccionado
   void loadDistritos(BuildContext context) async {
     if (selectedCanton != null) {
       var distritosResponse =
@@ -794,7 +792,6 @@ class _EditAccountState extends State<EditAccount> {
     }
   }
 
-  // Simula la carga de los barrios para el distrito seleccionado
   void loadBarrios(BuildContext context) async {
     if (selectedDistrito != null) {
       var barriosResponse = await getBarrios(

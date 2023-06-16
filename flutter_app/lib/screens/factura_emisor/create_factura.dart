@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../account/accounts_form.dart';
+import 'package:flutter_app/screens/account/accounts_form.dart';
 import 'package:flutter_app/models/account.dart';
 
 class CreateFactura extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../general/my_text.dart';
+import 'package:flutter_app/screens/widgets/general/my_text.dart';
 
 class AccountInfoCardHeader extends StatelessWidget {
   final String cedulaTipo;
