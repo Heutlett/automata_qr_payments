@@ -25,5 +25,7 @@ namespace Api.Services.CuentaService
         Task<ServiceResponse<GetCuentaDto>> GetCuentaTemporal(string nombreUsuario, int id);
         Task<ServiceResponse<string>> GenerateCuentaQr(int idCuenta);
         Task<ServiceResponse<GetCuentaDto>> GetCuentaByQR(string codigo);
+        Task<ServiceResponse<GetCuentaDto>> ShareCuentaByQR(string codigoEncriptado);
+
     }
 }

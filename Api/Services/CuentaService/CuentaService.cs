@@ -437,13 +437,13 @@ namespace Api.Services.CuentaService
 
                 TimeSpan duration = startTime.Subtract(timestamp);
 
+                // Validar el tiempo que ha pasado
                 if (duration.TotalMinutes > _qrExpirationTime)
                 {
                     throw new Exception($"El tiempo del codigo ha expirado.");
                 }
 
-                // Validar el tiempo que ha pasado
-
+                // Validar la existencia de la cuenta
                 var cuenta = await _context.Cuentas
                     .Include(c => c.Actividades)
                     .FirstOrDefaultAsync(c => c.Id == idCuenta && c.Usuario!.UID == uid && c.IsActive);
@@ -451,6 +451,7 @@ namespace Api.Services.CuentaService
                 if (cuenta is null)
                     throw new Exception($"El codigo no pertenece a una cuenta.");
 
+                // Modificar en la tabla de compartir cuenta
                 serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuenta);
 
             }
@@ -502,6 +503,59 @@ namespace Api.Services.CuentaService
             return mensajeDesencriptado;
         }
 
+        public async Task<ServiceResponse<GetCuentaDto>> ShareCuentaByQR(string codigoEncriptado)
+        {
+            var serviceResponse = new ServiceResponse<GetCuentaDto>();
 
+            try
+            {
+                var secretKey = _configuration.GetSection("AppSettings:Token").Value!;
+
+                string mensajeDesencriptado = DesencriptarMensaje(codigoEncriptado, secretKey);
+
+                // Extraer los datos originales de la cadena de texto
+                string[] partes = mensajeDesencriptado.Split(',');
+                var uid = partes[0];
+                var timestamp = DateTime.Parse(partes[1]);
+                var idCuenta = int.Parse(partes[2]);
+
+                DateTime startTime = DateTime.UtcNow;
+
+                TimeSpan duration = startTime.Subtract(timestamp);
+
+                // Validar el tiempo que ha pasado
+                if (duration.TotalMinutes > _qrExpirationTime)
+                {
+                    throw new Exception($"El tiempo del codigo ha expirado.");
+                }
+
+
+                // Crear relacion
+                var cuentaCompartida = new CuentaCompartida();
+                cuentaCompartida.Usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == uid);
+                cuentaCompartida.Cuenta = await _context.Cuentas
+                    .Include(c => c.Actividades)
+                    .FirstOrDefaultAsync(c => c.Id == idCuenta && c.Usuario!.UID == uid && c.IsActive);
+
+                if (cuentaCompartida.Usuario is null)
+                    throw new Exception($"El codigo no pertenece a ningun usuario.");
+
+                if (cuentaCompartida.Cuenta is null)
+                    throw new Exception($"El codigo no pertenece a una cuenta.");
+
+                _context.CuentasCompartidas.Add(cuentaCompartida); // (No es Async) Aun no se llama la db, solo se agrega un Cuenta al dataContext
+                await _context.SaveChangesAsync();  // Aqui es donde ya se envia a la db (Async)
+
+                serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuentaCompartida.Cuenta);
+            }
+
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
     }
 }
