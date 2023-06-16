@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
-import '../../models/actividad.dart';
+import 'package:flutter_app/models/actividad.dart';
+import 'package:flutter_app/models/ubicacion.dart';
+import 'package:flutter_app/utils/utils.dart';
 
 class AgregarCuentaForm extends StatefulWidget {
   const AgregarCuentaForm({super.key});
@@ -329,10 +331,10 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                       []; // Reinicia la lista de distritos
                                   barrios = []; // Reinicia la lista de barrios
                                   // Simula la carga de los cantones para la provincia seleccionada
-                                  loadCantones();
+                                  loadCantones(context);
                                 });
                               },
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Provincia',
                               ),
                             ),
@@ -353,10 +355,10 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                       []; // Reinicia la lista de distritos
                                   barrios = []; // Reinicia la lista de barrios
                                   // Simula la carga de los distritos para el cantón seleccionado
-                                  loadDistritos();
+                                  loadDistritos(context);
                                 });
                               },
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Cantón',
                               ),
                             ),
@@ -374,10 +376,10 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                   selectedBarrio = null;
                                   barrios = []; // Reinicia la lista de barrios
                                   // Simula la carga de los barrios para el distrito seleccionado
-                                  loadBarrios();
+                                  loadBarrios(context);
                                 });
                               },
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Distrito',
                               ),
                             ),
@@ -394,7 +396,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                   selectedBarrio = neighborhood;
                                 });
                               },
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: 'Barrio',
                               ),
                             ),
@@ -517,7 +519,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                             if (_formKey.currentState!.validate()) {
                               _submitForm(context);
                             } else {
-                              _showDialog(
+                              showAlertDialog(
                                   context,
                                   "Error",
                                   "Error, hay campos obligatorios sin llenar",
@@ -580,40 +582,19 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
 
     if (context.mounted) {
       if (response.statusCode == 200) {
-        _showDialog(context, 'Cuenta agregada',
+        showAlertDialog(context, 'Cuenta agregada',
             'La cuenta se agregó exitosamente.', 'Aceptar');
         Navigator.of(context).pop();
         Navigator.of(context).pop();
       } else {
-        _showDialog(context, 'Error al agregar cuenta',
+        showAlertDialog(context, 'Error al agregar cuenta',
             'Ocurrió un error al agregar la cuenta.', 'Aceptar');
       }
     }
   }
 
-  void _showDialog(
-      BuildContext context, String title, String content, String textButton) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: <Widget>[
-            TextButton(
-              child: Text(textButton),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   // Simula la carga de los cantones para la provincia seleccionada
-  void loadCantones() async {
+  void loadCantones(BuildContext context) async {
     if (selectedProvincia != null) {
       var cantonesResponse = await getCantones(selectedProvincia!.id);
       if (cantonesResponse.success) {
@@ -628,12 +609,20 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
             }).toList();
           });
         }
-      } else {}
+      } else {
+        if (context.mounted) {
+          showAlertDialog(context, 'Error',
+              'No se han podido obtener los cantones.', 'Aceptar');
+        }
+      }
+    } else {
+      showAlertDialog(
+          context, 'Error', 'No se ha seleccionado una provincia.', 'Aceptar');
     }
   }
 
 // Simula la carga de los distritos para el cantón seleccionado
-  void loadDistritos() async {
+  void loadDistritos(BuildContext context) async {
     if (selectedCanton != null) {
       var distritosResponse =
           await getDistritos(selectedProvincia!.id, selectedCanton!.id);
@@ -649,12 +638,20 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
             }).toList();
           });
         }
-      } else {}
+      } else {
+        if (context.mounted) {
+          showAlertDialog(context, 'Error',
+              'No se han podido obtener los distritos.', 'Aceptar');
+        }
+      }
+    } else {
+      showAlertDialog(
+          context, 'Error', 'No se ha seleccionado un cantón.', 'Aceptar');
     }
   }
 
   // Simula la carga de los barrios para el distrito seleccionado
-  void loadBarrios() async {
+  void loadBarrios(BuildContext context) async {
     if (selectedDistrito != null) {
       var barriosResponse = await getBarrios(
           selectedProvincia!.id, selectedCanton!.id, selectedDistrito!.id);
@@ -670,7 +667,15 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
             }).toList();
           });
         }
-      } else {}
+      } else {
+        if (context.mounted) {
+          showAlertDialog(context, 'Error',
+              'No se han podido obtener los barrios.', 'Aceptar');
+        }
+      }
+    } else {
+      showAlertDialog(
+          context, 'Error', 'No se ha seleccionado un distrito.', 'Aceptar');
     }
   }
 
@@ -687,17 +692,17 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
             actividades.add(actividad);
           });
 
-          _showDialog(context, 'Resultado',
+          showAlertDialog(context, 'Resultado',
               'La actividad se agregó exitosamente.', 'Aceptar');
         } else {
-          _showDialog(
+          showAlertDialog(
               context,
               'Error',
               'No se puede agregar una actividad economica repetida.',
               'Aceptar');
         }
       } else {
-        _showDialog(
+        showAlertDialog(
             context,
             'Error',
             'No se ha encontrado la actividad economica asociada a ese codigo.',
@@ -705,32 +710,4 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
       }
     }
   }
-}
-
-class Provincia {
-  final int id;
-  final String nombre;
-
-  Provincia({required this.id, required this.nombre});
-}
-
-class Canton {
-  final int id;
-  final String nombre;
-
-  Canton({required this.id, required this.nombre});
-}
-
-class Distrito {
-  final int id;
-  final String nombre;
-
-  Distrito({required this.id, required this.nombre});
-}
-
-class Barrio {
-  final int id;
-  final String nombre;
-
-  Barrio({required this.id, required this.nombre});
 }

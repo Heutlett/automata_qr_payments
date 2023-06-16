@@ -4,6 +4,7 @@ import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 import 'package:flutter_app/models/actividad.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/utils/utils.dart';
+import 'package:flutter_app/models/ubicacion.dart';
 
 class EditAccount extends StatefulWidget {
   const EditAccount({super.key});
@@ -22,21 +23,6 @@ class _EditAccountState extends State<EditAccount> {
   String? _cedulaTipo;
   String? _tipoCuenta;
 
-  String? _ubicacionProvincia;
-  String? _ubicacionCanton;
-  String? _ubicacionDistrito;
-  String? _ubicacionBarrio;
-
-  int _idProvincia = 0;
-  int _idCanton = 0;
-  int _idDistrito = 0;
-  int _idBarrio = 0;
-
-  List<Map<String, dynamic>>? provinciasMap;
-  List<Map<String, dynamic>>? cantonesMap;
-  List<Map<String, dynamic>>? distritosMap;
-  List<Map<String, dynamic>>? barriosMap;
-
   final List<String> _cedulaTipos = [
     'Fisica',
     'Juridica',
@@ -47,11 +33,6 @@ class _EditAccountState extends State<EditAccount> {
     'Receptor',
     'Emisor',
   ];
-
-  List<String> _provincias = [];
-  final List<String> _cantones = [];
-  final List<String> _distritos = [];
-  final List<String> _barrios = [];
 
   final _cedulaNumeroController = TextEditingController();
   final _idExtranjeroController = TextEditingController();
@@ -66,6 +47,31 @@ class _EditAccountState extends State<EditAccount> {
   final _ubicacionSenasExtranjeroController = TextEditingController();
 
   final _codigoActividadController = TextEditingController();
+
+// Lista de provincias
+  List<Provincia> provinces = [
+    Provincia(id: 1, nombre: 'SAN JOSE'),
+    Provincia(id: 2, nombre: 'ALAJUELA'),
+    Provincia(id: 3, nombre: 'CARTAGO'),
+    Provincia(id: 4, nombre: 'HEREDIA'),
+    Provincia(id: 5, nombre: 'GUANACASTE'),
+    Provincia(id: 6, nombre: 'PUNTARENAS'),
+    Provincia(id: 7, nombre: 'LIMON'),
+  ];
+
+  // Lista de cantones
+  List<Canton> cantones = [];
+
+  // Lista de distritos
+  List<Distrito> distritos = [];
+
+  // Lista de barrios
+  List<Barrio> barrios = [];
+
+  Provincia? selectedProvincia;
+  Canton? selectedCanton;
+  Distrito? selectedDistrito;
+  Barrio? selectedBarrio;
 
   @override
   void initState() {
@@ -98,11 +104,7 @@ class _EditAccountState extends State<EditAccount> {
     List<dynamic>? args =
         ModalRoute.of(context)?.settings.arguments as List<dynamic>?;
 
-    provinciasMap = args![0];
-    _provincias = provinciasMap!
-        .map((mapa) => mapa['nombreProvincia'] as String)
-        .toList();
-    final Account account = args[1];
+    final Account account = args![1];
 
     if (!_isInitialized) {
       _cedulaTipo = account.cedulaTipo;
@@ -356,116 +358,94 @@ class _EditAccountState extends State<EditAccount> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            DropdownButtonFormField<String>(
-                              value: _ubicacionProvincia,
+                            DropdownButtonFormField<Provincia>(
+                              value: selectedProvincia,
+                              items: provinces.map((province) {
+                                return DropdownMenuItem<Provincia>(
+                                  value: province,
+                                  child: Text(province.nombre),
+                                );
+                              }).toList(),
+                              onChanged: (province) {
+                                setState(() {
+                                  selectedProvincia = province;
+                                  selectedCanton = null;
+                                  selectedDistrito = null;
+                                  selectedBarrio = null;
+                                  cantones =
+                                      []; // Reinicia la lista de cantones
+                                  distritos =
+                                      []; // Reinicia la lista de distritos
+                                  barrios = []; // Reinicia la lista de barrios
+                                  // Simula la carga de los cantones para la provincia seleccionada
+                                  loadCantones(context);
+                                });
+                              },
                               decoration: const InputDecoration(
                                 labelText: 'Provincia',
                               ),
-                              items: _provincias
-                                  .map(
-                                    (prov) => DropdownMenuItem(
-                                      value: prov,
-                                      child: Text(prov),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (value) {
-                                setState(
-                                  () {
-                                    _ubicacionProvincia = value;
-                                  },
-                                );
-                                showCantones();
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Este campo es obligatorio.';
-                                }
-                                return null;
-                              },
                             ),
-                            DropdownButtonFormField<String>(
-                              value: _ubicacionCanton,
+                            DropdownButtonFormField<Canton>(
+                              value: selectedCanton,
+                              items: cantones.map((canton) {
+                                return DropdownMenuItem<Canton>(
+                                  value: canton,
+                                  child: Text(canton.nombre),
+                                );
+                              }).toList(),
+                              onChanged: (canton) {
+                                setState(() {
+                                  selectedCanton = canton;
+                                  selectedDistrito = null;
+                                  selectedBarrio = null;
+                                  distritos =
+                                      []; // Reinicia la lista de distritos
+                                  barrios = []; // Reinicia la lista de barrios
+                                  // Simula la carga de los distritos para el cantón seleccionado
+                                  loadDistritos(context);
+                                });
+                              },
                               decoration: const InputDecoration(
                                 labelText: 'Cantón',
                               ),
-                              items: _cantones
-                                  .map(
-                                    (cant) => DropdownMenuItem(
-                                      value: cant,
-                                      child: Text(cant),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (value) {
-                                setState(
-                                  () {
-                                    _ubicacionCanton = value;
-                                  },
-                                );
-                                showDistritos();
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Este campo es obligatorio.';
-                                }
-                                return null;
-                              },
                             ),
-                            DropdownButtonFormField<String>(
-                              value: _ubicacionDistrito,
+                            DropdownButtonFormField<Distrito>(
+                              value: selectedDistrito,
+                              items: distritos.map((district) {
+                                return DropdownMenuItem<Distrito>(
+                                  value: district,
+                                  child: Text(district.nombre),
+                                );
+                              }).toList(),
+                              onChanged: (district) {
+                                setState(() {
+                                  selectedDistrito = district;
+                                  selectedBarrio = null;
+                                  barrios = []; // Reinicia la lista de barrios
+                                  // Simula la carga de los barrios para el distrito seleccionado
+                                  loadBarrios(context);
+                                });
+                              },
                               decoration: const InputDecoration(
                                 labelText: 'Distrito',
                               ),
-                              items: _distritos
-                                  .map(
-                                    (dist) => DropdownMenuItem(
-                                      value: dist,
-                                      child: Text(dist),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (value) {
-                                setState(
-                                  () {
-                                    _ubicacionDistrito = value;
-                                  },
-                                );
-                                showBarrios();
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Este campo es obligatorio.';
-                                }
-                                return null;
-                              },
                             ),
-                            DropdownButtonFormField<String>(
-                              value: _ubicacionBarrio,
+                            DropdownButtonFormField<Barrio>(
+                              value: selectedBarrio,
+                              items: barrios.map((neighborhood) {
+                                return DropdownMenuItem<Barrio>(
+                                  value: neighborhood,
+                                  child: Text(neighborhood.nombre),
+                                );
+                              }).toList(),
+                              onChanged: (neighborhood) {
+                                setState(() {
+                                  selectedBarrio = neighborhood;
+                                });
+                              },
                               decoration: const InputDecoration(
                                 labelText: 'Barrio',
                               ),
-                              items: _barrios
-                                  .map(
-                                    (barr) => DropdownMenuItem(
-                                      value: barr,
-                                      child: Text(barr),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (value) {
-                                setState(
-                                  () {
-                                    _ubicacionBarrio = value;
-                                  },
-                                );
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Este campo es obligatorio.';
-                                }
-                                return null;
-                              },
                             ),
                             TextFormField(
                               controller: _ubicacionSenasController,
@@ -622,10 +602,10 @@ class _EditAccountState extends State<EditAccount> {
     final ubicacionSenasExtranjero = _ubicacionSenasExtranjeroController.text;
     final tipo = _tipoCuenta;
 
-    String codigoUbicacion = _idProvincia.toString() +
-        _idCanton.toString().padLeft(2, '0') +
-        _idDistrito.toString().padLeft(2, '0') +
-        _idBarrio.toString().padLeft(2, '0');
+    String codigoUbicacion = selectedProvincia!.id.toString() +
+        selectedCanton!.id.toString().padLeft(2, '0') +
+        selectedDistrito!.id.toString().padLeft(2, '0') +
+        selectedBarrio!.id.toString().padLeft(2, '0');
 
     final cuenta = {
       "id": accountId,
@@ -657,72 +637,6 @@ class _EditAccountState extends State<EditAccount> {
       } else {
         showAlertDialog(context, 'Error al editar cuenta',
             'Ocurrió un error al editar la cuenta.', 'Aceptar');
-      }
-    }
-  }
-
-  void showCantones() async {
-    _idProvincia = provinciasMap!.firstWhere(
-        (prov) => prov['nombreProvincia'] == _ubicacionProvincia)['provincia'];
-
-    var cantonesResponse = await getCantones(_idProvincia);
-    if (cantonesResponse.success) {
-      var cantonesList = cantonesResponse.data;
-      if (cantonesList != null) {
-        cantonesMap = cantonesList;
-        _cantones.clear();
-        for (var canton in cantonesList) {
-          setState(() {
-            _cantones.add(canton['nombreCanton']);
-            _idCanton = canton['canton'];
-          });
-        }
-      }
-    } else {
-      if (context.mounted) {
-        showAlertDialog(context, 'Error', cantonesResponse.message, 'Aceptar');
-      }
-    }
-  }
-
-  void showDistritos() async {
-    var distritosResponse = await getDistritos(_idProvincia, _idCanton);
-    if (distritosResponse.success) {
-      var distritosList = distritosResponse.data;
-      if (distritosList != null) {
-        distritosMap = distritosList;
-        _distritos.clear();
-        for (var distrito in distritosList) {
-          setState(() {
-            _distritos.add(distrito['nombreDistrito']);
-            _idDistrito = distrito['distrito'];
-          });
-        }
-      }
-    } else {
-      if (context.mounted) {
-        showAlertDialog(context, 'Error', distritosResponse.message, 'Aceptar');
-      }
-    }
-  }
-
-  void showBarrios() async {
-    var barriosResponse =
-        await getBarrios(_idProvincia, _idCanton, _idDistrito);
-    if (barriosResponse.success) {
-      var barriosList = barriosResponse.data;
-      if (barriosList != null) {
-        _barrios.clear();
-        for (var barrio in barriosList) {
-          setState(() {
-            _barrios.add(barrio['nombreBarrio']);
-            _idBarrio = barrio['barrio'];
-          });
-        }
-      }
-    } else {
-      if (context.mounted) {
-        showAlertDialog(context, 'Error', barriosResponse.message, 'Aceptar');
       }
     }
   }
@@ -764,6 +678,92 @@ class _EditAccountState extends State<EditAccount> {
             'No se ha encontrado la actividad economica asociada a ese codigo.',
             'Aceptar');
       }
+    }
+  }
+
+  // Simula la carga de los cantones para la provincia seleccionada
+  void loadCantones(BuildContext context) async {
+    if (selectedProvincia != null) {
+      var cantonesResponse = await getCantones(selectedProvincia!.id);
+      if (cantonesResponse.success) {
+        var cantonesList = cantonesResponse.data;
+        if (cantonesList != null) {
+          setState(() {
+            cantones = cantonesList.map((data) {
+              return Canton(
+                id: data['canton'],
+                nombre: data['nombreCanton'],
+              );
+            }).toList();
+          });
+        }
+      } else {
+        if (context.mounted) {
+          showAlertDialog(context, 'Error',
+              'No se han podido obtener los cantones.', 'Aceptar');
+        }
+      }
+    } else {
+      showAlertDialog(
+          context, 'Error', 'No se ha seleccionado una provincia.', 'Aceptar');
+    }
+  }
+
+// Simula la carga de los distritos para el cantón seleccionado
+  void loadDistritos(BuildContext context) async {
+    if (selectedCanton != null) {
+      var distritosResponse =
+          await getDistritos(selectedProvincia!.id, selectedCanton!.id);
+      if (distritosResponse.success) {
+        var distritosList = distritosResponse.data;
+        if (distritosList != null) {
+          setState(() {
+            distritos = distritosList.map((data) {
+              return Distrito(
+                id: data['distrito'],
+                nombre: data['nombreDistrito'],
+              );
+            }).toList();
+          });
+        }
+      } else {
+        if (context.mounted) {
+          showAlertDialog(context, 'Error',
+              'No se han podido obtener los distritos.', 'Aceptar');
+        }
+      }
+    } else {
+      showAlertDialog(
+          context, 'Error', 'No se ha seleccionado un cantón.', 'Aceptar');
+    }
+  }
+
+  // Simula la carga de los barrios para el distrito seleccionado
+  void loadBarrios(BuildContext context) async {
+    if (selectedDistrito != null) {
+      var barriosResponse = await getBarrios(
+          selectedProvincia!.id, selectedCanton!.id, selectedDistrito!.id);
+      if (barriosResponse.success) {
+        var barriosList = barriosResponse.data;
+        if (barriosList != null) {
+          setState(() {
+            barrios = barriosList.map((data) {
+              return Barrio(
+                id: data['barrio'],
+                nombre: data['nombreBarrio'],
+              );
+            }).toList();
+          });
+        }
+      } else {
+        if (context.mounted) {
+          showAlertDialog(context, 'Error',
+              'No se han podido obtener los barrios.', 'Aceptar');
+        }
+      }
+    } else {
+      showAlertDialog(
+          context, 'Error', 'No se ha seleccionado un distrito.', 'Aceptar');
     }
   }
 }
