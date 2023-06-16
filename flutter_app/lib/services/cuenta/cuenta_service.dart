@@ -12,8 +12,7 @@ import 'package:flutter_app/utils/config.dart';
 
 const String selectedHost = "host_adrian";
 
-Future<http.Response> postCreateAccount(
-    Object? cuenta, List<Actividad> actividades) async {
+Future<http.Response> postCreateAccount(Object? cuenta) async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
   String host = await Config.load(selectedHost);
@@ -29,8 +28,7 @@ Future<http.Response> postCreateAccount(
   return responseCreateAcc;
 }
 
-Future<http.Response> putEditAccount(
-    String id, Object? cuenta, List<Actividad> actividades) async {
+Future<http.Response> putEditAccount(String id, Object? cuenta) async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
   String host = await Config.load(selectedHost);

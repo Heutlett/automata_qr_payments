@@ -603,7 +603,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
       "actividades": actividades.map((act) => act.codigoActividad).toList()
     };
 
-    var response = await postCreateAccount(cuenta, actividades);
+    var response = await postCreateAccount(cuenta);
 
     if (context.mounted) {
       if (response.statusCode == 200) {

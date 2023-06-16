@@ -651,7 +651,7 @@ class _EditAccountState extends State<EditAccount> {
       "actividades": actividades.map((act) => act.codigoActividad).toList()
     };
 
-    var response = await putEditAccount(accountId, cuenta, actividades);
+    var response = await putEditAccount(accountId, cuenta);
 
     if (context.mounted) {
       if (response.statusCode == 200) {
