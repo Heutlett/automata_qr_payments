@@ -23,5 +23,6 @@ namespace Api.Data
         public DbSet<Cuenta> Cuentas => Set<Cuenta>();
         public DbSet<Actividad> Actividades => Set<Actividad>();
         public DbSet<Ubicacion> Ubicaciones => Set<Ubicacion>();
+        public DbSet<CuentaCompartida> CuentasCompartidas => Set<CuentaCompartida>();
     }
 }

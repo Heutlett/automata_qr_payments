@@ -41,7 +41,7 @@ namespace Api.Models
 
         [MaxLength(160)]
         public string Correo { get; set; } = String.Empty;
-        
+
         [MaxLength(7)]
         public string UbicacionCodigo { get; set; } = String.Empty;
 
@@ -52,5 +52,11 @@ namespace Api.Models
         public bool IsActive { get; set; } = true;
         public TipoCuenta Tipo { get; set; } = TipoCuenta.Receptor;
         public List<Actividad> Actividades { get; set; } = new List<Actividad>();
+        public List<Usuario> UsuariosCompartidos { get; set; } = new List<Usuario>();
+
+        public static implicit operator Cuenta(int v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

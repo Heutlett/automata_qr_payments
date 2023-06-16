@@ -14,7 +14,7 @@ namespace Api.Models
         [Required]
         [MaxLength(36)]
         public String UID { get; set; } = Guid.NewGuid().ToString();
-        
+
         [Required]
         [MaxLength(20)]
         public string Username { get; set; } = string.Empty;
@@ -25,5 +25,7 @@ namespace Api.Models
         [MaxLength(160)]
         public string Email { get; set; } = string.Empty;
         public TipoRol Rol { get; set; }
+
+        public List<CuentaCompartida> CuentasCompartidas { get; set; } = new List<CuentaCompartida>();
     }
 }
