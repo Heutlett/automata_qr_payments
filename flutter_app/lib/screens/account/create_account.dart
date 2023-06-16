@@ -502,7 +502,12 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                                       Expanded(
                                                         flex: 1,
                                                         child: ElevatedButton(
-                                                          onPressed: () {},
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              actividades
+                                                                  .remove(act);
+                                                            });
+                                                          },
                                                           child: const Text(
                                                               "Eliminar"),
                                                         ),

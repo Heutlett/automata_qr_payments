@@ -477,3 +477,42 @@ Future<ServerResponse<List<Map<String, dynamic>>>> getBarrios(
 
   return serverResponse;
 }
+
+Future<ServerResponse<List<Map<String, dynamic>>>> getFullUbicacion(
+    int provincia, int canton, int distrito, int barrio) async {
+  ServerResponse<List<Map<String, dynamic>>> serverResponse;
+
+  String host = await Config.load(selectedHost);
+  var url =
+      "http://$host/api/Cuenta/Ubicacion/$provincia$canton$distrito$barrio";
+
+  var response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    var responseDecoded = jsonDecode(response.body);
+
+    if (responseDecoded['success']) {
+      var data = responseDecoded['data'];
+      List<Map<String, dynamic>> ubicacion = data.cast<Map<String, dynamic>>();
+      serverResponse = ServerResponse(
+        data: ubicacion,
+        message: responseDecoded['message'],
+        success: true,
+      );
+    } else {
+      serverResponse = ServerResponse(
+        data: null,
+        message: responseDecoded['message'],
+        success: false,
+      );
+    }
+  } else {
+    serverResponse = ServerResponse(
+      data: null,
+      message: 'Ha ocurrido un error al obtener la informacion de la ubicacion',
+      success: false,
+    );
+  }
+
+  return serverResponse;
+}

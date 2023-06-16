@@ -549,7 +549,12 @@ class _EditAccountState extends State<EditAccount> {
                                                       Expanded(
                                                         flex: 1,
                                                         child: ElevatedButton(
-                                                          onPressed: () {},
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              actividades
+                                                                  .remove(act);
+                                                            });
+                                                          },
                                                           child: const Text(
                                                               "Eliminar"),
                                                         ),
