@@ -79,7 +79,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
     if (context.mounted) {
       if (response.statusCode == 200) {
-        showAlertDialog(context, 'Resultado registro', data['message'], 'Ok');
+        showAlertDialogWithRoute(
+            context, 'Resultado registro', data['message'], 'Ok', "/");
       } else {
         showAlertDialog(context, 'Resultado registro', data['message'], 'Ok');
       }

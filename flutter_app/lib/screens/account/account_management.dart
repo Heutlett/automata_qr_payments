@@ -88,15 +88,15 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
   }
 
   void _createAccount(BuildContext context) async {
-    var cantonesResponse = await getProvincias();
+    var provinciasResponse = await getProvincias();
 
     if (context.mounted) {
-      if (cantonesResponse.success) {
-        var cantonesList = cantonesResponse.data;
+      if (provinciasResponse.success) {
+        var provinciasList = provinciasResponse.data;
         Navigator.of(context)
-            .pushNamed("/create_account", arguments: cantonesList);
+            .pushNamed("/create_account", arguments: provinciasList);
       } else {
-        _showDialog(context, 'Error', cantonesResponse.message, 'Aceptar');
+        _showDialog(context, 'Error', provinciasResponse.message, 'Aceptar');
       }
     }
   }

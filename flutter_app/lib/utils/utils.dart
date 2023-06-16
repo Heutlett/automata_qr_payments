@@ -31,3 +31,36 @@ void showAlertDialog(
     },
   );
 }
+
+void showAlertDialogWithRoute(
+  BuildContext context,
+  String title,
+  String message,
+  String buttonText,
+  String route,
+) {
+  // set up the button
+  Widget okButton = TextButton(
+    child: Text(buttonText),
+    onPressed: () {
+      Navigator.of(context).pushNamed(route);
+    },
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text(title),
+    content: Text(message),
+    actions: [
+      okButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}

@@ -41,7 +41,7 @@ class HomeLoggedPage extends StatelessWidget {
             const SizedBox(height: 20.0),
             MyButton(
               text: 'Historial de pagos',
-              function: () => _showRecordsPage(context),
+              function: () => _createAccount(context),
               size: const Size(250, 60),
             ),
             const SizedBox(height: 20.0),
@@ -54,6 +54,17 @@ class HomeLoggedPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _createAccount(BuildContext context) async {
+    var provinciasResponse = await getProvincias();
+
+    if (context.mounted) {
+      if (provinciasResponse.success) {
+        var provinciasList = provinciasResponse.data;
+        Navigator.of(context).pushNamed("/records", arguments: provinciasList);
+      }
+    }
   }
 
   void _showHomePage(BuildContext context) {

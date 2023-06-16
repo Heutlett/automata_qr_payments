@@ -10,13 +10,13 @@ import 'package:flutter_app/models/ubicacion.dart';
 
 import 'package:flutter_app/utils/config.dart';
 
-const String selected_host = "host_adrian";
+const String selectedHost = "host_adrian";
 
 Future<http.Response> postCreateAccount(
     Object? cuenta, List<Actividad> actividades) async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
-  String host = await Config.load(selected_host);
+  String host = await Config.load(selectedHost);
 
   var responseCreateAcc = await http.post(
     Uri.parse('http://$host/api/Cuenta'),
@@ -33,7 +33,7 @@ Future<http.Response> putEditAccount(
     String id, Object? cuenta, List<Actividad> actividades) async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
-  String host = await Config.load(selected_host);
+  String host = await Config.load(selectedHost);
 
   var responseCreateAcc = await http.put(
     Uri.parse('http://$host/api/Cuenta'),
@@ -49,7 +49,7 @@ Future<http.Response> putEditAccount(
 Future<ServerResponse<String>> deleteAccount(String id) async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
-  String host = await Config.load(selected_host);
+  String host = await Config.load(selectedHost);
 
   var responseDeleteAcc = await http.delete(
     Uri.parse('http://$host/api/Cuenta/$id'),
@@ -86,7 +86,7 @@ Future<ServerResponse<String>> deleteAccount(String id) async {
 Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
-  String host = await Config.load(selected_host);
+  String host = await Config.load(selectedHost);
 
   final Map<String, dynamic> body = {
     "codigo": codigoQr,
@@ -166,7 +166,7 @@ Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
 Future<String> getAccountQr(int id) async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
-  String host = await Config.load(selected_host);
+  String host = await Config.load(selectedHost);
 
   var url = "http://$host/api/Cuenta/qr/$id";
 
@@ -183,7 +183,7 @@ Future<String> getAccountQr(int id) async {
 Future<Actividad?> getActividadByCode(int code) async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
-  String host = await Config.load(selected_host);
+  String host = await Config.load(selectedHost);
 
   var url = "http://$host/api/Cuenta/getActividadByCodigo/$code";
 
@@ -207,7 +207,7 @@ Future<Actividad?> getActividadByCode(int code) async {
 Future<http.Response> _getCuentas() async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
-  String host = await Config.load(selected_host);
+  String host = await Config.load(selectedHost);
 
   var url = "http://$host/api/Cuenta/GetAll";
 
@@ -291,7 +291,7 @@ Future<ServerResponse<Account?>> getCuentaByQr(String codigoQr) async {
 }
 
 Future<ServerResponse<Ubicacion>> getUbicacion(String codigo) async {
-  String host = await Config.load(selected_host);
+  String host = await Config.load(selectedHost);
   var url = "http://$host/api/Cuenta/Ubicacion/$codigo";
 
   var response = await http.get(Uri.parse(url));
@@ -330,7 +330,7 @@ Future<ServerResponse<Ubicacion>> getUbicacion(String codigo) async {
 
 Future<ServerResponse<List<Map<String, dynamic>>>> getProvincias() async {
   ServerResponse<List<Map<String, dynamic>>> serverResponse;
-  String host = await Config.load(selected_host);
+  String host = await Config.load(selectedHost);
 
   var url = "http://$host/api/Cuenta/UbicacionProvincias";
 
@@ -368,7 +368,7 @@ Future<ServerResponse<List<Map<String, dynamic>>>> getProvincias() async {
 Future<ServerResponse<List<Map<String, dynamic>>>> getCantones(
     int provincia) async {
   ServerResponse<List<Map<String, dynamic>>> serverResponse;
-  String host = await Config.load(selected_host);
+  String host = await Config.load(selectedHost);
   var url = "http://$host/api/Cuenta/UbicacionCantones?provincia=$provincia";
 
   var response = await http.get(Uri.parse(url));
@@ -405,7 +405,7 @@ Future<ServerResponse<List<Map<String, dynamic>>>> getCantones(
 Future<ServerResponse<List<Map<String, dynamic>>>> getDistritos(
     int provincia, int canton) async {
   ServerResponse<List<Map<String, dynamic>>> serverResponse;
-  String host = await Config.load(selected_host);
+  String host = await Config.load(selectedHost);
 
   var url =
       "http://$host/api/Cuenta/UbicacionDistritos?provincia=$provincia&canton=$canton";
@@ -445,7 +445,7 @@ Future<ServerResponse<List<Map<String, dynamic>>>> getBarrios(
     int provincia, int canton, int distrito) async {
   ServerResponse<List<Map<String, dynamic>>> serverResponse;
 
-  String host = await Config.load(selected_host);
+  String host = await Config.load(selectedHost);
   var url =
       "http://$host/api/Cuenta/UbicacionBarrios?provincia=$provincia&canton=$canton&distrito=$distrito";
 
