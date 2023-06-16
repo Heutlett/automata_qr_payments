@@ -95,14 +95,30 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
   }
 
   void deleteAcc(BuildContext context, String accountId) async {
-    var deleteResponse = await deleteAccount(accountId);
-    if (context.mounted) {
-      if (deleteResponse.success) {
-        showAlertDialog(context, 'Cuenta eliminada',
-            'La cuenta ha sido eliminada correctamente.', 'Aceptar');
-      } else {
-        showAlertDialog(context, 'Error', deleteResponse.message, 'Aceptar');
-      }
+    showAlertDialog2Options(
+        context,
+        'Aviso',
+        '¿Está seguro de que desea eliminar esta cuenta?',
+        'Si, acepto',
+        'No, cancelar', () {
+      deleteAccConfirm(context, accountId);
+    });
+  }
+}
+
+void deleteAccConfirm(BuildContext context, String accountId) async {
+  var deleteResponse = await deleteAccount(accountId);
+  if (context.mounted) {
+    if (deleteResponse.success) {
+      showAlertDialog(context, 'Cuenta eliminada',
+          'La cuenta ha sido eliminada correctamente.', 'Aceptar');
+    } else {
+      showAlertDialog(context, 'Error', deleteResponse.message, 'Aceptar');
     }
+  }
+  if (context.mounted) {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        "/home_logged", (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamed('/account_management');
   }
 }

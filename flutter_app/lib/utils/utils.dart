@@ -64,3 +64,74 @@ void showAlertDialogWithRoute(
     },
   );
 }
+
+void showAlertDialog2Options(
+  BuildContext context,
+  String title,
+  String message,
+  String buttonText1,
+  String buttonText2,
+  VoidCallback function,
+) {
+  // set up the buttons
+  Widget executeButton = TextButton(
+    child: Text(buttonText1),
+    onPressed: function,
+  );
+
+  Widget cancelButton = TextButton(
+    child: Text(buttonText2),
+    onPressed: () {
+      Navigator.of(context).pop();
+    },
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text(title),
+    content: Text(message),
+    actions: [
+      executeButton,
+      cancelButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}
+
+void showAlertDialogWithFunction(
+  BuildContext context,
+  String title,
+  String message,
+  String buttonText,
+  VoidCallback function,
+) {
+  // set up the button
+  Widget okButton = TextButton(
+    child: Text(buttonText),
+    onPressed: function,
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text(title),
+    content: Text(message),
+    actions: [
+      okButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}

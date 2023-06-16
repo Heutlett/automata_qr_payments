@@ -3,6 +3,7 @@ import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 import 'package:flutter_app/screens/widgets/general/my_button.dart';
 import 'package:flutter_app/screens/widgets/account/account_info_card.dart';
+import 'package:flutter_app/utils/utils.dart';
 
 class AccountManagementScreen extends StatefulWidget {
   const AccountManagementScreen({Key? key}) : super(key: key);
@@ -12,11 +13,23 @@ class AccountManagementScreen extends StatefulWidget {
 }
 
 class _AccountManagementScreenState extends State<AccountManagementScreen> {
+  List<Account>? accounts;
+
+  @override
+  void initState() {
+    super.initState();
+    loadAccounts();
+  }
+
+  void loadAccounts() async {
+    var loadedAccounts = await getCuentasList();
+    setState(() {
+      accounts = loadedAccounts;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final List<Account> accounts =
-        ModalRoute.of(context)?.settings.arguments as List<Account>;
-
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -42,48 +55,27 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          children: accounts.map(
-            (acc) {
-              return Card(
-                margin: const EdgeInsets.all(8),
-                elevation: 5,
-                color: acc.cedulaTipo == 'Juridica'
-                    ? const Color.fromARGB(255, 180, 193, 255)
-                    : const Color.fromARGB(255, 180, 234, 255),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      AccountInfoCard(account: acc, addButtons: 2),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ).toList(),
+          children: accounts == null
+              ? [CircularProgressIndicator()] // Indicador de carga
+              : accounts!.map((acc) {
+                  return Card(
+                    margin: const EdgeInsets.all(8),
+                    elevation: 5,
+                    color: acc.cedulaTipo == 'Juridica'
+                        ? const Color.fromARGB(255, 180, 193, 255)
+                        : const Color.fromARGB(255, 180, 234, 255),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          AccountInfoCard(account: acc, addButtons: 2),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
         ),
       ),
-    );
-  }
-
-  void _showDialog(
-      BuildContext context, String title, String content, String textButton) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: <Widget>[
-            TextButton(
-              child: Text(textButton),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 
@@ -96,7 +88,8 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
         Navigator.of(context)
             .pushNamed("/create_account", arguments: provinciasList);
       } else {
-        _showDialog(context, 'Error', provinciasResponse.message, 'Aceptar');
+        showAlertDialog(
+            context, 'Error', provinciasResponse.message, 'Aceptar');
       }
     }
   }

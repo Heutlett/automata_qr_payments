@@ -155,11 +155,13 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                 }
                                 return null;
                               },
+                              keyboardType: TextInputType.number,
                             ),
                             TextFormField(
                               controller: _idExtranjeroController,
                               decoration: const InputDecoration(
                                   labelText: 'ID extranjero'),
+                              keyboardType: TextInputType.number,
                             ),
                             TextFormField(
                               controller: _nombreController,
@@ -171,11 +173,13 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                 }
                                 return null;
                               },
+                              keyboardType: TextInputType.name,
                             ),
                             TextFormField(
                               controller: _nombreComercialController,
                               decoration: const InputDecoration(
                                   labelText: 'Nombre comercial'),
+                              keyboardType: TextInputType.name,
                             ),
                             DropdownButtonFormField<String>(
                               value: _tipoCuenta,
@@ -230,6 +234,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                           }
                                           return null;
                                         },
+                                        keyboardType: TextInputType.number,
                                       ),
                                     ),
                                     const SizedBox(width: 16.0),
@@ -245,6 +250,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                           }
                                           return null;
                                         },
+                                        keyboardType: TextInputType.number,
                                       ),
                                     )
                                   ],
@@ -264,6 +270,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                         controller: _faxCodigoPaisController,
                                         decoration: const InputDecoration(
                                             labelText: 'Código de país'),
+                                        keyboardType: TextInputType.number,
                                       ),
                                     ),
                                     const SizedBox(width: 16.0),
@@ -273,6 +280,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                         controller: _faxNumeroController,
                                         decoration: const InputDecoration(
                                             labelText: 'Número de fax'),
+                                        keyboardType: TextInputType.number,
                                       ),
                                     )
                                   ],
@@ -295,6 +303,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                     }
                                     return null;
                                   },
+                                  keyboardType: TextInputType.emailAddress,
                                 ),
                               ])),
                       const SizedBox(height: 16.0),
@@ -442,13 +451,13 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                     Expanded(
                                       child: TextFormField(
                                         controller: _codigoActividadController,
-                                        keyboardType: TextInputType
-                                            .number, // Esto cambiará el tipo de teclado a numérico
+                                        keyboardType: TextInputType.number,
                                         inputFormatters: [
                                           FilteringTextInputFormatter.digitsOnly
                                         ],
                                         decoration: const InputDecoration(
-                                            labelText: 'Codigo de actividad'),
+                                          labelText: 'Codigo de actividad',
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(width: 16.0),
@@ -457,6 +466,10 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                       child: ElevatedButton(
                                         onPressed: () {
                                           addActivity(context);
+                                          _codigoActividadController
+                                              .clear(); // Limpiar el TextFormField
+                                          FocusScope.of(context)
+                                              .unfocus(); // Ocultar el teclado
                                         },
                                         child: const Text("Agregar actividad"),
                                       ),
@@ -555,6 +568,18 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
     final ubicacionSenasExtranjero = _ubicacionSenasExtranjeroController.text;
     final tipo = _tipoCuenta;
 
+    if (selectedProvincia == null ||
+        selectedCanton == null ||
+        selectedDistrito == null ||
+        selectedBarrio == null) {
+      showAlertDialog(
+          context,
+          'Error',
+          'Todos los campos de ubicación son requeridos, por favor agregue TODOS los campos de ubicación.',
+          'Aceptar');
+      return;
+    }
+
     String codigoUbicacion = selectedProvincia!.id.toString() +
         selectedCanton!.id.toString().padLeft(2, '0') +
         selectedDistrito!.id.toString().padLeft(2, '0') +
@@ -582,15 +607,21 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
 
     if (context.mounted) {
       if (response.statusCode == 200) {
-        showAlertDialog(context, 'Cuenta agregada',
-            'La cuenta se agregó exitosamente.', 'Aceptar');
-        Navigator.of(context).pop();
-        Navigator.of(context).pop();
+        showAlertDialogWithFunction(context, 'Cuenta agregada',
+            'La cuenta se agregó exitosamente.', 'Aceptar', () {
+          reloadAccounts(context);
+        });
       } else {
         showAlertDialog(context, 'Error al agregar cuenta',
             'Ocurrió un error al agregar la cuenta.', 'Aceptar');
       }
     }
+  }
+
+  void reloadAccounts(BuildContext context) async {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        "/home_logged", (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamed('/account_management');
   }
 
   // Simula la carga de los cantones para la provincia seleccionada

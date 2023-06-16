@@ -202,11 +202,13 @@ class _EditAccountState extends State<EditAccount> {
                                 }
                                 return null;
                               },
+                              keyboardType: TextInputType.number,
                             ),
                             TextFormField(
                               controller: _idExtranjeroController,
                               decoration: const InputDecoration(
                                   labelText: 'ID extranjero'),
+                              keyboardType: TextInputType.number,
                             ),
                             TextFormField(
                               controller: _nombreController,
@@ -218,11 +220,13 @@ class _EditAccountState extends State<EditAccount> {
                                 }
                                 return null;
                               },
+                              keyboardType: TextInputType.name,
                             ),
                             TextFormField(
                               controller: _nombreComercialController,
                               decoration: const InputDecoration(
                                   labelText: 'Nombre comercial'),
+                              keyboardType: TextInputType.name,
                             ),
                             DropdownButtonFormField<String>(
                               value: _tipoCuenta,
@@ -277,6 +281,7 @@ class _EditAccountState extends State<EditAccount> {
                                           }
                                           return null;
                                         },
+                                        keyboardType: TextInputType.number,
                                       ),
                                     ),
                                     const SizedBox(width: 16.0),
@@ -292,6 +297,7 @@ class _EditAccountState extends State<EditAccount> {
                                           }
                                           return null;
                                         },
+                                        keyboardType: TextInputType.number,
                                       ),
                                     )
                                   ],
@@ -311,6 +317,7 @@ class _EditAccountState extends State<EditAccount> {
                                         controller: _faxCodigoPaisController,
                                         decoration: const InputDecoration(
                                             labelText: 'Código de país'),
+                                        keyboardType: TextInputType.number,
                                       ),
                                     ),
                                     const SizedBox(width: 16.0),
@@ -320,6 +327,7 @@ class _EditAccountState extends State<EditAccount> {
                                         controller: _faxNumeroController,
                                         decoration: const InputDecoration(
                                             labelText: 'Número de fax'),
+                                        keyboardType: TextInputType.number,
                                       ),
                                     )
                                   ],
@@ -342,6 +350,7 @@ class _EditAccountState extends State<EditAccount> {
                                     }
                                     return null;
                                   },
+                                  keyboardType: TextInputType.emailAddress,
                                 ),
                               ])),
                       const SizedBox(height: 16.0),
@@ -489,13 +498,13 @@ class _EditAccountState extends State<EditAccount> {
                                     Expanded(
                                       child: TextFormField(
                                         controller: _codigoActividadController,
-                                        keyboardType: TextInputType
-                                            .number, // Esto cambiará el tipo de teclado a numérico
+                                        keyboardType: TextInputType.number,
                                         inputFormatters: [
                                           FilteringTextInputFormatter.digitsOnly
                                         ],
                                         decoration: const InputDecoration(
-                                            labelText: 'Codigo de actividad'),
+                                          labelText: 'Codigo de actividad',
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(width: 16.0),
@@ -504,6 +513,10 @@ class _EditAccountState extends State<EditAccount> {
                                       child: ElevatedButton(
                                         onPressed: () {
                                           addActivity(context);
+                                          _codigoActividadController
+                                              .clear(); // Limpiar el TextFormField
+                                          FocusScope.of(context)
+                                              .unfocus(); // Ocultar el teclado
                                         },
                                         child: const Text("Agregar actividad"),
                                       ),
@@ -602,6 +615,18 @@ class _EditAccountState extends State<EditAccount> {
     final ubicacionSenasExtranjero = _ubicacionSenasExtranjeroController.text;
     final tipo = _tipoCuenta;
 
+    if (selectedProvincia == null ||
+        selectedCanton == null ||
+        selectedDistrito == null ||
+        selectedBarrio == null) {
+      showAlertDialog(
+          context,
+          'Error',
+          'Todos los campos de ubicación son requeridos, por favor agregue TODOS los campos de ubicación.',
+          'Aceptar');
+      return;
+    }
+
     String codigoUbicacion = selectedProvincia!.id.toString() +
         selectedCanton!.id.toString().padLeft(2, '0') +
         selectedDistrito!.id.toString().padLeft(2, '0') +
@@ -630,15 +655,21 @@ class _EditAccountState extends State<EditAccount> {
 
     if (context.mounted) {
       if (response.statusCode == 200) {
-        showAlertDialog(context, 'Cuenta editada correctamente',
-            'La cuenta se editó exitosamente.', 'Aceptar');
-        Navigator.of(context).pop();
-        Navigator.of(context).pop();
+        showAlertDialogWithFunction(context, 'Cuenta editada',
+            'La cuenta se editó exitosamente.', 'Aceptar', () {
+          reloadAccounts(context);
+        });
       } else {
         showAlertDialog(context, 'Error al editar cuenta',
             'Ocurrió un error al editar la cuenta.', 'Aceptar');
       }
     }
+  }
+
+  void reloadAccounts(BuildContext context) async {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        "/home_logged", (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamed('/account_management');
   }
 
   void initActivities(BuildContext context, String activity) async {

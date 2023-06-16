@@ -10,8 +10,6 @@ class HomeLoggedPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String message = ModalRoute.of(context)?.settings.arguments as String;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('QR Payments'),
@@ -22,7 +20,7 @@ class HomeLoggedPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             MyText(
-              text: '¡Bienvenido $message!',
+              text: '¡Bienvenido a QR Payments!',
               fontSize: 28.0,
               fontWeight: FontWeight.bold,
             ),
