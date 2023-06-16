@@ -75,8 +75,8 @@ void showAlertDialog2Options(
 ) {
   // set up the buttons
   Widget executeButton = TextButton(
-    child: Text(buttonText1),
     onPressed: function,
+    child: Text(buttonText1),
   );
 
   Widget cancelButton = TextButton(
@@ -114,8 +114,8 @@ void showAlertDialogWithFunction(
 ) {
   // set up the button
   Widget okButton = TextButton(
-    child: Text(buttonText),
     onPressed: function,
+    child: Text(buttonText),
   );
 
   // set up the AlertDialog

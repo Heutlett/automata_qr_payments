@@ -8,7 +8,6 @@ class Config {
       final config = jsonDecode(configString);
       return config[selectedHost];
     } catch (e) {
-      print('Error al cargar la configuración: $e');
       return "Error";
     }
   }
