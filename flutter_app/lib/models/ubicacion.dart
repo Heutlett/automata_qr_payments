@@ -11,6 +11,16 @@ class Ubicacion {
       required this.barrio});
 }
 
+List<Provincia> provincias = [
+  Provincia(id: 1, nombre: 'SAN JOSE'),
+  Provincia(id: 2, nombre: 'ALAJUELA'),
+  Provincia(id: 3, nombre: 'CARTAGO'),
+  Provincia(id: 4, nombre: 'HEREDIA'),
+  Provincia(id: 5, nombre: 'GUANACASTE'),
+  Provincia(id: 6, nombre: 'PUNTARENAS'),
+  Provincia(id: 7, nombre: 'LIMON'),
+];
+
 class Provincia {
   final int id;
   final String nombre;

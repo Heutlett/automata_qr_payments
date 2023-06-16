@@ -48,17 +48,6 @@ class _EditAccountState extends State<EditAccount> {
 
   final _codigoActividadController = TextEditingController();
 
-// Lista de provincias
-  List<Provincia> provinces = [
-    Provincia(id: 1, nombre: 'SAN JOSE'),
-    Provincia(id: 2, nombre: 'ALAJUELA'),
-    Provincia(id: 3, nombre: 'CARTAGO'),
-    Provincia(id: 4, nombre: 'HEREDIA'),
-    Provincia(id: 5, nombre: 'GUANACASTE'),
-    Provincia(id: 6, nombre: 'PUNTARENAS'),
-    Provincia(id: 7, nombre: 'LIMON'),
-  ];
-
   // Lista de cantones
   List<Canton> cantones = [];
 
@@ -99,14 +88,46 @@ class _EditAccountState extends State<EditAccount> {
     super.dispose();
   }
 
+  void loadUbicacion(Account account) async {
+    var response = await getUbicacion(account.ubicacionCodigo);
+
+    if (response.success) {
+      var ubicacion = response.data;
+      if (ubicacion != null) {
+        setState(() {
+          selectedProvincia = provincias.firstWhere((provincia) =>
+              provincia.nombre.toUpperCase() ==
+              ubicacion.provincia.toUpperCase());
+
+          selectedCanton = cantones.firstWhere((canton) =>
+              canton.nombre.toUpperCase() == ubicacion.canton.toUpperCase());
+
+          selectedDistrito = distritos.firstWhere((distrito) =>
+              distrito.nombre.toUpperCase() ==
+              ubicacion.distrito.toUpperCase());
+
+          selectedBarrio = barrios.firstWhere((barrio) =>
+              barrio.nombre.toUpperCase() == ubicacion.barrio.toUpperCase());
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<dynamic>? args =
-        ModalRoute.of(context)?.settings.arguments as List<dynamic>?;
+    List<dynamic> args =
+        ModalRoute.of(context)?.settings.arguments as List<dynamic>;
 
-    final Account account = args![1];
+    Account account = args[0];
+
+    //Account account = ModalRoute.of(context)?.settings.arguments as Account;
 
     if (!_isInitialized) {
+      cantones = args[1];
+      distritos = args[2];
+      barrios = args[3];
+      loadUbicacion(account);
+
       _cedulaTipo = account.cedulaTipo;
       _cedulaNumeroController.text = account.cedulaNumero;
       _idExtranjeroController.text = account.idExtranjero;
@@ -118,13 +139,6 @@ class _EditAccountState extends State<EditAccount> {
       _faxCodigoPaisController.text = account.faxCodigoPais;
       _faxNumeroController.text = account.faxNumero;
       _correoController.text = account.correo;
-      //_ubicacionProvincia = account.nombreProvincia!.toUpperCase();
-      //showCantones();
-      //_ubicacionCanton = account.nombreCanton!;
-      //showDistritos();
-      //_ubicacionDistrito = account.nombreDistrito!;
-      //showBarrios();
-      //_ubicacionBarrio = account.nombreBarrio!;
       _ubicacionSenasController.text = account.ubicacionSenas;
       _ubicacionSenasExtranjeroController.text =
           account.ubicacionSenasExtranjero;
@@ -369,7 +383,7 @@ class _EditAccountState extends State<EditAccount> {
                             ),
                             DropdownButtonFormField<Provincia>(
                               value: selectedProvincia,
-                              items: provinces.map((province) {
+                              items: provincias.map((province) {
                                 return DropdownMenuItem<Provincia>(
                                   value: province,
                                   child: Text(province.nombre),
@@ -686,33 +700,41 @@ class _EditAccountState extends State<EditAccount> {
   }
 
   void addActivity(BuildContext context) async {
-    Actividad? actividad =
-        await getActividadByCode(int.parse(_codigoActividadController.text));
+    if (_codigoActividadController.text.isEmpty) {
+      showAlertDialog(
+          context,
+          'Error',
+          'El campo Codigo de actividad está vacío, por favor ingresar un codigo de actividad',
+          'Aceptar');
+    } else {
+      Actividad? actividad =
+          await getActividadByCode(int.parse(_codigoActividadController.text));
 
-    if (context.mounted) {
-      if (actividad != null) {
-        bool containsActividad = actividades.contains(actividad);
+      if (context.mounted) {
+        if (actividad != null) {
+          bool containsActividad = actividades.contains(actividad);
 
-        if (!containsActividad) {
-          setState(() {
-            actividades.add(actividad);
-          });
+          if (!containsActividad) {
+            setState(() {
+              actividades.add(actividad);
+            });
 
-          showAlertDialog(context, 'Resultado',
-              'La actividad se agregó exitosamente.', 'Aceptar');
+            showAlertDialog(context, 'Resultado',
+                'La actividad se agregó exitosamente.', 'Aceptar');
+          } else {
+            showAlertDialog(
+                context,
+                'Error',
+                'No se puede agregar una actividad economica repetida.',
+                'Aceptar');
+          }
         } else {
           showAlertDialog(
               context,
               'Error',
-              'No se puede agregar una actividad economica repetida.',
+              'No se ha encontrado la actividad economica asociada a ese codigo.',
               'Aceptar');
         }
-      } else {
-        showAlertDialog(
-            context,
-            'Error',
-            'No se ha encontrado la actividad economica asociada a ese codigo.',
-            'Aceptar');
       }
     }
   }

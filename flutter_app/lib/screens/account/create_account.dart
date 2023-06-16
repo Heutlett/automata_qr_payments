@@ -716,33 +716,41 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
   }
 
   void addActivity(BuildContext context) async {
-    Actividad? actividad =
-        await getActividadByCode(int.parse(_codigoActividadController.text));
+    if (_codigoActividadController.text.isEmpty) {
+      showAlertDialog(
+          context,
+          'Error',
+          'El campo Codigo de actividad está vacío, por favor ingresar un codigo de actividad',
+          'Aceptar');
+    } else {
+      Actividad? actividad =
+          await getActividadByCode(int.parse(_codigoActividadController.text));
 
-    if (context.mounted) {
-      if (actividad != null) {
-        bool containsActividad = actividades.contains(actividad);
+      if (context.mounted) {
+        if (actividad != null) {
+          bool containsActividad = actividades.contains(actividad);
 
-        if (!containsActividad) {
-          setState(() {
-            actividades.add(actividad);
-          });
+          if (!containsActividad) {
+            setState(() {
+              actividades.add(actividad);
+            });
 
-          showAlertDialog(context, 'Resultado',
-              'La actividad se agregó exitosamente.', 'Aceptar');
+            showAlertDialog(context, 'Resultado',
+                'La actividad se agregó exitosamente.', 'Aceptar');
+          } else {
+            showAlertDialog(
+                context,
+                'Error',
+                'No se puede agregar una actividad economica repetida.',
+                'Aceptar');
+          }
         } else {
           showAlertDialog(
               context,
               'Error',
-              'No se puede agregar una actividad economica repetida.',
+              'No se ha encontrado la actividad economica asociada a ese codigo.',
               'Aceptar');
         }
-      } else {
-        showAlertDialog(
-            context,
-            'Error',
-            'No se ha encontrado la actividad economica asociada a ese codigo.',
-            'Aceptar');
       }
     }
   }

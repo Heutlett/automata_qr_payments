@@ -5,6 +5,7 @@ import 'account_info_activities.dart';
 import 'account_info_card_buttons.dart';
 import 'account_info_expand.dart';
 import 'account_info_header.dart';
+import 'package:flutter_app/models/ubicacion.dart';
 import 'package:flutter_app/utils/utils.dart';
 
 class AccountInfoCard extends StatefulWidget {
@@ -23,6 +24,19 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
 
   late Account account;
   late int addButtons;
+
+  List<Canton>? _cantones;
+  List<Distrito>? _distritos;
+  List<Barrio>? _barrios;
+
+  Ubicacion? ubicacion;
+  Provincia? selectedProvincia;
+  Canton? selectedCanton;
+  Distrito? selectedDistrito;
+  Barrio? selectedBarrio;
+
+  final String errorUbicacionMessage =
+      'Ha ocurrido un error al obtener la ubicación de la cuenta.';
 
   @override
   void initState() {
@@ -75,16 +89,103 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
   }
 
   void editAcc(BuildContext context) async {
-    var cantonesResponse = await getProvincias();
+    var response = await getUbicacion(account.ubicacionCodigo);
+
+    try {
+      if (response.success) {
+        ubicacion = response.data;
+        if (ubicacion != null) {
+          selectedProvincia = provincias.firstWhere((provincia) =>
+              provincia.nombre.toUpperCase() ==
+              ubicacion!.provincia.toUpperCase());
+        } else {
+          throw Exception('Ubicación nula');
+        }
+      } else {
+        throw Exception('Respuesta de error del API');
+      }
+
+      if (selectedProvincia != null) {
+        var cantonesResponse = await getCantones(selectedProvincia!.id);
+        if (cantonesResponse.success) {
+          var cantonesList = cantonesResponse.data;
+          if (cantonesList != null) {
+            _cantones = cantonesList.map((data) {
+              return Canton(
+                id: data['canton'],
+                nombre: data['nombreCanton'],
+              );
+            }).toList();
+          } else {
+            throw Exception('Lista de cantones nula');
+          }
+        } else {
+          throw Exception('Respuesta de error del API');
+        }
+      } else {
+        throw Exception('Provincia seleccionada nula');
+      }
+
+      selectedCanton = _cantones!.firstWhere((canton) =>
+          canton.nombre.toUpperCase() == ubicacion!.canton.toUpperCase());
+
+      if (selectedCanton != null) {
+        var distritosResponse =
+            await getDistritos(selectedProvincia!.id, selectedCanton!.id);
+        if (distritosResponse.success) {
+          var distritosList = distritosResponse.data;
+          if (distritosList != null) {
+            _distritos = distritosList.map((data) {
+              return Distrito(
+                id: data['distrito'],
+                nombre: data['nombreDistrito'],
+              );
+            }).toList();
+          } else {
+            throw Exception('Lista de distritos nula');
+          }
+        } else {
+          throw Exception('Respuesta de error del API');
+        }
+      } else {
+        throw Exception('Cantón seleccionado nulo');
+      }
+
+      selectedDistrito = _distritos!.firstWhere((distrito) =>
+          distrito.nombre.toUpperCase() == ubicacion!.distrito.toUpperCase());
+
+      if (selectedDistrito != null) {
+        var barriosResponse = await getBarrios(
+            selectedProvincia!.id, selectedCanton!.id, selectedDistrito!.id);
+        if (barriosResponse.success) {
+          var barriosList = barriosResponse.data;
+          if (barriosList != null) {
+            _barrios = barriosList.map((data) {
+              return Barrio(
+                id: data['barrio'],
+                nombre: data['nombreBarrio'],
+              );
+            }).toList();
+          } else {
+            throw Exception('Lista de barrios nula');
+          }
+        } else {
+          throw Exception('Respuesta de error del API');
+        }
+      } else {
+        throw Exception('Distrito seleccionado nulo');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        String exError = e.toString();
+        showAlertDialog(
+            context, 'Error', "$errorUbicacionMessage: $exError", 'Aceptar');
+      }
+    }
 
     if (context.mounted) {
-      if (cantonesResponse.success) {
-        var cantonesList = cantonesResponse.data;
-        Navigator.of(context)
-            .pushNamed("/edit_account", arguments: [cantonesList, account]);
-      } else {
-        showAlertDialog(context, 'Error', cantonesResponse.message, 'Aceptar');
-      }
+      Navigator.of(context).pushNamed("/edit_account",
+          arguments: [account, _cantones, _distritos, _barrios]);
     }
   }
 
