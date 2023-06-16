@@ -140,10 +140,10 @@ Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
           await getUbicacion(acc.ubicacionCodigo);
 
       if (ubicacion.success) {
-        acc.nombreProvincia = ubicacion.data!.provincia;
-        acc.nombreCanton = ubicacion.data!.canton;
-        acc.nombreDistrito = ubicacion.data!.distrito;
-        acc.nombreBarrio = ubicacion.data!.barrio;
+        acc.nombreProvincia = ubicacion.data!.provincia.nombre;
+        acc.nombreCanton = ubicacion.data!.canton.nombre;
+        acc.nombreDistrito = ubicacion.data!.distrito.nombre;
+        acc.nombreBarrio = ubicacion.data!.barrio.nombre;
       }
 
       serverResponse = ServerResponse(data: acc, message: '', success: true);
@@ -253,10 +253,10 @@ Future<List<Account>> getCuentasList() async {
         ubicacionSenasExtranjero: data[i]['ubicacionSenasExtranjero'],
         tipo: data[i]['tipo'],
         actividades: actividades,
-        nombreProvincia: ubicacion.data!.provincia,
-        nombreCanton: ubicacion.data!.canton,
-        nombreDistrito: ubicacion.data!.distrito,
-        nombreBarrio: ubicacion.data!.barrio,
+        nombreProvincia: ubicacion.data!.provincia.nombre,
+        nombreCanton: ubicacion.data!.canton.nombre,
+        nombreDistrito: ubicacion.data!.distrito.nombre,
+        nombreBarrio: ubicacion.data!.barrio.nombre,
       ));
     } else {
       accounts.add(Account(
@@ -301,10 +301,17 @@ Future<ServerResponse<Ubicacion>> getUbicacion(String codigo) async {
       data = data['data'];
       serverResponse = ServerResponse(
         data: Ubicacion(
-            provincia: data['nombreProvincia'].toUpperCase(),
-            canton: data['nombreCanton'].toUpperCase(),
-            distrito: data['nombreDistrito'].toUpperCase(),
-            barrio: data['nombreBarrio'].toUpperCase()),
+            provincia: Provincia(
+                id: data['provincia'],
+                nombre: data['nombreProvincia'].toUpperCase()),
+            canton: Canton(
+                id: data['canton'], nombre: data['nombreCanton'].toUpperCase()),
+            distrito: Distrito(
+                id: data['distrito'],
+                nombre: data['nombreDistrito'].toUpperCase()),
+            barrio: Barrio(
+                id: data['barrio'],
+                nombre: data['nombreBarrio'].toUpperCase())),
         message: '',
         success: true,
       );

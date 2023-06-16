@@ -95,19 +95,17 @@ class _EditAccountState extends State<EditAccount> {
       var ubicacion = response.data;
       if (ubicacion != null) {
         setState(() {
-          selectedProvincia = provincias.firstWhere((provincia) =>
-              provincia.nombre.toUpperCase() ==
-              ubicacion.provincia.toUpperCase());
+          selectedProvincia = provincias.firstWhere(
+              (provincia) => provincia.id == ubicacion.provincia.id);
 
-          selectedCanton = cantones.firstWhere((canton) =>
-              canton.nombre.toUpperCase() == ubicacion.canton.toUpperCase());
+          selectedCanton =
+              cantones.firstWhere((canton) => canton.id == ubicacion.canton.id);
 
-          selectedDistrito = distritos.firstWhere((distrito) =>
-              distrito.nombre.toUpperCase() ==
-              ubicacion.distrito.toUpperCase());
+          selectedDistrito = distritos
+              .firstWhere((distrito) => distrito.id == ubicacion.distrito.id);
 
-          selectedBarrio = barrios.firstWhere((barrio) =>
-              barrio.nombre.toUpperCase() == ubicacion.barrio.toUpperCase());
+          selectedBarrio =
+              barrios.firstWhere((barrio) => barrio.id == ubicacion.barrio.id);
         });
       }
     }
@@ -750,7 +748,7 @@ class _EditAccountState extends State<EditAccount> {
             cantones = cantonesList.map((data) {
               return Canton(
                 id: data['canton'],
-                nombre: data['nombreCanton'],
+                nombre: data['nombreCanton'].toUpperCase(),
               );
             }).toList();
           });
@@ -779,7 +777,7 @@ class _EditAccountState extends State<EditAccount> {
             distritos = distritosList.map((data) {
               return Distrito(
                 id: data['distrito'],
-                nombre: data['nombreDistrito'],
+                nombre: data['nombreDistrito'].toUpperCase(),
               );
             }).toList();
           });
@@ -808,7 +806,7 @@ class _EditAccountState extends State<EditAccount> {
             barrios = barriosList.map((data) {
               return Barrio(
                 id: data['barrio'],
-                nombre: data['nombreBarrio'],
+                nombre: data['nombreBarrio'].toUpperCase(),
               );
             }).toList();
           });

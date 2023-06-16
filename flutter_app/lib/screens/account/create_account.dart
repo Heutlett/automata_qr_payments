@@ -640,7 +640,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
             cantones = cantonesList.map((data) {
               return Canton(
                 id: data['canton'],
-                nombre: data['nombreCanton'],
+                nombre: data['nombreCanton'].toUpperCase(),
               );
             }).toList();
           });
@@ -669,7 +669,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
             distritos = distritosList.map((data) {
               return Distrito(
                 id: data['distrito'],
-                nombre: data['nombreDistrito'],
+                nombre: data['nombreDistrito'].toUpperCase(),
               );
             }).toList();
           });
@@ -698,7 +698,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
             barrios = barriosList.map((data) {
               return Barrio(
                 id: data['barrio'],
-                nombre: data['nombreBarrio'],
+                nombre: data['nombreBarrio'].toUpperCase(),
               );
             }).toList();
           });

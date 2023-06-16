@@ -95,9 +95,8 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
       if (response.success) {
         ubicacion = response.data;
         if (ubicacion != null) {
-          selectedProvincia = provincias.firstWhere((provincia) =>
-              provincia.nombre.toUpperCase() ==
-              ubicacion!.provincia.toUpperCase());
+          selectedProvincia = provincias.firstWhere(
+              (provincia) => provincia.id == ubicacion!.provincia.id);
         } else {
           throw Exception('Ubicación nula');
         }
@@ -113,7 +112,7 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
             _cantones = cantonesList.map((data) {
               return Canton(
                 id: data['canton'],
-                nombre: data['nombreCanton'],
+                nombre: data['nombreCanton'].toUpperCase(),
               );
             }).toList();
           } else {
@@ -126,8 +125,8 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
         throw Exception('Provincia seleccionada nula');
       }
 
-      selectedCanton = _cantones!.firstWhere((canton) =>
-          canton.nombre.toUpperCase() == ubicacion!.canton.toUpperCase());
+      selectedCanton =
+          _cantones!.firstWhere((canton) => canton.id == ubicacion!.canton.id);
 
       if (selectedCanton != null) {
         var distritosResponse =
@@ -138,7 +137,7 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
             _distritos = distritosList.map((data) {
               return Distrito(
                 id: data['distrito'],
-                nombre: data['nombreDistrito'],
+                nombre: data['nombreDistrito'].toUpperCase(),
               );
             }).toList();
           } else {
@@ -151,8 +150,8 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
         throw Exception('Cantón seleccionado nulo');
       }
 
-      selectedDistrito = _distritos!.firstWhere((distrito) =>
-          distrito.nombre.toUpperCase() == ubicacion!.distrito.toUpperCase());
+      selectedDistrito = _distritos!
+          .firstWhere((distrito) => distrito.id == ubicacion!.distrito.id);
 
       if (selectedDistrito != null) {
         var barriosResponse = await getBarrios(
@@ -163,7 +162,7 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
             _barrios = barriosList.map((data) {
               return Barrio(
                 id: data['barrio'],
-                nombre: data['nombreBarrio'],
+                nombre: data['nombreBarrio'].toUpperCase(),
               );
             }).toList();
           } else {

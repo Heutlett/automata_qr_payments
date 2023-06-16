@@ -1,8 +1,8 @@
 class Ubicacion {
-  String provincia;
-  String canton;
-  String distrito;
-  String barrio;
+  Provincia provincia;
+  Canton canton;
+  Distrito distrito;
+  Barrio barrio;
 
   Ubicacion(
       {required this.provincia,
