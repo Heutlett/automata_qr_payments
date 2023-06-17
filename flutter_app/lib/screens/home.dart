@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/widgets/general/my_button.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'widgets/general/my_text.dart';
 
 class HomePage extends StatelessWidget {
@@ -19,7 +19,7 @@ class HomePage extends StatelessWidget {
           children: [
             const MyText(
                 text: '¡Bienvenido a QR Payments!',
-                fontSize: 28.0,
+                fontSize: 25.0,
                 fontWeight: FontWeight.bold),
             const SizedBox(height: 40.0),
             MyButton(
@@ -50,8 +50,11 @@ class HomePage extends StatelessWidget {
   }
 
   Future<void> _showLoginPage(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? userName = prefs.getString('lastUsername');
+
     if (context.mounted) {
-      Navigator.of(context).pushNamed("/login");
+      Navigator.of(context).pushNamed("/login", arguments: userName);
     }
   }
 }

@@ -22,27 +22,17 @@ class _LoginPageState extends State<LoginPage> {
   bool _builded = false;
   String? lastUsername;
   @override
-  void initState() {
-    super.initState();
-    loadUsername();
-  }
-
-  void loadUsername() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      lastUsername = prefs.getString('lastUsername');
-
-      // Remember username
-      if (lastUsername != null && lastUsername!.isNotEmpty && !_builded) {
-        _usernameController.text = lastUsername!;
-        _rememberUsername = true;
-        _builded = true;
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final String? lastUsername =
+        ModalRoute.of(context)?.settings.arguments as String?;
+
+    // Remember username
+    if (lastUsername != null && lastUsername.isNotEmpty && !_builded) {
+      _usernameController.text = lastUsername;
+      _rememberUsername = true;
+      _builded = true;
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inicio de sesión'),
@@ -55,47 +45,45 @@ class _LoginPageState extends State<LoginPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: lastUsername == null
-            ? const CircularProgressIndicator() // Indicador de carga
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20.0),
-                  const MyText(
-                    text: 'Bienvenido a QR Payments!',
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  const SizedBox(height: 20.0),
-                  MyTextField(
-                    labelText: 'Nombre de usuario',
-                    controller: _usernameController,
-                  ),
-                  const SizedBox(height: 20.0),
-                  MyTextField(
-                    labelText: 'Contraseña',
-                    controller: _passwordController,
-                    isPassword: true,
-                  ),
-                  const SizedBox(height: 20.0),
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: _rememberUsername,
-                        onChanged: (value) {
-                          recodarUsuario(value);
-                        },
-                      ),
-                      const Text('Recordar nombre de usuario'),
-                    ],
-                  ),
-                  const SizedBox(height: 20.0),
-                  MyButton(
-                    text: 'Iniciar sesión',
-                    function: () => _submitForm(context),
-                  ),
-                ],
-              ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20.0),
+            const MyText(
+              text: 'Bienvenido a QR Payments!',
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+            ),
+            const SizedBox(height: 20.0),
+            MyTextField(
+              labelText: 'Nombre de usuario',
+              controller: _usernameController,
+            ),
+            const SizedBox(height: 20.0),
+            MyTextField(
+              labelText: 'Contraseña',
+              controller: _passwordController,
+              isPassword: true,
+            ),
+            const SizedBox(height: 20.0),
+            Row(
+              children: [
+                Checkbox(
+                  value: _rememberUsername,
+                  onChanged: (value) {
+                    recodarUsuario(value);
+                  },
+                ),
+                const Text('Recordar nombre de usuario'),
+              ],
+            ),
+            const SizedBox(height: 20.0),
+            MyButton(
+              text: 'Iniciar sesión',
+              function: () => _submitForm(context),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -355,13 +355,26 @@ class _EditAccountState extends State<EditAccount> {
                                 TextFormField(
                                   controller: _correoController,
                                   decoration: const InputDecoration(
-                                      labelText: 'Correo electrónico'),
+                                    labelText: 'Correo electrónico',
+                                  ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'Este campo es obligatorio.';
                                     }
+
+                                    // Expresión regular para validar la estructura del correo electrónico
+                                    RegExp regex = RegExp(
+                                      r'^\s*(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()\[\]\.,;:\s@\"]+\.)+[^<>()\[\]\.,;:\s@\"]{0,})\s*$',
+                                    );
+
+                                    if (!regex.hasMatch(value)) {
+                                      return 'Ingrese un correo electrónico válido.';
+                                    }
+
                                     return null;
                                   },
+                                  autocorrect: false,
+                                  enableSuggestions: false,
                                   keyboardType: TextInputType.emailAddress,
                                 ),
                               ])),
@@ -599,7 +612,7 @@ class _EditAccountState extends State<EditAccount> {
                               showAlertDialog(
                                   context,
                                   "Error",
-                                  "Error, hay campos obligatorios sin llenar",
+                                  "El formulario se encuentra incompleto o algún campo es incorrecto.",
                                   "Corregir");
                             }
                           },
