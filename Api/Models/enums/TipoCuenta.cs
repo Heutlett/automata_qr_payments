@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Api.Scaffold
+namespace Api.Models
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum TipoCuenta

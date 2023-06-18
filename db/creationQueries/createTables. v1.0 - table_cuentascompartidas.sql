@@ -39,6 +39,16 @@ CREATE TABLE cuentas (
   CONSTRAINT FK_Cuentas_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES usuarios(Id)
 ) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS cuentascompartidas;
+CREATE TABLE cuentascompartidas (
+  UsuarioId INT NOT NULL,
+  CuentaCompartidaId INT NOT NULL,
+  PRIMARY KEY (UsuarioId, CuentaCompartidaId),
+  KEY IX_CuentasCompartidas_CuentaCompartidaId (CuentaCompartidaId), -- index key
+  CONSTRAINT FK_CuentasCompartidas_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES usuarios(Id) ON DELETE CASCADE,
+  CONSTRAINT FK_CuentasCompartidas_Cuentas_CuentaCompartidaId FOREIGN KEY (CuentaCompartidaId) REFERENCES cuentas(Id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 DROP TABLE IF EXISTS actividades;
 CREATE TABLE actividades (
     Codigo INT NOT NULL AUTO_INCREMENT,
@@ -68,3 +78,38 @@ CREATE TABLE ubicaciones (
     NombreBarrio LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     PRIMARY KEY (Provincia, Canton, Distrito, Barrio)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- DROP TABLE IF EXISTS--  credenciales_atv;
+-- CREATE TABLE credenciales_atv (
+--   Id INT NOT NULL AUTO_INCREMENT,
+--   IdCuenta INT NOT NULL,
+--   LlaveP12 VARCHAR(255) NOT NULL,
+--   PinP12 VARCHAR(10) NOT NULL,
+--   Usuario VARCHAR(250) NOT NULL,
+--   Contrasena VARCHAR(60) NOT NULL,
+--   PRIMARY KEY (Id),
+--   FOREIGN KEY (IdCuenta) REFERENCES cuentas(Id) ON DELETE CASCADE ON UPDATE CASCADE
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- DROP TABLE IF EXISTS historicos;
+-- CREATE TABLE historicos (
+--   Id INT NOT NULL AUTO_INCREMENT,
+--   IdEmisor INT NOT NULL,
+--   IdReceptor INT NOT NULL,
+--   Fecha DATE NOT NULL,
+--   DispositivoScan VARCHAR(100) NOT NULL,
+--   PRIMARY KEY (Id),
+--   FOREIGN KEY (IdEmisor) REFERENCES cuentas(Id),
+--   FOREIGN KEY (IdReceptor) REFERENCES cuentas(Id)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- DROP  TABLE IF EXISTS--  comprobantes;
+-- CREATE TABLE comprobantes (
+--     Id INT NOT NULL AUTO_INCREMENT,
+--     IdHistorico INT NOT NULL,
+--     Xml VARCHAR(100) NOT NULL,
+--     Tipo VARCHAR(4) NOT NULL,
+--     Estado INT(2) NOT NULL,
+--     PRIMARY KEY (Id),
+--     FOREIGN KEY (IdHistorico) REFERENCES historicos(Id)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

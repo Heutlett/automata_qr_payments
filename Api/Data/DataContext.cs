@@ -1,4 +1,4 @@
-using Api.Scaffold;
+using Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -111,7 +111,7 @@ namespace Api.Data
 
                 entity.HasMany(d => d.CuentasCompartidas).WithMany(p => p.Usuarios)
                     .UsingEntity<Dictionary<string, object>>(
-                        "Cuentascompartida",
+                        "cuentascompartidas",
                         r => r.HasOne<Cuenta>().WithMany()
                             .HasForeignKey("CuentaCompartidaId")
                             .HasConstraintName("FK_CuentasCompartidas_Cuentas_CuentaCompartidaId"),

@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Api.Dtos.Cuenta;
 using Api.Dtos.Cuenta.Ubicacion;
-using Api.Scaffold;
+using Api.Models;
 using AutoMapper;
 
 namespace Api

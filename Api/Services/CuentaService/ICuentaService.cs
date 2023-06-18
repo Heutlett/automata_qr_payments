@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Api.Dtos.Cuenta;
 using Api.Dtos.Cuenta.Ubicacion;
-using Api.Scaffold;
+using Api.Models;
 
 namespace Api.Services.CuentaService
 {
@@ -22,10 +18,8 @@ namespace Api.Services.CuentaService
         Task<ServiceResponse<List<GetUbicacionCantonDto>>> GetUbicacionCanton(int provincia);
         Task<ServiceResponse<List<GetUbicacionDistritoDto>>> GetUbicacionDistrito(int provincia, int canton);
         Task<ServiceResponse<List<GetUbicacionBarrioDto>>> GetUbicacionBarrio(int provincia, int canton, int distrito);
-        Task<ServiceResponse<GetCuentaDto>> GetCuentaTemporal(string nombreUsuario, int id);
-        Task<ServiceResponse<string>> GenerateCuentaQr(int idCuenta);
-        Task<ServiceResponse<GetCuentaDto>> GetCuentaByQR(string codigo);
-        // Task<ServiceResponse<GetCuentaDto>> ShareCuentaByQR(string codigoEncriptado);
-
+        Task<ServiceResponse<GetCuentaDto>> GetCuentaTemporal(string username, int id);
+        Task<ServiceResponse<string>> GenerateCuentaQr(int CuentaId);
+        Task<ServiceResponse<GetCuentaDto>> GetCuentaByQR(int UsuarioId, string encryptedcode);
     }
 }

@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Api.Scaffold;
+using Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -12,7 +8,7 @@ namespace Api.Data
 {
     public class AuthRepository : IAuthRepository
     {
-        
+
         private readonly DataContext _context;
         private readonly IConfiguration _configuration;
 
@@ -27,28 +23,29 @@ namespace Api.Data
             var usuario = await _context.Usuarios
                 .FirstOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower()));
 
-            if(usuario is null)
+            if (usuario is null)
             {
                 response.Success = false;
                 response.Message = "No se ha encontrado el usuario.";
             }
-            else if(!VerifyPasswordHash(password, usuario.PasswordHash, usuario.PasswordSalt))
+            else if (!VerifyPasswordHash(password, usuario.PasswordHash, usuario.PasswordSalt))
             {
                 response.Success = false;
                 response.Message = "Contraseña incorrecta.";
             }
-            else{
+            else
+            {
                 response.Data = CreateToken(usuario);
                 response.Message = "Se ha iniciado sesión correctamente!";
             }
-            
+
             return response;
         }
 
         public async Task<ServiceResponse<int>> Register(Usuario usuario, string password)
         {
             var response = new ServiceResponse<int>();
-            if(await UserExists(usuario.Username))
+            if (await UserExists(usuario.Username))
             {
                 response.Success = false;
                 response.Message = "Error, el usuario ya existe.";
@@ -69,7 +66,7 @@ namespace Api.Data
 
         public async Task<bool> UserExists(string username)
         {
-            if(await _context.Usuarios.AnyAsync(u => u.Username.ToLower() == username.ToLower()))
+            if (await _context.Usuarios.AnyAsync(u => u.Username.ToLower() == username.ToLower()))
             {
                 return true;
             }
@@ -78,7 +75,7 @@ namespace Api.Data
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
-            using(var hmac = new System.Security.Cryptography.HMACSHA512())
+            using (var hmac = new System.Security.Cryptography.HMACSHA512())
             {
                 passwordSalt = hmac.Key;
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
@@ -87,7 +84,7 @@ namespace Api.Data
 
         private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
-            using(var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
             {
                 var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
                 return computedHash.SequenceEqual(passwordHash);
@@ -105,12 +102,12 @@ namespace Api.Data
 
             var appSettingsToken = _configuration.GetSection("AppSettings:Token").Value;
 
-            if(appSettingsToken is null)
+            if (appSettingsToken is null)
                 throw new Exception("AppSettings Token is null!");
 
             SymmetricSecurityKey key = new SymmetricSecurityKey(System.Text.Encoding.UTF8
                 .GetBytes(appSettingsToken));
-            
+
             SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor

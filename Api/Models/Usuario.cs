@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Api.Models
 {
-    public class Usuario
+    public partial class Usuario
     {
         [Key]
         public int Id { get; set; }
@@ -22,8 +18,16 @@ namespace Api.Models
         public byte[] PasswordSalt { get; set; } = new byte[0];
 
         [Required]
+        [EmailAddress]
         [MaxLength(160)]
         public string Email { get; set; } = string.Empty;
+
         public TipoRol Rol { get; set; }
+
+        // One-to-many relationship with the Cuenta entity
+        public virtual ICollection<Cuenta> Cuenta { get; } = new List<Cuenta>();
+
+        // Many-to-many relationship with the Cuenta entity (Shared Accounts)
+        public virtual ICollection<Cuenta> CuentasCompartidas { get; } = new List<Cuenta>();
     }
 }

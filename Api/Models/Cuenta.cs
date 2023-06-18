@@ -1,17 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Api.Models
 {
-    public class Cuenta
+    public partial class Cuenta
     {
         [Key]
         public int Id { get; set; }
 
-        public Usuario? Usuario { get; set; }
+        public int UsuarioId { get; set; }
 
         public TipoIdentificacion CedulaTipo { get; set; }
 
@@ -21,6 +17,7 @@ namespace Api.Models
         [MaxLength(20)]
         public string IdExtranjero { get; set; } = string.Empty;
 
+        [Required]
         [MaxLength(100)]
         public string Nombre { get; set; } = string.Empty;
 
@@ -39,7 +36,9 @@ namespace Api.Models
         [MaxLength(20)]
         public string FaxNumero { get; set; } = string.Empty;
 
+        [Required]
         [MaxLength(160)]
+        [EmailAddress]
         public string Correo { get; set; } = String.Empty;
 
         [MaxLength(7)]
@@ -49,8 +48,18 @@ namespace Api.Models
         public string UbicacionSenas { get; set; } = String.Empty;
         [MaxLength(300)]
         public string UbicacionSenasExtranjero { get; set; } = String.Empty;
+
         public bool IsActive { get; set; } = true;
+
         public TipoCuenta Tipo { get; set; } = TipoCuenta.Receptor;
-        public List<Actividad> Actividades { get; set; } = new List<Actividad>();
+
+        // Navigation property to the Usuario entity
+        public virtual Usuario Usuario { get; set; } = null!;
+
+        // One-to-many relationship with the Actividad entity
+        public virtual ICollection<Actividad> Actividades { get; } = new List<Actividad>();
+
+        // Many-to-many relationship with the Usuario entity
+        public virtual ICollection<Usuario> Usuarios { get; } = new List<Usuario>();
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 using Api.Data;
 using Api.Dtos.Cuenta;
 using Api.Dtos.Cuenta.Ubicacion;
-using Api.Scaffold;
+using Api.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
@@ -377,24 +377,24 @@ namespace Api.Services.CuentaService
             return response;
         }
 
-        public async Task<ServiceResponse<GetCuentaDto>> GetCuentaTemporal(string nombreUsuario, int id)
+        public async Task<ServiceResponse<GetCuentaDto>> GetCuentaTemporal(string username, int id)
         {
             var serviceResponse = new ServiceResponse<GetCuentaDto>();
-            var dbCuenta = await _context.Cuentas
+            var cuenta = await _context.Cuentas
                 .Include(c => c.Actividades)
-                .FirstOrDefaultAsync(c => c.Id == id && c.Usuario!.Username == nombreUsuario && c.IsActive);
-            serviceResponse.Data = _mapper.Map<GetCuentaDto>(dbCuenta);
+                .FirstOrDefaultAsync(c => c.Id == id && c.Usuario!.Username == username && c.IsActive);
+            serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuenta);
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<string>> GenerateCuentaQr(int idCuenta)
+        public async Task<ServiceResponse<string>> GenerateCuentaQr(int CuentaId)
         {
             var serviceResponse = new ServiceResponse<string>();
 
             try
             {
                 var cuenta = await _context.Cuentas
-                .FirstOrDefaultAsync(c => c.Id == idCuenta && c.Usuario!.UID == GetUserUid() && c.IsActive);
+                .FirstOrDefaultAsync(c => c.Id == CuentaId && c.Usuario!.UID == GetUserUid() && c.IsActive);
 
                 if (cuenta is null)
                     throw new Exception($"No se han encontrado la cuenta.");
@@ -405,9 +405,9 @@ namespace Api.Services.CuentaService
 
                 var secretKey = _configuration.GetSection("AppSettings:Token").Value!;
 
-                string texto = $"{uid},{timestamp.ToString("s")},{idCuenta}";
+                string texto = $"{uid},{timestamp.ToString("s")},{CuentaId}";
 
-                string mensajeEncriptado = EncriptarMensaje(texto, secretKey);
+                string mensajeEncriptado = encryptMessage(texto, secretKey);
 
                 serviceResponse.Data = mensajeEncriptado;
             }
@@ -420,24 +420,22 @@ namespace Api.Services.CuentaService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetCuentaDto>> GetCuentaByQR(string codigoEncriptado)
+        public async Task<ServiceResponse<GetCuentaDto>> GetCuentaByQR(int UsuarioId, string encryptedcode)
         {
             var serviceResponse = new ServiceResponse<GetCuentaDto>();
 
             try
             {
                 var secretKey = _configuration.GetSection("AppSettings:Token").Value!;
-
-                string mensajeDesencriptado = DesencriptarMensaje(codigoEncriptado, secretKey);
+                string decryptedMessage = decryptMessage(encryptedcode, secretKey);
 
                 // Extraer los datos originales de la cadena de texto
-                string[] partes = mensajeDesencriptado.Split(',');
-                var uid = partes[0];
-                var timestamp = DateTime.Parse(partes[1]);
-                var idCuenta = int.Parse(partes[2]);
+                string[] args = decryptedMessage.Split(',');
+                var UID = args[0];
+                var timestamp = DateTime.Parse(args[1]);
+                var CuentaId = int.Parse(args[2]);
 
                 DateTime startTime = DateTime.UtcNow;
-
                 TimeSpan duration = startTime.Subtract(timestamp);
 
                 // Validar el tiempo que ha pasado
@@ -449,10 +447,31 @@ namespace Api.Services.CuentaService
                 // Validar la existencia de la cuenta
                 var cuenta = await _context.Cuentas
                     .Include(c => c.Actividades)
-                    .FirstOrDefaultAsync(c => c.Id == idCuenta && c.Usuario!.UID == uid && c.IsActive);
+                    .FirstOrDefaultAsync(c => c.Id == CuentaId && c.Usuario!.UID == UID && c.IsActive);
+                if (cuenta == null)
+                    throw new Exception($"El código no pertenece a una cuenta.");
 
-                if (cuenta is null)
-                    throw new Exception($"El codigo no pertenece a una cuenta.");
+                // Analizar si el usuario actual ya es propietario de la cuenta
+                if (cuenta.UsuarioId == UsuarioId)
+                    throw new Exception("Usted ya es propietario de esta cuenta.");
+
+                // Verificar si el usuario ya existe en la colección Usuarios de la Cuenta
+                if (await _context.Cuentas.AnyAsync(c => c.Id == CuentaId && c.Usuarios.Any(u => u.Id == UsuarioId)))
+                    throw new Exception("Esta cuenta ya ha sido previamente registrada.");
+
+                // Obtener el usuario actual
+                var usuario = await _context.Usuarios.FindAsync(UsuarioId);
+                if (usuario == null)
+                    throw new Exception("Usuario no encontrado.");
+
+                // Agregar el Usuario a la colección Usuarios de la Cuenta
+                cuenta.Usuarios.Add(usuario);
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+
+                // Guarda los cambios en la base de datos
+                await _context.SaveChangesAsync();
 
                 // Modificar en la tabla de compartir cuenta
                 serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuenta);
@@ -469,96 +488,40 @@ namespace Api.Services.CuentaService
 
 
         // Método para encriptar un mensaje
-        public static string EncriptarMensaje(string mensaje, string clave)
+        private static string encryptMessage(string mensaje, string key)
         {
-            byte[] mensajeBytes = Encoding.UTF8.GetBytes(mensaje);
-            byte[] claveBytes = Encoding.UTF8.GetBytes(clave.PadRight(32, '0').Substring(0, 32)); // Utiliza una clave de 256 bits (32 bytes)
-
+            byte[] messageBytes = Encoding.UTF8.GetBytes(mensaje);
+            byte[] keyBytes = Encoding.UTF8.GetBytes(key.PadRight(32, '0').Substring(0, 32)); // Utiliza una key de 256 bits (32 bytes)
 
             Aes aes = Aes.Create();
-            aes.Key = claveBytes;
+            aes.Key = keyBytes;
             aes.IV = new byte[aes.BlockSize / 8];
 
-            ICryptoTransform encriptador = aes.CreateEncryptor();
+            ICryptoTransform encrypter = aes.CreateEncryptor();
 
-            byte[] mensajeEncriptadoBytes = encriptador.TransformFinalBlock(mensajeBytes, 0, mensajeBytes.Length);
-            string mensajeEncriptado = Convert.ToBase64String(mensajeEncriptadoBytes);
+            byte[] encryptedBytes = encrypter.TransformFinalBlock(messageBytes, 0, messageBytes.Length);
+            string encryptedMessage = Convert.ToBase64String(encryptedBytes);
 
-            return mensajeEncriptado;
+            return encryptedMessage;
         }
 
         // Método para desencriptar un mensaje
-        public static string DesencriptarMensaje(string mensajeEncriptado, string clave)
+        private static string decryptMessage(string encryptedMessage, string key)
         {
-            byte[] mensajeEncriptadoBytes = Convert.FromBase64String(mensajeEncriptado);
-            byte[] claveBytes = Encoding.UTF8.GetBytes(clave.PadRight(32, '0').Substring(0, 32)); // Utiliza una clave de 256 bits (32 bytes)
-
+            byte[] encryptedBytes = Convert.FromBase64String(encryptedMessage);
+            byte[] keyBytes = Encoding.UTF8.GetBytes(key.PadRight(32, '0').Substring(0, 32)); // Utiliza una key de 256 bits (32 bytes)
 
             Aes aes = Aes.Create();
-            aes.Key = claveBytes;
+            aes.Key = keyBytes;
             aes.IV = new byte[aes.BlockSize / 8];
 
-            ICryptoTransform desencriptador = aes.CreateDecryptor();
+            ICryptoTransform decryptor = aes.CreateDecryptor();
 
-            byte[] mensajeDesencriptadoBytes = desencriptador.TransformFinalBlock(mensajeEncriptadoBytes, 0, mensajeEncriptadoBytes.Length);
-            string mensajeDesencriptado = Encoding.UTF8.GetString(mensajeDesencriptadoBytes);
+            byte[] decryptedBytes = decryptor.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
+            string decryptedMessage = Encoding.UTF8.GetString(decryptedBytes);
 
-            return mensajeDesencriptado;
+            return decryptedMessage;
         }
 
-        // public async Task<ServiceResponse<GetCuentaDto>> ShareCuentaByQR(string codigoEncriptado)
-        // {
-        //     var serviceResponse = new ServiceResponse<GetCuentaDto>();
-
-        //     try
-        //     {
-        //         var secretKey = _configuration.GetSection("AppSettings:Token").Value!;
-
-        //         string mensajeDesencriptado = DesencriptarMensaje(codigoEncriptado, secretKey);
-
-        //         // Extraer los datos originales de la cadena de texto
-        //         string[] partes = mensajeDesencriptado.Split(',');
-        //         var uid = partes[0];
-        //         var timestamp = DateTime.Parse(partes[1]);
-        //         var idCuenta = int.Parse(partes[2]);
-
-        //         DateTime startTime = DateTime.UtcNow;
-
-        //         TimeSpan duration = startTime.Subtract(timestamp);
-
-        //         // Validar el tiempo que ha pasado
-        //         if (duration.TotalMinutes > _qrExpirationTime)
-        //         {
-        //             throw new Exception($"El tiempo del codigo ha expirado.");
-        //         }
-
-
-        //         // Crear relacion
-        //         // var cuentaCompartida = new CuentaCompartida();
-        //         // cuentaCompartida.Usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == uid);
-        //         // cuentaCompartida.Cuenta = await _context.Cuentas
-        //         //     .Include(c => c.Actividades)
-        //         //     .FirstOrDefaultAsync(c => c.Id == idCuenta && c.Usuario!.UID == uid && c.IsActive);
-
-        //         // if (cuentaCompartida.Usuario is null)
-        //         //     throw new Exception($"El codigo no pertenece a ningun usuario.");
-
-        //         // if (cuentaCompartida.Cuenta is null)
-        //         //     throw new Exception($"El codigo no pertenece a una cuenta.");
-
-        //         // _context.CuentasCompartidas.Add(cuentaCompartida); // (No es Async) Aun no se llama la db, solo se agrega un Cuenta al dataContext
-        //         // await _context.SaveChangesAsync();  // Aqui es donde ya se envia a la db (Async)
-
-        //         // serviceResponse.Data = _mapper.Map<GetCuentaDto>(.Cuenta);
-        //     }
-
-        //     catch (Exception ex)
-        //     {
-        //         serviceResponse.Success = false;
-        //         serviceResponse.Message = ex.Message;
-        //     }
-
-        //     return serviceResponse;
-        // }
     }
 }

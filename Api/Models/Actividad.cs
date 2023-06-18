@@ -1,18 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Api.Models
+namespace Api.Models;
+
+public partial class Actividad
 {
-    public class Actividad
-    {
-        [Key]
-        [Required]
-        public int Codigo { get; set; }
-        [Required]
-        public string Nombre { get; set; } = string.Empty;
-        public List<Cuenta>? Cuentas { get; set; }
-    }
+    [Key]
+    [Required]
+    public int Codigo { get; set; }
+    
+    [Required]
+    public string Nombre { get; set; } = null!;
+
+    public virtual ICollection<Cuenta> Cuentas { get; } = new List<Cuenta>();
 }

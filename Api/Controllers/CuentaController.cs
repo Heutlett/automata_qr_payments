@@ -1,6 +1,6 @@
 using Api.Dtos.Cuenta;
 using Api.Dtos.Cuenta.Ubicacion;
-using Api.Scaffold;
+using Api.Models;
 using Api.Services.CuentaService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -187,17 +187,10 @@ namespace Api.Controllers
             return Ok(await _cuentaService.GenerateCuentaQr(id));
         }
 
-        [HttpPost("cuentabyqr")]
-        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> GetCuentaByQr(QrBody qrBody)
+        [HttpPost("cuentabyqr/{UsuarioId}")]
+        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> GetCuentaByQr(int UsuarioId, QrBody qrBody)
         {
-            return Ok(await _cuentaService.GetCuentaByQR(qrBody.Codigo));
+            return Ok(await _cuentaService.GetCuentaByQR(UsuarioId, qrBody.Codigo));
         }
-
-        // [HttpGet("CompartirCuenta/{id}")]
-        // public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> ShareCuentaByQr(QrBody qrBody)
-        // {
-        //     return Ok(await _cuentaService.ShareCuentaByQR(qrBody.Codigo));
-        // }
-
     }
 }
