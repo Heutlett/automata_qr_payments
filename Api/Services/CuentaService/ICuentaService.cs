@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Api.Dtos.Cuenta;
 using Api.Dtos.Cuenta.Ubicacion;
-using Api.Models;
+using Api.Scaffold;
 
 namespace Api.Services.CuentaService
 {
@@ -25,7 +25,7 @@ namespace Api.Services.CuentaService
         Task<ServiceResponse<GetCuentaDto>> GetCuentaTemporal(string nombreUsuario, int id);
         Task<ServiceResponse<string>> GenerateCuentaQr(int idCuenta);
         Task<ServiceResponse<GetCuentaDto>> GetCuentaByQR(string codigo);
-        Task<ServiceResponse<GetCuentaDto>> ShareCuentaByQR(string codigoEncriptado);
+        // Task<ServiceResponse<GetCuentaDto>> ShareCuentaByQR(string codigoEncriptado);
 
     }
 }

@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using Api.Data;
 using Api.Dtos.Cuenta;
 using Api.Dtos.Cuenta.Ubicacion;
-using Api.Models;
+using Api.Scaffold;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
@@ -56,7 +52,14 @@ namespace Api.Services.CuentaService
                     UbicacionSenasExtranjero = newCuenta.UbicacionSenasExtranjero
                 };
 
-            cuenta.Usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
+            if (usuario == null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Error agregando la cuenta.";
+                return serviceResponse;
+            }
+            cuenta.Usuario = usuario;
 
             _context.Cuentas.Add(cuenta); // (No es Async) Aun no se llama la db, solo se agrega un Cuenta al dataContext
             await _context.SaveChangesAsync();  // Aqui es donde ya se envia a la db (Async)
@@ -503,59 +506,59 @@ namespace Api.Services.CuentaService
             return mensajeDesencriptado;
         }
 
-        public async Task<ServiceResponse<GetCuentaDto>> ShareCuentaByQR(string codigoEncriptado)
-        {
-            var serviceResponse = new ServiceResponse<GetCuentaDto>();
+        // public async Task<ServiceResponse<GetCuentaDto>> ShareCuentaByQR(string codigoEncriptado)
+        // {
+        //     var serviceResponse = new ServiceResponse<GetCuentaDto>();
 
-            try
-            {
-                var secretKey = _configuration.GetSection("AppSettings:Token").Value!;
+        //     try
+        //     {
+        //         var secretKey = _configuration.GetSection("AppSettings:Token").Value!;
 
-                string mensajeDesencriptado = DesencriptarMensaje(codigoEncriptado, secretKey);
+        //         string mensajeDesencriptado = DesencriptarMensaje(codigoEncriptado, secretKey);
 
-                // Extraer los datos originales de la cadena de texto
-                string[] partes = mensajeDesencriptado.Split(',');
-                var uid = partes[0];
-                var timestamp = DateTime.Parse(partes[1]);
-                var idCuenta = int.Parse(partes[2]);
+        //         // Extraer los datos originales de la cadena de texto
+        //         string[] partes = mensajeDesencriptado.Split(',');
+        //         var uid = partes[0];
+        //         var timestamp = DateTime.Parse(partes[1]);
+        //         var idCuenta = int.Parse(partes[2]);
 
-                DateTime startTime = DateTime.UtcNow;
+        //         DateTime startTime = DateTime.UtcNow;
 
-                TimeSpan duration = startTime.Subtract(timestamp);
+        //         TimeSpan duration = startTime.Subtract(timestamp);
 
-                // Validar el tiempo que ha pasado
-                if (duration.TotalMinutes > _qrExpirationTime)
-                {
-                    throw new Exception($"El tiempo del codigo ha expirado.");
-                }
+        //         // Validar el tiempo que ha pasado
+        //         if (duration.TotalMinutes > _qrExpirationTime)
+        //         {
+        //             throw new Exception($"El tiempo del codigo ha expirado.");
+        //         }
 
 
-                // Crear relacion
-                var cuentaCompartida = new CuentaCompartida();
-                cuentaCompartida.Usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == uid);
-                cuentaCompartida.Cuenta = await _context.Cuentas
-                    .Include(c => c.Actividades)
-                    .FirstOrDefaultAsync(c => c.Id == idCuenta && c.Usuario!.UID == uid && c.IsActive);
+        //         // Crear relacion
+        //         // var cuentaCompartida = new CuentaCompartida();
+        //         // cuentaCompartida.Usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == uid);
+        //         // cuentaCompartida.Cuenta = await _context.Cuentas
+        //         //     .Include(c => c.Actividades)
+        //         //     .FirstOrDefaultAsync(c => c.Id == idCuenta && c.Usuario!.UID == uid && c.IsActive);
 
-                if (cuentaCompartida.Usuario is null)
-                    throw new Exception($"El codigo no pertenece a ningun usuario.");
+        //         // if (cuentaCompartida.Usuario is null)
+        //         //     throw new Exception($"El codigo no pertenece a ningun usuario.");
 
-                if (cuentaCompartida.Cuenta is null)
-                    throw new Exception($"El codigo no pertenece a una cuenta.");
+        //         // if (cuentaCompartida.Cuenta is null)
+        //         //     throw new Exception($"El codigo no pertenece a una cuenta.");
 
-                _context.CuentasCompartidas.Add(cuentaCompartida); // (No es Async) Aun no se llama la db, solo se agrega un Cuenta al dataContext
-                await _context.SaveChangesAsync();  // Aqui es donde ya se envia a la db (Async)
+        //         // _context.CuentasCompartidas.Add(cuentaCompartida); // (No es Async) Aun no se llama la db, solo se agrega un Cuenta al dataContext
+        //         // await _context.SaveChangesAsync();  // Aqui es donde ya se envia a la db (Async)
 
-                serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuentaCompartida.Cuenta);
-            }
+        //         // serviceResponse.Data = _mapper.Map<GetCuentaDto>(.Cuenta);
+        //     }
 
-            catch (Exception ex)
-            {
-                serviceResponse.Success = false;
-                serviceResponse.Message = ex.Message;
-            }
+        //     catch (Exception ex)
+        //     {
+        //         serviceResponse.Success = false;
+        //         serviceResponse.Message = ex.Message;
+        //     }
 
-            return serviceResponse;
-        }
+        //     return serviceResponse;
+        // }
     }
 }

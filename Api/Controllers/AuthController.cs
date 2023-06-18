@@ -1,6 +1,6 @@
 using Api.Data;
 using Api.Dtos.Usuario;
-using Api.Models;
+using Api.Scaffold;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers

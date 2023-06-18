@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Api.Models
+namespace Api.Scaffold
 {
-    public class Usuario
+    public partial class Usuario
     {
         [Key]
         public int Id { get; set; }
@@ -15,6 +11,7 @@ namespace Api.Models
         [MaxLength(36)]
         public String UID { get; set; } = Guid.NewGuid().ToString();
 
+
         [Required]
         [MaxLength(20)]
         public string Username { get; set; } = string.Empty;
@@ -22,8 +19,16 @@ namespace Api.Models
         public byte[] PasswordSalt { get; set; } = new byte[0];
 
         [Required]
+        [EmailAddress]
         [MaxLength(160)]
-        public string Email { get; set; } = string.Empty;
+        public string Email { get; set; } = null!;
+
         public TipoRol Rol { get; set; }
+
+        // One-to-many relationship with the Cuenta entity
+        public virtual ICollection<Cuenta> Cuenta { get; } = new List<Cuenta>();
+
+        // Many-to-many relationship with the Cuenta entity (Shared Accounts)
+        public virtual ICollection<Cuenta> CuentasCompartidas { get; } = new List<Cuenta>();
     }
 }
