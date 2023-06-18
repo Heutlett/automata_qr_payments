@@ -39,13 +39,6 @@ CREATE TABLE cuentas (
   CONSTRAINT FK_Cuentas_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES usuarios(Id)
 ) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS actividades;
-CREATE TABLE actividades (
-    Codigo INT NOT NULL AUTO_INCREMENT,
-    Nombre LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    PRIMARY KEY (Codigo)
-) ENGINE=InnoDB AUTO_INCREMENT=990002 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 DROP TABLE IF EXISTS cuentascompartidas;
 CREATE TABLE cuentascompartidas (
   UsuarioId INT NOT NULL,
@@ -54,6 +47,23 @@ CREATE TABLE cuentascompartidas (
   KEY IX_CuentasCompartidas_CuentaCompartidaId (CuentaCompartidaId), -- index key
   CONSTRAINT FK_CuentasCompartidas_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES usuarios(Id) ON DELETE CASCADE,
   CONSTRAINT FK_CuentasCompartidas_Cuentas_CuentaCompartidaId FOREIGN KEY (CuentaCompartidaId) REFERENCES cuentas(Id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS actividades;
+CREATE TABLE actividades (
+    Codigo INT NOT NULL AUTO_INCREMENT,
+    Nombre LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    PRIMARY KEY (Codigo)
+) ENGINE=InnoDB AUTO_INCREMENT=990002 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS actividadcuenta;
+CREATE TABLE actividadcuenta (
+  ActividadesCodigo INT NOT NULL,
+  CuentasId INT NOT NULL,     -- Acorde a resolucion 4.3
+  PRIMARY KEY (ActividadesCodigo, CuentasId),
+  KEY IX_ActividadCuenta_CuentasId (CuentasId), -- index key - index on the CuentasId column
+  CONSTRAINT FK_ActividadCuenta_Actividades_ActividadesCodigo FOREIGN KEY (ActividadesCodigo) REFERENCES actividades(Codigo) ON DELETE CASCADE,
+  CONSTRAINT FK_ActividadCuenta_Cuentas_CuentasId FOREIGN KEY (CuentasId) REFERENCES cuentas(Id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS ubicaciones;
@@ -103,11 +113,3 @@ CREATE TABLE ubicaciones (
 --     PRIMARY KEY (Id),
 --     FOREIGN KEY (IdHistorico) REFERENCES historicos(Id)
 -- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
-
--- ALTER TABLE ubicaciones
--- ADD  CONSTRAINT compuesta_pk PRIMARY KEY (Provincia, Canton, Distrito, Barrio);
-
-
-
