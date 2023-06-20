@@ -58,8 +58,51 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
   final _correoController = TextEditingController();
   final _ubicacionSenasController = TextEditingController();
   final _ubicacionSenasExtranjeroController = TextEditingController();
-
   final _codigoActividadController = TextEditingController();
+
+  late FocusNode _cedulaTipoFocusNode;
+  late FocusNode _cedulaNumeroFocusNode;
+  late FocusNode _idExtranjeroFocusNode;
+  late FocusNode _nombreFocusNode;
+  late FocusNode _nombreComercialFocusNode;
+  late FocusNode _tipoCuentaFocusNode;
+  late FocusNode _telCodigoPaisFocusNode;
+  late FocusNode _telNumeroFocusNode;
+  late FocusNode _faxCodigoPaisFocusNode;
+  late FocusNode _faxNumeroFocusNode;
+  late FocusNode _correoFocusNode;
+
+  late FocusNode _ubicacionProvinciaFocusNode;
+  late FocusNode _ubicacionCantonFocusNode;
+  late FocusNode _ubicacionDistritoFocusNode;
+  late FocusNode _ubicacionBarrioFocusNode;
+
+  late FocusNode _ubicacionSenasFocusNode;
+  late FocusNode _ubicacionSenasExtranjeroFocusNode;
+  late FocusNode _codigoActividadFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _cedulaTipoFocusNode = FocusNode();
+    _cedulaNumeroFocusNode = FocusNode();
+    _idExtranjeroFocusNode = FocusNode();
+    _nombreFocusNode = FocusNode();
+    _nombreComercialFocusNode = FocusNode();
+    _tipoCuentaFocusNode = FocusNode();
+    _telCodigoPaisFocusNode = FocusNode();
+    _telNumeroFocusNode = FocusNode();
+    _faxCodigoPaisFocusNode = FocusNode();
+    _faxNumeroFocusNode = FocusNode();
+    _correoFocusNode = FocusNode();
+    _ubicacionProvinciaFocusNode = FocusNode();
+    _ubicacionCantonFocusNode = FocusNode();
+    _ubicacionDistritoFocusNode = FocusNode();
+    _ubicacionBarrioFocusNode = FocusNode();
+    _ubicacionSenasFocusNode = FocusNode();
+    _ubicacionSenasExtranjeroFocusNode = FocusNode();
+    _codigoActividadFocusNode = FocusNode();
+  }
 
   @override
   void dispose() {
@@ -67,6 +110,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
     _idExtranjeroController.dispose();
     _nombreController.dispose();
     _nombreComercialController.dispose();
+    _tipoCuentaFocusNode.dispose();
     _telCodigoPaisController.dispose();
     _telNumeroController.dispose();
     _faxCodigoPaisController.dispose();
@@ -75,7 +119,32 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
     _ubicacionSenasController.dispose();
     _ubicacionSenasExtranjeroController.dispose();
     _codigoActividadController.dispose();
+
+    _cedulaTipoFocusNode.dispose();
+    _cedulaNumeroFocusNode.dispose();
+    _idExtranjeroFocusNode.dispose();
+    _nombreFocusNode.dispose();
+    _nombreComercialFocusNode.dispose();
+    _telCodigoPaisFocusNode.dispose();
+    _telNumeroFocusNode.dispose();
+    _faxCodigoPaisFocusNode.dispose();
+    _faxNumeroFocusNode.dispose();
+    _correoFocusNode.dispose();
+    _ubicacionProvinciaFocusNode.dispose();
+    _ubicacionCantonFocusNode.dispose();
+    _ubicacionDistritoFocusNode.dispose();
+    _ubicacionBarrioFocusNode.dispose();
+    _ubicacionSenasFocusNode.dispose();
+    _ubicacionSenasExtranjeroFocusNode.dispose();
+    _codigoActividadFocusNode.dispose();
+
     super.dispose();
+  }
+
+  void _focusNextField(
+      BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
+    currentFocus.unfocus();
+    FocusScope.of(context).requestFocus(nextFocus);
   }
 
   @override
@@ -146,6 +215,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                 ),
                               ),
                               DropdownButtonFormField<String>(
+                                focusNode: _cedulaTipoFocusNode,
                                 value: _cedulaTipo,
                                 decoration: const InputDecoration(
                                   labelText: 'Tipo de cédula',
@@ -159,6 +229,10 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                 onChanged: (value) {
                                   setState(() {
                                     _cedulaTipo = value;
+                                    _focusNextField(
+                                        context,
+                                        _cedulaTipoFocusNode,
+                                        _cedulaNumeroFocusNode);
                                   });
                                 },
                                 validator: (value) {
@@ -169,7 +243,12 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                 },
                               ),
                               TextFormField(
+                                focusNode: _cedulaNumeroFocusNode,
                                 controller: _cedulaNumeroController,
+                                onEditingComplete: () {
+                                  _focusNextField(context,
+                                      _cedulaNumeroFocusNode, _nombreFocusNode);
+                                },
                                 decoration: const InputDecoration(
                                     labelText: 'Número de cédula'),
                                 validator: (value) {
@@ -178,16 +257,30 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                   }
                                   return null;
                                 },
-                                keyboardType: TextInputType.number,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                        signed: true, decimal: false),
                               ),
                               TextFormField(
+                                focusNode: _idExtranjeroFocusNode,
                                 controller: _idExtranjeroController,
+                                onEditingComplete: () {
+                                  _focusNextField(context,
+                                      _idExtranjeroFocusNode, _nombreFocusNode);
+                                },
                                 decoration: const InputDecoration(
                                     labelText: 'ID extranjero'),
-                                keyboardType: TextInputType.number,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                        signed: true, decimal: false),
                               ),
                               TextFormField(
+                                focusNode: _nombreFocusNode,
                                 controller: _nombreController,
+                                onEditingComplete: () {
+                                  _focusNextField(context, _nombreFocusNode,
+                                      _nombreComercialFocusNode);
+                                },
                                 decoration:
                                     const InputDecoration(labelText: 'Nombre'),
                                 validator: (value) {
@@ -199,12 +292,20 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                 keyboardType: TextInputType.name,
                               ),
                               TextFormField(
+                                focusNode: _nombreComercialFocusNode,
                                 controller: _nombreComercialController,
+                                onEditingComplete: () {
+                                  _focusNextField(
+                                      context,
+                                      _nombreComercialFocusNode,
+                                      _tipoCuentaFocusNode);
+                                },
                                 decoration: const InputDecoration(
                                     labelText: 'Nombre comercial'),
                                 keyboardType: TextInputType.name,
                               ),
                               DropdownButtonFormField<String>(
+                                focusNode: _tipoCuentaFocusNode,
                                 value: _tipoCuenta,
                                 decoration: const InputDecoration(
                                   labelText: 'Tipo de cuenta',
@@ -219,6 +320,8 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                   setState(() {
                                     _tipoCuenta = value;
                                   });
+                                  _focusNextField(context, _tipoCuentaFocusNode,
+                                      _telCodigoPaisFocusNode);
                                 },
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -248,7 +351,14 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                     children: [
                                       Expanded(
                                         child: TextFormField(
+                                          focusNode: _telCodigoPaisFocusNode,
                                           controller: _telCodigoPaisController,
+                                          onEditingComplete: () {
+                                            _focusNextField(
+                                                context,
+                                                _telCodigoPaisFocusNode,
+                                                _telNumeroFocusNode);
+                                          },
                                           decoration: const InputDecoration(
                                               labelText: 'Código de país'),
                                           validator: (value) {
@@ -258,14 +368,23 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                             }
                                             return null;
                                           },
-                                          keyboardType: TextInputType.number,
+                                          keyboardType: const TextInputType
+                                                  .numberWithOptions(
+                                              signed: true, decimal: false),
                                         ),
                                       ),
                                       const SizedBox(width: 16.0),
                                       Expanded(
                                         flex: 2,
                                         child: TextFormField(
+                                          focusNode: _telNumeroFocusNode,
                                           controller: _telNumeroController,
+                                          onEditingComplete: () {
+                                            _focusNextField(
+                                                context,
+                                                _telNumeroFocusNode,
+                                                _faxCodigoPaisFocusNode);
+                                          },
                                           decoration: const InputDecoration(
                                               labelText: 'Número de télefono'),
                                           validator: (value) {
@@ -275,7 +394,9 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                             }
                                             return null;
                                           },
-                                          keyboardType: TextInputType.number,
+                                          keyboardType: const TextInputType
+                                                  .numberWithOptions(
+                                              signed: true, decimal: false),
                                         ),
                                       )
                                     ],
@@ -292,20 +413,38 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                     children: [
                                       Expanded(
                                         child: TextFormField(
+                                          focusNode: _faxCodigoPaisFocusNode,
                                           controller: _faxCodigoPaisController,
+                                          onEditingComplete: () {
+                                            _focusNextField(
+                                                context,
+                                                _faxCodigoPaisFocusNode,
+                                                _faxNumeroFocusNode);
+                                          },
                                           decoration: const InputDecoration(
                                               labelText: 'Código de país'),
-                                          keyboardType: TextInputType.number,
+                                          keyboardType: const TextInputType
+                                                  .numberWithOptions(
+                                              signed: true, decimal: false),
                                         ),
                                       ),
                                       const SizedBox(width: 16.0),
                                       Expanded(
                                         flex: 2,
                                         child: TextFormField(
+                                          focusNode: _faxNumeroFocusNode,
                                           controller: _faxNumeroController,
+                                          onEditingComplete: () {
+                                            _focusNextField(
+                                                context,
+                                                _faxNumeroFocusNode,
+                                                _correoFocusNode);
+                                          },
                                           decoration: const InputDecoration(
                                               labelText: 'Número de fax'),
-                                          keyboardType: TextInputType.number,
+                                          keyboardType: const TextInputType
+                                                  .numberWithOptions(
+                                              signed: true, decimal: false),
                                         ),
                                       )
                                     ],
@@ -319,7 +458,12 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                     ),
                                   ),
                                   TextFormField(
+                                    focusNode: _correoFocusNode,
                                     controller: _correoController,
+                                    onEditingComplete: () {
+                                      _focusNextField(context, _correoFocusNode,
+                                          _ubicacionProvinciaFocusNode);
+                                    },
                                     decoration: const InputDecoration(
                                       labelText: 'Correo electrónico',
                                     ),
@@ -359,6 +503,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                 ),
                               ),
                               DropdownButtonFormField<Provincia>(
+                                focusNode: _ubicacionProvinciaFocusNode,
                                 value: selectedProvincia,
                                 items: provincias.map((province) {
                                   return DropdownMenuItem<Provincia>(
@@ -381,12 +526,17 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                     // Simula la carga de los cantones para la provincia seleccionada
                                     loadCantones(context);
                                   });
+                                  _focusNextField(
+                                      context,
+                                      _ubicacionProvinciaFocusNode,
+                                      _ubicacionCantonFocusNode);
                                 },
                                 decoration: const InputDecoration(
                                   labelText: 'Provincia',
                                 ),
                               ),
                               DropdownButtonFormField<Canton>(
+                                focusNode: _ubicacionCantonFocusNode,
                                 value: selectedCanton,
                                 items: cantones.map((canton) {
                                   return DropdownMenuItem<Canton>(
@@ -406,12 +556,17 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                     // Simula la carga de los distritos para el cantón seleccionado
                                     loadDistritos(context);
                                   });
+                                  _focusNextField(
+                                      context,
+                                      _ubicacionCantonFocusNode,
+                                      _ubicacionDistritoFocusNode);
                                 },
                                 decoration: const InputDecoration(
                                   labelText: 'Cantón',
                                 ),
                               ),
                               DropdownButtonFormField<Distrito>(
+                                focusNode: _ubicacionDistritoFocusNode,
                                 value: selectedDistrito,
                                 items: distritos.map((district) {
                                   return DropdownMenuItem<Distrito>(
@@ -428,29 +583,39 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                     // Simula la carga de los barrios para el distrito seleccionado
                                     loadBarrios(context);
                                   });
+                                  _focusNextField(
+                                      context,
+                                      _ubicacionDistritoFocusNode,
+                                      _ubicacionBarrioFocusNode);
                                 },
                                 decoration: const InputDecoration(
                                   labelText: 'Distrito',
                                 ),
                               ),
                               DropdownButtonFormField<Barrio>(
+                                focusNode: _ubicacionBarrioFocusNode,
                                 value: selectedBarrio,
-                                items: barrios.map((neighborhood) {
+                                items: barrios.map((barrio) {
                                   return DropdownMenuItem<Barrio>(
-                                    value: neighborhood,
-                                    child: Text(neighborhood.nombre),
+                                    value: barrio,
+                                    child: Text(barrio.nombre),
                                   );
                                 }).toList(),
-                                onChanged: (neighborhood) {
+                                onChanged: (barrio) {
                                   setState(() {
-                                    selectedBarrio = neighborhood;
+                                    selectedBarrio = barrio;
                                   });
+                                  _focusNextField(
+                                      context,
+                                      _ubicacionBarrioFocusNode,
+                                      _ubicacionSenasFocusNode);
                                 },
                                 decoration: const InputDecoration(
                                   labelText: 'Barrio',
                                 ),
                               ),
                               TextFormField(
+                                focusNode: _ubicacionSenasFocusNode,
                                 controller: _ubicacionSenasController,
                                 decoration: const InputDecoration(
                                     labelText: 'Otras señas'),
@@ -462,6 +627,7 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                 },
                               ),
                               TextFormField(
+                                focusNode: _ubicacionSenasExtranjeroFocusNode,
                                 controller: _ubicacionSenasExtranjeroController,
                                 decoration: const InputDecoration(
                                     labelText: 'Otras señas (extranjero)'),
