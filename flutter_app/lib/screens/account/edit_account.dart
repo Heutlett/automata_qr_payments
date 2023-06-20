@@ -50,13 +50,8 @@ class _EditAccountState extends State<EditAccount> {
 
   final _codigoActividadController = TextEditingController();
 
-  // Lista de cantones
   List<Canton> cantones = [];
-
-  // Lista de distritos
   List<Distrito> distritos = [];
-
-  // Lista de barrios
   List<Barrio> barrios = [];
 
   Provincia? selectedProvincia;
@@ -119,8 +114,6 @@ class _EditAccountState extends State<EditAccount> {
         ModalRoute.of(context)?.settings.arguments as List<dynamic>;
 
     Account account = args[0];
-
-    //Account account = ModalRoute.of(context)?.settings.arguments as Account;
 
     if (!_isInitialized) {
       cantones = args[1];

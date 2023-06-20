@@ -33,13 +33,8 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
     'Emisor',
   ];
 
-  // Lista de cantones
   List<Canton> cantones = [];
-
-  // Lista de distritos
   List<Distrito> distritos = [];
-
-  // Lista de barrios
   List<Barrio> barrios = [];
 
   Provincia? selectedProvincia;
@@ -71,12 +66,10 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
   late FocusNode _faxCodigoPaisFocusNode;
   late FocusNode _faxNumeroFocusNode;
   late FocusNode _correoFocusNode;
-
   late FocusNode _ubicacionProvinciaFocusNode;
   late FocusNode _ubicacionCantonFocusNode;
   late FocusNode _ubicacionDistritoFocusNode;
   late FocusNode _ubicacionBarrioFocusNode;
-
   late FocusNode _ubicacionSenasFocusNode;
   late FocusNode _ubicacionSenasExtranjeroFocusNode;
   late FocusNode _codigoActividadFocusNode;
