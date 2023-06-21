@@ -20,6 +20,8 @@ namespace Api.Services.CuentaService
         Task<ServiceResponse<List<GetUbicacionBarrioDto>>> GetUbicacionBarrio(int provincia, int canton, int distrito);
         Task<ServiceResponse<GetCuentaDto>> GetCuentaTemporal(string username, int id);
         Task<ServiceResponse<string>> GenerateCuentaQr(int CuentaId);
-        Task<ServiceResponse<GetCuentaDto>> GetCuentaByQR(int UsuarioId, string encryptedcode);
+        Task<ServiceResponse<GetCuentaDto>> ShareCuenta(string encryptedcode);
+        Task<ServiceResponse<GetCuentaDto>> UnshareCuenta(int id);
+
     }
 }

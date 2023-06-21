@@ -420,7 +420,7 @@ namespace Api.Services.CuentaService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetCuentaDto>> GetCuentaByQR(int UsuarioId, string encryptedcode)
+        public async Task<ServiceResponse<GetCuentaDto>> ShareCuenta(string encryptedcode)
         {
             var serviceResponse = new ServiceResponse<GetCuentaDto>();
 
@@ -439,30 +439,22 @@ namespace Api.Services.CuentaService
                 TimeSpan duration = startTime.Subtract(timestamp);
 
                 // Validar el tiempo que ha pasado
-                if (duration.TotalMinutes > _qrExpirationTime)
-                {
-                    throw new Exception($"El tiempo del codigo ha expirado.");
-                }
+                if (duration.TotalMinutes > _qrExpirationTime) throw new Exception($"El tiempo del codigo ha expirado.");
 
                 // Validar la existencia de la cuenta
-                var cuenta = await _context.Cuentas
-                    .Include(c => c.Actividades)
-                    .FirstOrDefaultAsync(c => c.Id == CuentaId && c.Usuario!.UID == UID && c.IsActive);
-                if (cuenta == null)
-                    throw new Exception($"El código no pertenece a una cuenta.");
-
-                // Analizar si el usuario actual ya es propietario de la cuenta
-                if (cuenta.UsuarioId == UsuarioId)
-                    throw new Exception("Usted ya es propietario de esta cuenta.");
-
-                // Verificar si el usuario ya existe en la colección Usuarios de la Cuenta
-                if (await _context.Cuentas.AnyAsync(c => c.Id == CuentaId && c.Usuarios.Any(u => u.Id == UsuarioId)))
-                    throw new Exception("Esta cuenta ya ha sido previamente registrada.");
+                var cuenta = await _context.Cuentas.Include(c => c.Actividades).FirstOrDefaultAsync(c => c.Id == CuentaId && c.Usuario!.UID == UID && c.IsActive);
+                if (cuenta == null) throw new Exception($"No se ha encontrado ninguna cuenta coincidente.");
 
                 // Obtener el usuario actual
-                var usuario = await _context.Usuarios.FindAsync(UsuarioId);
-                if (usuario == null)
-                    throw new Exception("Usuario no encontrado.");
+                var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
+                if (usuario == null) throw new Exception($"Usuario no encontrado.");
+
+                // Analizar si el usuario actual ya es propietario de la cuenta
+                if (UID == usuario.UID) throw new Exception($"Usted ya es propietario de esta cuenta.");
+
+                // Verificar si el usuario ya existe en la colección Usuarios de la Cuenta
+                if (await _context.Cuentas.AnyAsync(c => c.Id == CuentaId && c.Usuarios.Any(u => u.Id == usuario.Id)))
+                    throw new Exception($"Esta cuenta ya ha sido previamente registrada.");
 
                 // Agregar el Usuario a la colección Usuarios de la Cuenta
                 cuenta.Usuarios.Add(usuario);
@@ -470,12 +462,8 @@ namespace Api.Services.CuentaService
                 // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
 
-                // Guarda los cambios en la base de datos
-                await _context.SaveChangesAsync();
-
                 // Modificar en la tabla de compartir cuenta
                 serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuenta);
-
             }
             catch (Exception ex)
             {
@@ -486,6 +474,41 @@ namespace Api.Services.CuentaService
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<GetCuentaDto>> UnshareCuenta(int id)
+        {
+            var serviceResponse = new ServiceResponse<GetCuentaDto>();
+
+            try
+            {
+                // Obtener el usuario actual
+                var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
+                if (usuario == null) throw new Exception($"Usuario no encontrado.");
+
+                // Verificar si el usuario existe en la colección Usuarios de la Cuenta
+                if (!await _context.Cuentas.AnyAsync(c => c.Id == id && c.Usuarios.Any(u => u.Id == usuario.Id)))throw new Exception($"Cuenta no encontrada.");
+
+                // Verificar si el usuario existe en la colección Usuarios de la Cuenta y obtener la cuenta
+                var cuenta = await _context.Cuentas.Include(c => c.Usuarios).FirstOrDefaultAsync(c => c.Id == id && c.Usuarios.Any(u => u.Id == usuario.Id));
+                if (cuenta == null) throw new Exception($"No se ha encontrado ninguna cuenta coincidente.");
+
+                // Eliminar el Usuario de la colección Usuarios de la Cuenta
+                cuenta.Usuarios.Remove(usuario);
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+
+                // Asignar null para indicar que la cuenta se eliminó
+                serviceResponse.Data = null;
+                serviceResponse.Message = "Acceso de usuario a esta cuenta revocado.";
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
 
         // Método para encriptar un mensaje
         private static string encryptMessage(string mensaje, string key)
