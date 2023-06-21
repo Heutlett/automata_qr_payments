@@ -86,7 +86,6 @@ namespace Api.Services.CuentaService
             return serviceResponse;
         }
 
-
         public async Task<ServiceResponse<List<GetCuentaDto>>> DeleteCuenta(int id)
         {
             var serviceResponse = new ServiceResponse<List<GetCuentaDto>>();
@@ -97,21 +96,22 @@ namespace Api.Services.CuentaService
             {
                 var cuenta = await _context.Cuentas
                     .Include(c => c.Usuario)
+                    .Include(c => c.UsuariosCompartidos)
                     .FirstOrDefaultAsync(c => c.Id == id && c.Usuario!.UID == GetUserUid() && c.IsActive);
 
                 if (cuenta is null || cuenta.Usuario!.UID != GetUserUid())
                     throw new Exception($"No se ha encontrado la cuenta con el Id '{id}'");
 
                 cuenta.IsActive = false;
+                cuenta.UsuariosCompartidos.Clear();
+
                 await _context.SaveChangesAsync();
+
 
                 await transaction.CommitAsync();
 
-                serviceResponse.Data =
-                    await _context.Cuentas
-                        .Where(c => c.Usuario!.UID == GetUserUid() && c.IsActive)
-                        .Select(c => _mapper.Map<GetCuentaDto>(c))
-                        .ToListAsync();
+                var cuentas = GetCuentas();
+                serviceResponse.Data = await cuentas;
             }
             catch (Exception ex)
             {
@@ -125,6 +125,7 @@ namespace Api.Services.CuentaService
         }
         private async Task<List<GetCuentaDto>> GetMyCuentas()
         {
+            // Asume la existencia del usuario
             var dbCuentasPropias = await _context.Cuentas
                .Include(c => c.Actividades)
                .Include(c => c.UsuariosCompartidos)
@@ -144,6 +145,7 @@ namespace Api.Services.CuentaService
 
         private async Task<List<GetCuentaDto>> GetSharedWithMeCuentas()
         {
+            // Asume la existencia del usuario
             var dbCuentasCompartidas = await _context.Cuentas
                 .Include(c => c.Actividades)
                 .Include(c => c.Usuario) // Include the Usuario for each shared account
@@ -162,11 +164,33 @@ namespace Api.Services.CuentaService
 
         private async Task<List<GetCuentaDto>> GetCuentas()
         {
+            // Asume la existencia del usuario
             var myCuentas = await GetMyCuentas();
             var sharedWithMeCuentas = await GetSharedWithMeCuentas();
             var cuentas = myCuentas.Concat(sharedWithMeCuentas).ToList();
             return cuentas;
         }
+
+        private async Task<GetCuentaDto?> GetMyCuenta(int id)
+        {
+            // Asume la existencia del usuario
+
+            // Obtener la cuenta
+            var cuentasDto = await GetMyCuentas();
+            var cuenta = cuentasDto.FirstOrDefault(c => c.Id == id);
+            return cuenta;
+        }
+
+        private async Task<GetCuentaDto?> GetCuenta(int id)
+        {
+            // Asume la existencia del usuario
+
+            // Obtener la cuenta
+            var cuentasDto = await GetCuentas();
+            var cuenta = cuentasDto.FirstOrDefault(c => c.Id == id);
+            return cuenta;
+        }
+
 
         public async Task<ServiceResponse<List<GetCuentaDto>>> GetAllCuentas()
         {
@@ -183,15 +207,6 @@ namespace Api.Services.CuentaService
 
             return serviceResponse;
         }
-
-        private async Task<GetCuentaDto?> GetCuenta(int id)
-        {
-            // Obtener la cuenta
-            var cuentasDto = await GetCuentas();
-            var cuenta = cuentasDto.FirstOrDefault(c => c.Id == id);
-            return cuenta;
-        }
-
 
         public async Task<ServiceResponse<GetCuentaDto>> GetCuentaById(int id)
         {
@@ -510,7 +525,7 @@ namespace Api.Services.CuentaService
             try
             {
                 // Validar la existencia de la cuenta dentro de las cuentas titulares
-                var cuenta = await _context.Cuentas.Include(c => c.Actividades).FirstOrDefaultAsync(c => c.Id == CuentaId && c.Usuario!.UID == GetUserUid() && c.IsActive);
+                var cuenta = await GetMyCuenta(CuentaId);
                 if (cuenta == null) throw new Exception("No se ha encontrado cuenta coincidente.");
 
                 serviceResponse.Data = GenerateCuentaQR("share", CuentaId);
@@ -567,9 +582,9 @@ namespace Api.Services.CuentaService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetCuentaDto>> ShareCuenta(string encryptedcode)
+        public async Task<ServiceResponse<List<GetCuentaDto>>> ShareCuenta(string encryptedcode)
         {
-            var serviceResponse = new ServiceResponse<GetCuentaDto>();
+            var serviceResponse = new ServiceResponse<List<GetCuentaDto>>();
 
             using var transaction = await _context.Database.BeginTransactionAsync();
 
@@ -594,20 +609,23 @@ namespace Api.Services.CuentaService
                 // Validar el tiempo que ha pasado
                 if (duration.TotalMinutes > _qrExpirationTime) throw new Exception($"El tiempo del codigo ha expirado.");
 
-                // Validar la existencia de la cuenta dentro de las cuentras propias.
-                var cuenta = await _context.Cuentas.Include(c => c.Actividades).FirstOrDefaultAsync(c => c.Id == CuentaId && c.Usuario!.UID == UID && c.IsActive);
-                if (cuenta == null) throw new Exception($"No se ha encontrado ninguna cuenta coincidente.");
-
-                // Obtener el usuario actual
+                // Obtener y validar la existencia del usuario actual
                 var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
-                if (usuario == null) throw new Exception($"Usuario no encontrado.");
+                if (usuario == null)
+                    throw new Exception("No se encontró ningún usuario.");
+
+                // Obtener y validar la existencia de la cuenta
+                var cuenta = await _context.Cuentas.FirstOrDefaultAsync(c => c.Id == CuentaId && c.IsActive);
+                if (cuenta == null)
+                    throw new Exception("No se encontró ninguna cuenta activa coincidente.");
 
                 // Analizar si el usuario actual ya es propietario de la cuenta
-                if (UID == usuario.UID) throw new Exception($"Usted ya es propietario de esta cuenta.");
+                if (UID == usuario.UID)
+                    throw new Exception("Usted ya es propietario de esta cuenta.");
 
                 // Verificar si el usuario ya existe en la colección Usuarios de la Cuenta
                 if (await _context.Cuentas.AnyAsync(c => c.Id == CuentaId && c.UsuariosCompartidos.Any(u => u.Id == usuario.Id)))
-                    throw new Exception($"Esta cuenta ya ha sido previamente registrada.");
+                    throw new Exception("Esta cuenta ya ha sido previamente registrada.");
 
                 // Agregar el Usuario a la colección Usuarios de la Cuenta
                 cuenta.UsuariosCompartidos.Add(usuario);
@@ -617,16 +635,18 @@ namespace Api.Services.CuentaService
 
                 await transaction.CommitAsync();
 
-                // Retorna la misma cuenta con el nuevo usuario compartidos
-                serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuenta);
+                // Devolver cuentas actualizadas
+                var cuentas = await GetCuentas();
+                serviceResponse.Data = cuentas;
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
             {
                 await transaction.RollbackAsync();
 
                 serviceResponse.Success = false;
-                serviceResponse.Message = ex.Message;
+                serviceResponse.Message = "Error al guardar los cambios en la base de datos: " + ex.InnerException?.Message;
             }
+
             return serviceResponse;
         }
 
@@ -639,13 +659,15 @@ namespace Api.Services.CuentaService
 
             try
             {
-                // Obtener el usuario actual
+                // Obtener y validar la existencia del usuario actual
                 var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
-                if (usuario == null) throw new Exception($"Usuario no encontrado.");
+                if (usuario == null)
+                    throw new Exception("No se encontró ningún usuario.");
 
-                // Verificar si el usuario existe en la colección Usuarios de la Cuenta y obtener la cuenta
-                var cuenta = await _context.Cuentas.Include(c => c.UsuariosCompartidos).FirstOrDefaultAsync(c => c.Id == id && c.UsuariosCompartidos.Any(u => u.Id == usuario.Id));
-                if (cuenta == null) throw new Exception($"No se ha encontrado ninguna cuenta coincidente.");
+                // Obtener la cuenta y verificar si el usuario existe en la colección Usuarios de la Cuenta
+                var cuenta = await _context.Cuentas.Include(c => c.UsuariosCompartidos).FirstOrDefaultAsync(c => c.Id == id && c.IsActive && c.UsuariosCompartidos.Any(u => u.Id == usuario.Id));
+                if (cuenta == null)
+                    throw new Exception($"No se ha encontrado ninguna cuenta coincidente.");
 
                 // Eliminar el Usuario de la colección Usuarios de la Cuenta
                 cuenta.UsuariosCompartidos.Remove(usuario);
@@ -680,11 +702,13 @@ namespace Api.Services.CuentaService
             {
                 // Obtener el usuario a eliminar
                 var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Username == username);
-                if (usuario == null) throw new Exception($"Usuario no encontrado.");
+                if (usuario == null)
+                    throw new Exception($"Usuario no encontrado.");
 
-                // Verificar si el usuario existe en la colección Usuarios de la Cuenta y obtener la cuenta
-                var cuenta = await _context.Cuentas.Include(c => c.UsuariosCompartidos).FirstOrDefaultAsync(c => c.Id == id && c.UsuariosCompartidos.Any(u => u.Id == usuario.Id));
-                if (cuenta == null) throw new Exception($"No se ha encontrado ninguna cuenta coincidente.");
+                // Obtener la cuenta y verificar si el usuario existe en la colección Usuarios de la Cuenta
+                var cuenta = await _context.Cuentas.Include(c => c.UsuariosCompartidos).FirstOrDefaultAsync(c => c.Id == id && c.IsActive && c.UsuariosCompartidos.Any(u => u.Id == usuario.Id));
+                if (cuenta == null)
+                    throw new Exception($"No se ha encontrado ninguna cuenta coincidente.");
 
                 // Eliminar el Usuario de la colección Usuarios de la Cuenta
                 cuenta.UsuariosCompartidos.Remove(usuario);
