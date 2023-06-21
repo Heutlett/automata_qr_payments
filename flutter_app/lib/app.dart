@@ -15,6 +15,8 @@ import 'package:flutter_app/screens/factura_receptor/select_account_qr.dart';
 import 'package:flutter_app/screens/account/edit_account.dart';
 import 'package:flutter_app/screens/records/records.dart';
 import 'package:flutter_app/screens/account/share_account.dart';
+import 'package:flutter_app/screens/account/add_shared_account.dart';
+import 'package:flutter_app/screens/account/added_shared_account.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -46,6 +48,10 @@ class MyApp extends StatelessWidget {
         "/edit_account": (BuildContext context) => const EditAccount(),
         "/records": (BuildContext context) => const RecordsPage(),
         "/share_account": (BuildContext context) => const ShareAccountScreen(),
+        "/add_shared_account": (BuildContext context) =>
+            const AddSharedAccount(),
+        "/added_shared_account": (BuildContext context) =>
+            const AddedSharedAccount()
       },
     );
   }

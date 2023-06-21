@@ -5,6 +5,7 @@ import 'package:flutter_app/screens/widgets/account/account_info_activities.dart
 import 'package:flutter_app/screens/widgets/account/account_info_card_buttons.dart';
 import 'package:flutter_app/screens/widgets/account/account_info_expand.dart';
 import 'package:flutter_app/screens/widgets/account/account_info_header.dart';
+import 'package:flutter_app/screens/widgets/account/account_info_card_shared_acc.dart';
 import 'package:flutter_app/models/ubicacion.dart';
 import 'package:flutter_app/utils/utils.dart';
 
@@ -50,14 +51,17 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
     return Column(
       children: [
         AccountInfoCardHeader(
-          cedulaTipo: widget.account.cedulaTipo,
-          cedulaNumero: widget.account.cedulaNumero,
-          nombre: widget.account.nombre,
+          cedulaTipo: account.cedulaTipo,
+          cedulaNumero: account.cedulaNumero,
+          nombre: account.nombre,
         ),
         isExpand == true
             ? AccountInfoCardExpand(account: account)
             : const SizedBox(),
         AccountInfoCardActivities(activities: widget.account.actividades),
+        account.esCompartida
+            ? AccountInfoCardSharedAcc(account: account)
+            : const SizedBox(),
         addButtons != 0
             ? AccountInfoCardButtons(
                 expandInfo: expandInfo,
@@ -189,8 +193,11 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
   }
 
   void shareAcc(BuildContext context) async {
+    var codigoQR = await getAccountShareQr(int.parse(account.id));
+
     if (context.mounted) {
-      Navigator.of(context).pushNamed("/share_account", arguments: account);
+      Navigator.of(context)
+          .pushNamed("/share_account", arguments: [account, codigoQR]);
     }
   }
 
