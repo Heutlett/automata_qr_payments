@@ -56,7 +56,7 @@ class SelectAccountQrPage extends StatelessWidget {
   }
 
   void _showGenerateQr(BuildContext context, Account account) async {
-    var codigoQR = await getAccountQr(int.parse(account.id));
+    var codigoQR = await getAccountBillingQr(int.parse(account.id));
     var args = [
       account.cedulaTipo,
       account.cedulaNumero,

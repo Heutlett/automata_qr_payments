@@ -25,11 +25,13 @@ class _AccountInfoCardButtonsState extends State<AccountInfoCardButtons> {
   String expandName = 'Expandir';
   IconData expandIcon = Icons.open_in_full;
   late int buttons;
+  late Account acc;
 
   @override
   void initState() {
     super.initState();
     buttons = widget.buttons;
+    acc = widget.account;
   }
 
   @override
@@ -55,9 +57,9 @@ class _AccountInfoCardButtonsState extends State<AccountInfoCardButtons> {
               : const SizedBox(),
           buttons == 2
               ? IconButton(
-                  onPressed: shareAction,
+                  onPressed: acc.esCompartida ? null : shareAction,
                   icon: const Icon(Icons.share),
-                  color: Colors.green,
+                  color: acc.esCompartida ? Colors.grey : Colors.green,
                 )
               : const SizedBox(),
           buttons == 2

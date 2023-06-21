@@ -24,7 +24,11 @@ class _ShareAccountScreenState extends State<ShareAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Account acc = ModalRoute.of(context)?.settings.arguments as Account;
+    final List<dynamic> args =
+        ModalRoute.of(context)?.settings.arguments as List<dynamic>;
+
+    final Account acc = args[0];
+    final String codigoQR = args[1];
 
     return Scaffold(
       appBar: AppBar(
@@ -63,7 +67,7 @@ class _ShareAccountScreenState extends State<ShareAccountScreen> {
             const SizedBox(height: 26),
             Center(
               child: QrImage(
-                data: 'prueba',
+                data: codigoQR,
                 version: QrVersions.auto,
                 size: 200,
               ),
@@ -75,7 +79,7 @@ class _ShareAccountScreenState extends State<ShareAccountScreen> {
             ),
             const SizedBox(height: 76),
             MyButton(
-                function: () => _showHome(context), text: 'Volver al inicio')
+                function: () => _showHome(context), text: 'Volver a cuentas')
           ],
         ),
       ),
@@ -83,8 +87,6 @@ class _ShareAccountScreenState extends State<ShareAccountScreen> {
   }
 
   void _showHome(BuildContext context) {
-    Navigator.of(context).pop();
-    Navigator.of(context).pop();
     Navigator.of(context).pop();
   }
 }

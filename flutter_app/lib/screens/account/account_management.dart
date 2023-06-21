@@ -45,7 +45,7 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
               text: 'Agregar cuenta compartida',
               fontSize: 16,
               foregroundColor: Colors.black,
-              function: () => {},
+              function: () => _addSharedAccount(context),
               size: const Size(180, 40),
               backgroundColor: Colors.yellow,
             ),
@@ -80,5 +80,9 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
 
   void _createAccount(BuildContext context) async {
     Navigator.of(context).pushNamed("/create_account");
+  }
+
+  void _addSharedAccount(BuildContext context) async {
+    Navigator.of(context).pushNamed("/add_shared_account");
   }
 }

@@ -90,7 +90,7 @@ Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
     "codigo": codigoQr,
   };
 
-  var url = "http://$host/api/Cuenta/cuentabyqr";
+  var url = "http://$host/api/Cuenta/billing/cuentabyqr";
 
   var headers = {
     "Content-Type": "application/json",
@@ -118,23 +118,23 @@ Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
       }
 
       Account acc = Account(
-        id: data['id'].toString(),
-        cedulaTipo: data['cedulaTipo'],
-        cedulaNumero: data['cedulaNumero'],
-        idExtranjero: data['idExtranjero'],
-        nombre: data['nombre'],
-        nombreComercial: data['nombreComercial'],
-        telCodigoPais: data['telCodigoPais'],
-        telNumero: data['telNumero'],
-        faxCodigoPais: data['faxCodigoPais'],
-        faxNumero: data['faxNumero'],
-        correo: data['correo'],
-        ubicacionCodigo: data['ubicacionCodigo'],
-        ubicacionSenas: data['ubicacionSenas'],
-        ubicacionSenasExtranjero: data['ubicacionSenasExtranjero'],
-        tipo: data['tipo'],
-        actividades: actividades,
-      );
+          id: data['id'].toString(),
+          cedulaTipo: data['cedulaTipo'],
+          cedulaNumero: data['cedulaNumero'],
+          idExtranjero: data['idExtranjero'],
+          nombre: data['nombre'],
+          nombreComercial: data['nombreComercial'],
+          telCodigoPais: data['telCodigoPais'],
+          telNumero: data['telNumero'],
+          faxCodigoPais: data['faxCodigoPais'],
+          faxNumero: data['faxNumero'],
+          correo: data['correo'],
+          ubicacionCodigo: data['ubicacionCodigo'],
+          ubicacionSenas: data['ubicacionSenas'],
+          ubicacionSenasExtranjero: data['ubicacionSenasExtranjero'],
+          tipo: data['tipo'],
+          actividades: actividades,
+          esCompartida: data['esCompartida']);
 
       ServerResponse<Ubicacion> ubicacion =
           await getUbicacion(acc.ubicacionCodigo);
@@ -161,12 +161,109 @@ Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
   return serverResponse;
 }
 
-Future<String> getAccountQr(int id) async {
+Future<ServerResponse<Account?>> shareAccountByQr(String codigoQr) async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
   String host = await Config.load(selectedHost);
 
-  var url = "http://$host/api/Cuenta/qr/$id";
+  final Map<String, dynamic> body = {
+    "codigo": codigoQr,
+  };
+
+  var url = "http://$host/api/Cuenta/share";
+
+  var headers = {
+    "Content-Type": "application/json",
+    "Authorization": "bearer $token"
+  };
+
+  var response = await http.post(Uri.parse(url),
+      headers: headers, body: json.encode(body));
+
+  ServerResponse<Account?> serverResponse;
+
+  if (response.statusCode == 200) {
+    var data = jsonDecode(response.body);
+
+    if (data['success']) {
+      data = data['data'];
+
+      List<dynamic> dataActividades = data['actividades'];
+      List<Actividad> actividades = [];
+
+      for (var e = 0; e < dataActividades.length; e++) {
+        actividades.add(Actividad(
+            codigoActividad: dataActividades[e]['codigo'].toString(),
+            nombre: dataActividades[e]['nombre']));
+      }
+
+      Account acc = Account(
+          id: data['id'].toString(),
+          cedulaTipo: data['cedulaTipo'],
+          cedulaNumero: data['cedulaNumero'],
+          idExtranjero: data['idExtranjero'],
+          nombre: data['nombre'],
+          nombreComercial: data['nombreComercial'],
+          telCodigoPais: data['telCodigoPais'],
+          telNumero: data['telNumero'],
+          faxCodigoPais: data['faxCodigoPais'],
+          faxNumero: data['faxNumero'],
+          correo: data['correo'],
+          ubicacionCodigo: data['ubicacionCodigo'],
+          ubicacionSenas: data['ubicacionSenas'],
+          ubicacionSenasExtranjero: data['ubicacionSenasExtranjero'],
+          tipo: data['tipo'],
+          actividades: actividades,
+          esCompartida: data['esCompartida']);
+
+      ServerResponse<Ubicacion> ubicacion =
+          await getUbicacion(acc.ubicacionCodigo);
+
+      if (ubicacion.success) {
+        acc.nombreProvincia = ubicacion.data!.provincia.nombre;
+        acc.nombreCanton = ubicacion.data!.canton.nombre;
+        acc.nombreDistrito = ubicacion.data!.distrito.nombre;
+        acc.nombreBarrio = ubicacion.data!.barrio.nombre;
+      }
+
+      serverResponse = ServerResponse(data: acc, message: '', success: true);
+    } else {
+      serverResponse =
+          ServerResponse(data: null, message: data['message'], success: true);
+    }
+  } else {
+    serverResponse = ServerResponse(
+        data: null,
+        message: 'Ha ocurrido un error, probablemente el token ha expirado',
+        success: false);
+  }
+
+  return serverResponse;
+}
+
+Future<String> getAccountBillingQr(int id) async {
+  final prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('accessToken');
+  String host = await Config.load(selectedHost);
+
+  var url = "http://$host/api/Cuenta/$id/billing/qr";
+
+  var headers = {"Authorization": "bearer $token"};
+
+  var response = await http.get(Uri.parse(url), headers: headers);
+
+  var data = jsonDecode(response.body);
+  data = data['data'];
+
+  return data;
+}
+
+Future<String> getAccountShareQr(int id) async {
+  final prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('accessToken');
+  String host = await Config.load(selectedHost);
+
+  var url = "http://$host/api/Cuenta/$id/share/qr";
 
   var headers = {"Authorization": "bearer $token"};
 
@@ -237,46 +334,46 @@ Future<List<Account>> getCuentasList() async {
 
     if (ubicacion.success) {
       accounts.add(Account(
-        id: data[i]['id'].toString(),
-        cedulaTipo: data[i]['cedulaTipo'],
-        cedulaNumero: data[i]['cedulaNumero'],
-        idExtranjero: data[i]['idExtranjero'],
-        nombre: data[i]['nombre'],
-        nombreComercial: data[i]['nombreComercial'],
-        telCodigoPais: data[i]['telCodigoPais'],
-        telNumero: data[i]['telNumero'],
-        faxCodigoPais: data[i]['faxCodigoPais'],
-        faxNumero: data[i]['faxNumero'],
-        correo: data[i]['correo'],
-        ubicacionCodigo: data[i]['ubicacionCodigo'],
-        ubicacionSenas: data[i]['ubicacionSenas'],
-        ubicacionSenasExtranjero: data[i]['ubicacionSenasExtranjero'],
-        tipo: data[i]['tipo'],
-        actividades: actividades,
-        nombreProvincia: ubicacion.data!.provincia.nombre,
-        nombreCanton: ubicacion.data!.canton.nombre,
-        nombreDistrito: ubicacion.data!.distrito.nombre,
-        nombreBarrio: ubicacion.data!.barrio.nombre,
-      ));
+          id: data[i]['id'].toString(),
+          cedulaTipo: data[i]['cedulaTipo'],
+          cedulaNumero: data[i]['cedulaNumero'],
+          idExtranjero: data[i]['idExtranjero'],
+          nombre: data[i]['nombre'],
+          nombreComercial: data[i]['nombreComercial'],
+          telCodigoPais: data[i]['telCodigoPais'],
+          telNumero: data[i]['telNumero'],
+          faxCodigoPais: data[i]['faxCodigoPais'],
+          faxNumero: data[i]['faxNumero'],
+          correo: data[i]['correo'],
+          ubicacionCodigo: data[i]['ubicacionCodigo'],
+          ubicacionSenas: data[i]['ubicacionSenas'],
+          ubicacionSenasExtranjero: data[i]['ubicacionSenasExtranjero'],
+          tipo: data[i]['tipo'],
+          actividades: actividades,
+          nombreProvincia: ubicacion.data!.provincia.nombre,
+          nombreCanton: ubicacion.data!.canton.nombre,
+          nombreDistrito: ubicacion.data!.distrito.nombre,
+          nombreBarrio: ubicacion.data!.barrio.nombre,
+          esCompartida: data[i]['esCompartida']));
     } else {
       accounts.add(Account(
-        id: data[i]['id'].toString(),
-        cedulaTipo: data[i]['cedulaTipo'],
-        cedulaNumero: data[i]['cedulaNumero'],
-        idExtranjero: data[i]['idExtranjero'],
-        nombre: data[i]['nombre'],
-        nombreComercial: data[i]['nombreComercial'],
-        telCodigoPais: data[i]['telCodigoPais'],
-        telNumero: data[i]['telNumero'],
-        faxCodigoPais: data[i]['faxCodigoPais'],
-        faxNumero: data[i]['faxNumero'],
-        correo: data[i]['correo'],
-        ubicacionCodigo: data[i]['ubicacionCodigo'],
-        ubicacionSenas: data[i]['ubicacionSenas'],
-        ubicacionSenasExtranjero: data[i]['ubicacionSenasExtranjero'],
-        tipo: data[i]['tipo'],
-        actividades: actividades,
-      ));
+          id: data[i]['id'].toString(),
+          cedulaTipo: data[i]['cedulaTipo'],
+          cedulaNumero: data[i]['cedulaNumero'],
+          idExtranjero: data[i]['idExtranjero'],
+          nombre: data[i]['nombre'],
+          nombreComercial: data[i]['nombreComercial'],
+          telCodigoPais: data[i]['telCodigoPais'],
+          telNumero: data[i]['telNumero'],
+          faxCodigoPais: data[i]['faxCodigoPais'],
+          faxNumero: data[i]['faxNumero'],
+          correo: data[i]['correo'],
+          ubicacionCodigo: data[i]['ubicacionCodigo'],
+          ubicacionSenas: data[i]['ubicacionSenas'],
+          ubicacionSenasExtranjero: data[i]['ubicacionSenasExtranjero'],
+          tipo: data[i]['tipo'],
+          actividades: actividades,
+          esCompartida: data[i]['esCompartida']));
     }
   }
   return accounts;

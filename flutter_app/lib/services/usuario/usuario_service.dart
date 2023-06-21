@@ -20,8 +20,6 @@ Future<http.Response> postLogin(String username, String password) async {
   var response = await http.post(Uri.parse(url),
       headers: headers, body: json.encode(data));
 
-  //print(response.body);
-
   return response;
 }
 
