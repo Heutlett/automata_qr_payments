@@ -2,7 +2,7 @@ DROP VIEW IF EXISTS vw_cuentas_usuarios;
 CREATE VIEW vw_cuentas_usuarios AS
 SELECT
     u.Id AS UsuarioId,
-	u.UID as UID,
+    u.UID AS UID,
     c.Id AS CuentaId,
     u.Username AS Username,
     0 AS EsCompartida,
@@ -27,7 +27,7 @@ FROM
 UNION
 SELECT
     cc.UsuarioId AS UsuarioId,
-	u.UID as UID,
+    u.UID AS UID,
     c.Id AS CuentaId,
     u.Username AS Username,
     1 AS EsCompartida,
@@ -49,7 +49,5 @@ SELECT
 FROM
     cuentascompartidas cc
     INNER JOIN cuentas c ON cc.CuentaCompartidaId = c.Id
-    INNER JOIN usuarios u ON c.UsuarioId = u.Id
-ORDER BY UsuarioId;
-
-SELECT * FROM qr_payments2.vw_cuentas_usuarios;
+    INNER JOIN usuarios u ON cc.UsuarioId = u.Id
+    INNER JOIN usuarios uc ON c.UsuarioId = uc.Id;

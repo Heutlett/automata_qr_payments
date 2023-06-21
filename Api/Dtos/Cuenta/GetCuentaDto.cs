@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Api.Dtos.Usuario;
 using Api.Models;
 
 namespace Api.Dtos.Cuenta
@@ -24,5 +21,7 @@ namespace Api.Dtos.Cuenta
         public string UbicacionSenasExtranjero { get; set; } = String.Empty;
         public TipoCuenta Tipo { get; set; } = TipoCuenta.Receptor;
         public List<GetActividadDto>? Actividades { get; set; }
+        public List<string>? UsuariosCompartidos { get; set; }
+        public bool EsCompartida { get; internal set; }
     }
 }

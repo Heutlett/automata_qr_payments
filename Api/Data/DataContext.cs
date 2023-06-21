@@ -109,7 +109,7 @@ namespace Api.Data
                     .HasColumnName("UID");
                 entity.Property(e => e.Username).HasMaxLength(20);
 
-                entity.HasMany(d => d.CuentasCompartidas).WithMany(p => p.Usuarios)
+                entity.HasMany(d => d.CuentasCompartidas).WithMany(p => p.UsuariosCompartidos)
                     .UsingEntity<Dictionary<string, object>>(
                         "cuentascompartidas",
                         r => r.HasOne<Cuenta>().WithMany()

@@ -181,10 +181,22 @@ namespace Api.Controllers
             return Ok(await _cuentaService.GetCuentaTemporal(nombreUsuario, id));
         }
 
-        [HttpGet("{id}/qr")]
-        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> GetCuentaQR(int id)
+        [HttpGet("{id}/billing/qr")]
+        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> GetBillingCuentaQR(int id)
         {
-            return Ok(await _cuentaService.GenerateCuentaQr(id));
+            return Ok(await _cuentaService.GenerateCuentaQr("billing", id));
+        }
+
+        [HttpGet("billing/cuentabyqr")]
+        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> GetCuentaByQR(QrBody qrBody)
+        {
+            return Ok(await _cuentaService.GetCuentaByQR(qrBody.Codigo));
+        }
+
+        [HttpGet("{id}/share/qr")]
+        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> GetShareCuentaQR(int id)
+        {
+            return Ok(await _cuentaService.GenerateCuentaQr("share", id));
         }
 
         [HttpPost("share")]
