@@ -17,6 +17,10 @@ namespace Api
             CreateMap<Ubicacion, GetUbicacionCantonDto>();
             CreateMap<Ubicacion, GetUbicacionDistritoDto>();
             CreateMap<Ubicacion, GetUbicacionBarrioDto>();
+
+            CreateMap<Cuenta, GetCuentaDto>()
+                .ForMember(dest => dest.UsuariosCompartidos, opt => opt.MapFrom(src => src.UsuariosCompartidos.Select(u => u.Username).ToList()));
+
         }
     }
 }

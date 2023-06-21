@@ -126,19 +126,16 @@ namespace Api.Services.CuentaService
         private async Task<List<GetCuentaDto>> GetMyCuentas()
         {
             // Asume la existencia del usuario
-            var dbCuentasPropias = await _context.Cuentas
+            var dbMyCuentas = await _context.Cuentas
                .Include(c => c.Actividades)
                .Include(c => c.UsuariosCompartidos)
                .Where(c => c.Usuario!.UID == GetUserUid() && c.IsActive)
                .ToListAsync();
 
-            List<GetCuentaDto> myCuentas = dbCuentasPropias.Select(c =>
-            {
-                var cuenta = _mapper.Map<GetCuentaDto>(c);
-                cuenta.UsuariosCompartidos = c.UsuariosCompartidos.Select(u => u.Username).ToList();
+            List<GetCuentaDto> myCuentas = _mapper.Map<List<GetCuentaDto>>(dbMyCuentas);
+
+            foreach (var cuenta in myCuentas)
                 cuenta.EsCompartida = false; // La cuenta es propia, por lo tanto no es compartida
-                return cuenta;
-            }).ToList();
 
             return myCuentas;
         }
@@ -146,18 +143,16 @@ namespace Api.Services.CuentaService
         private async Task<List<GetCuentaDto>> GetSharedWithMeCuentas()
         {
             // Asume la existencia del usuario
-            var dbCuentasCompartidas = await _context.Cuentas
+            var dbSharedCuentas = await _context.Cuentas
                 .Include(c => c.Actividades)
                 .Include(c => c.Usuario) // Include the Usuario for each shared account
                 .Where(c => c.UsuariosCompartidos.Any(u => u!.UID == GetUserUid()) && c.IsActive)
                 .ToListAsync();
 
-            List<GetCuentaDto> sharedWithMeCuentas = dbCuentasCompartidas.Select(c =>
-            {
-                var cuenta = _mapper.Map<GetCuentaDto>(c);
-                cuenta.EsCompartida = true; // La cuenta es compartida
-                return cuenta;
-            }).ToList();
+            List<GetCuentaDto> sharedWithMeCuentas = _mapper.Map<List<GetCuentaDto>>(dbSharedCuentas);
+
+            foreach (var cuenta in sharedWithMeCuentas)
+                cuenta.EsCompartida = false; // La cuenta es propia, por lo tanto no es compartida
 
             return sharedWithMeCuentas;
         }
