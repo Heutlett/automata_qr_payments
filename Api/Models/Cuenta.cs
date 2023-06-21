@@ -60,6 +60,6 @@ namespace Api.Models
         public virtual ICollection<Actividad> Actividades { get; } = new List<Actividad>();
 
         // Many-to-many relationship with the Usuario entity
-        public virtual ICollection<Usuario> Usuarios { get; } = new List<Usuario>();
+        public virtual ICollection<Usuario> UsuariosCompartidos { get; } = new List<Usuario>();
     }
 }

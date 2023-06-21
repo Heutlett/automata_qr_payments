@@ -1,7 +1,6 @@
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using Api.Data;
+using Api.Utils;
 using Api.Dtos.Cuenta;
 using Api.Dtos.Cuenta.Ubicacion;
 using Api.Models;
@@ -33,8 +32,12 @@ namespace Api.Services.CuentaService
         public async Task<ServiceResponse<List<GetCuentaDto>>> AddCuenta(AddCuentaDto newCuenta)
         {
             var serviceResponse = new ServiceResponse<List<GetCuentaDto>>();
-            var cuenta =
-                new Cuenta
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                var cuenta = new Cuenta
                 {
                     CedulaNumero = newCuenta.CedulaNumero,
                     CedulaTipo = newCuenta.CedulaTipo,
@@ -52,35 +55,43 @@ namespace Api.Services.CuentaService
                     UbicacionSenasExtranjero = newCuenta.UbicacionSenasExtranjero
                 };
 
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
-            if (usuario == null)
-            {
-                serviceResponse.Success = false;
-                serviceResponse.Message = "Error agregando la cuenta.";
-                return serviceResponse;
-            }
-            cuenta.Usuario = usuario;
+                var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
+                if (usuario == null) throw new Exception($"Error agregando la cuenta.");
+                cuenta.Usuario = usuario;
 
-            _context.Cuentas.Add(cuenta); // (No es Async) Aun no se llama la db, solo se agrega un Cuenta al dataContext
-            await _context.SaveChangesAsync();  // Aqui es donde ya se envia a la db (Async)
+                _context.Cuentas.Add(cuenta);
+                await _context.SaveChangesAsync();
 
-            var actividades = newCuenta.actividades!;
+                var actividades = newCuenta.actividades!;
 
-            var addCuentaActividades = new AddCuentaActividadesDto { CuentaId = cuenta.Id, ActividadesId = actividades };
+                var addCuentaActividades = new AddCuentaActividadesDto { CuentaId = cuenta.Id, ActividadesId = actividades };
 
-            await AddCuentaActividades(addCuentaActividades);
+                await AddCuentaActividades(addCuentaActividades);
 
-            serviceResponse.Data =
-                await _context.Cuentas
+                await transaction.CommitAsync();
+
+                serviceResponse.Data = await _context.Cuentas
                     .Where(c => c.Usuario!.UID == GetUserUid())
                     .Select(c => _mapper.Map<GetCuentaDto>(c))
                     .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                // Manejar el error de alguna manera adecuada
+                await transaction.RollbackAsync();
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
             return serviceResponse;
         }
+
 
         public async Task<ServiceResponse<List<GetCuentaDto>>> DeleteCuenta(int id)
         {
             var serviceResponse = new ServiceResponse<List<GetCuentaDto>>();
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
@@ -94,10 +105,105 @@ namespace Api.Services.CuentaService
                 cuenta.IsActive = false;
                 await _context.SaveChangesAsync();
 
+                await transaction.CommitAsync();
+
                 serviceResponse.Data =
                     await _context.Cuentas
                         .Where(c => c.Usuario!.UID == GetUserUid() && c.IsActive)
-                        .Select(c => _mapper.Map<GetCuentaDto>(c)).ToListAsync();
+                        .Select(c => _mapper.Map<GetCuentaDto>(c))
+                        .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
+        private async Task<List<GetCuentaDto>> GetMyCuentas()
+        {
+            var dbCuentasPropias = await _context.Cuentas
+               .Include(c => c.Actividades)
+               .Include(c => c.UsuariosCompartidos)
+               .Where(c => c.Usuario!.UID == GetUserUid() && c.IsActive)
+               .ToListAsync();
+
+            List<GetCuentaDto> myCuentas = dbCuentasPropias.Select(c =>
+            {
+                var cuenta = _mapper.Map<GetCuentaDto>(c);
+                cuenta.UsuariosCompartidos = c.UsuariosCompartidos.Select(u => u.Username).ToList();
+                cuenta.EsCompartida = false; // La cuenta es propia, por lo tanto no es compartida
+                return cuenta;
+            }).ToList();
+
+            return myCuentas;
+        }
+
+        private async Task<List<GetCuentaDto>> GetSharedWithMeCuentas()
+        {
+            var dbCuentasCompartidas = await _context.Cuentas
+                .Include(c => c.Actividades)
+                .Include(c => c.Usuario) // Include the Usuario for each shared account
+                .Where(c => c.UsuariosCompartidos.Any(u => u!.UID == GetUserUid()) && c.IsActive)
+                .ToListAsync();
+
+            List<GetCuentaDto> sharedWithMeCuentas = dbCuentasCompartidas.Select(c =>
+            {
+                var cuenta = _mapper.Map<GetCuentaDto>(c);
+                cuenta.EsCompartida = true; // La cuenta es compartida
+                return cuenta;
+            }).ToList();
+
+            return sharedWithMeCuentas;
+        }
+
+        private async Task<List<GetCuentaDto>> GetCuentas()
+        {
+            var myCuentas = await GetMyCuentas();
+            var sharedWithMeCuentas = await GetSharedWithMeCuentas();
+            var cuentas = myCuentas.Concat(sharedWithMeCuentas).ToList();
+            return cuentas;
+        }
+
+        public async Task<ServiceResponse<List<GetCuentaDto>>> GetAllCuentas()
+        {
+            var serviceResponse = new ServiceResponse<List<GetCuentaDto>>();
+
+            // Obtener el usuario actual
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
+            if (usuario == null) throw new Exception($"Usuario no encontrado.");
+
+            // Obtener cuentas
+            var cuentas = await GetCuentas();
+
+            serviceResponse.Data = cuentas;
+
+            return serviceResponse;
+        }
+
+        private async Task<GetCuentaDto?> GetCuenta(int id)
+        {
+            // Obtener la cuenta
+            var cuentasDto = await GetCuentas();
+            var cuenta = cuentasDto.FirstOrDefault(c => c.Id == id);
+            return cuenta;
+        }
+
+
+        public async Task<ServiceResponse<GetCuentaDto>> GetCuentaById(int id)
+        {
+            var serviceResponse = new ServiceResponse<GetCuentaDto>();
+
+            try
+            {
+                // Obtener la cuenta
+                var cuenta = await GetCuenta(id);
+                if (cuenta == null) throw new Exception("No se ha encontrado cuenta coincidente.");
+
+                serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuenta);
             }
             catch (Exception ex)
             {
@@ -105,27 +211,6 @@ namespace Api.Services.CuentaService
                 serviceResponse.Message = ex.Message;
             }
 
-            return serviceResponse;
-        }
-
-        public async Task<ServiceResponse<List<GetCuentaDto>>> GetAllCuentas()
-        {
-            var serviceResponse = new ServiceResponse<List<GetCuentaDto>>();
-            var dbCuentas = await _context.Cuentas
-                .Include(c => c.Actividades)
-                .Where(c => c.Usuario!.UID == GetUserUid() && c.IsActive).ToListAsync();
-
-            serviceResponse.Data = dbCuentas.Select(c => _mapper.Map<GetCuentaDto>(c)).ToList();
-            return serviceResponse;
-        }
-
-        public async Task<ServiceResponse<GetCuentaDto>> GetCuentaById(int id)
-        {
-            var serviceResponse = new ServiceResponse<GetCuentaDto>();
-            var dbCuenta = await _context.Cuentas
-                .Include(c => c.Actividades)
-                .FirstOrDefaultAsync(c => c.Id == id && c.Usuario!.UID == GetUserUid() && c.IsActive);
-            serviceResponse.Data = _mapper.Map<GetCuentaDto>(dbCuenta);
             return serviceResponse;
         }
 
@@ -387,29 +472,91 @@ namespace Api.Services.CuentaService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<string>> GenerateCuentaQr(int CuentaId)
+
+        private string GenerateCuentaQR(string type, int CuentaId)
+        {
+            var uid = GetUserUid();
+            DateTime timestamp = DateTime.UtcNow;
+            var secretKey = _configuration.GetSection("AppSettings:Token").Value!;
+            string text = $"{type},{uid},{timestamp.ToString("s")},{CuentaId}";
+            string code = Utils.AESEncryptionHelper.Encrypt(text, secretKey);
+
+            return code;
+        }
+
+        public async Task<ServiceResponse<string>> GenerateBillingCuentaQr(int CuentaId)
         {
             var serviceResponse = new ServiceResponse<string>();
+            try
+            {
+                // Validar la existencia de la cuenta dentro de todas las cuentas, titulares y compartidas conmigo
+                var cuenta = await GetCuenta(CuentaId);
+                if (cuenta == null) throw new Exception("No se ha encontrado cuenta coincidente.");
+
+                serviceResponse.Data = GenerateCuentaQR("billing", CuentaId);
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<string>> GenerateShareCuentaQr(int CuentaId)
+        {
+            var serviceResponse = new ServiceResponse<string>();
+            try
+            {
+                // Validar la existencia de la cuenta dentro de las cuentas titulares
+                var cuenta = await _context.Cuentas.Include(c => c.Actividades).FirstOrDefaultAsync(c => c.Id == CuentaId && c.Usuario!.UID == GetUserUid() && c.IsActive);
+                if (cuenta == null) throw new Exception("No se ha encontrado cuenta coincidente.");
+
+                serviceResponse.Data = GenerateCuentaQR("share", CuentaId);
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<GetCuentaDto>> GetCuentaByQR(string encryptedcode)
+        {
+            var serviceResponse = new ServiceResponse<GetCuentaDto>();
 
             try
             {
-                var cuenta = await _context.Cuentas
-                .FirstOrDefaultAsync(c => c.Id == CuentaId && c.Usuario!.UID == GetUserUid() && c.IsActive);
-
-                if (cuenta is null)
-                    throw new Exception($"No se han encontrado la cuenta.");
-
-                var uid = GetUserUid();
-
-                DateTime timestamp = DateTime.UtcNow;
-
                 var secretKey = _configuration.GetSection("AppSettings:Token").Value!;
+                string decryptedMessage = Utils.AESEncryptionHelper.Decrypt(encryptedcode, secretKey);
 
-                string texto = $"{uid},{timestamp.ToString("s")},{CuentaId}";
+                // Extraer los datos originales de la cadena de texto
+                string[] args = decryptedMessage.Split(',');
+                var type = args[0];
+                var UID = args[1];
+                var timestamp = DateTime.Parse(args[2]);
+                var CuentaId = int.Parse(args[3]);
 
-                string mensajeEncriptado = encryptMessage(texto, secretKey);
+                DateTime startTime = DateTime.UtcNow;
+                TimeSpan duration = startTime.Subtract(timestamp);
 
-                serviceResponse.Data = mensajeEncriptado;
+                // Validar tipo de QR
+                if (type != "billing") throw new Exception("Código inválido");
+
+                // Validar el tiempo que ha pasado
+                if (duration.TotalMinutes > _qrExpirationTime) throw new Exception($"El tiempo del codigo ha expirado.");
+
+                // Validar la existencia de la cuenta dentro de todas las cuentas, titulares y compartidas conmigo
+                var cuenta = await GetCuenta(CuentaId);
+                if (cuenta == null) throw new Exception("No se ha encontrado cuenta coincidente.");
+
+                // Quitar los usuarios compartidos, para conservar la privacidad
+                cuenta.UsuariosCompartidos.Clear();
+
+                serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuenta);
             }
             catch (Exception ex)
             {
@@ -424,24 +571,30 @@ namespace Api.Services.CuentaService
         {
             var serviceResponse = new ServiceResponse<GetCuentaDto>();
 
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
             try
             {
                 var secretKey = _configuration.GetSection("AppSettings:Token").Value!;
-                string decryptedMessage = decryptMessage(encryptedcode, secretKey);
+                string decryptedMessage = Utils.AESEncryptionHelper.Decrypt(encryptedcode, secretKey);
 
                 // Extraer los datos originales de la cadena de texto
                 string[] args = decryptedMessage.Split(',');
-                var UID = args[0];
-                var timestamp = DateTime.Parse(args[1]);
-                var CuentaId = int.Parse(args[2]);
+                var type = args[0];
+                var UID = args[1];
+                var timestamp = DateTime.Parse(args[2]);
+                var CuentaId = int.Parse(args[3]);
 
                 DateTime startTime = DateTime.UtcNow;
                 TimeSpan duration = startTime.Subtract(timestamp);
 
+                // Validar tipo de QR
+                if (type != "share") throw new Exception("Código inválido");
+
                 // Validar el tiempo que ha pasado
                 if (duration.TotalMinutes > _qrExpirationTime) throw new Exception($"El tiempo del codigo ha expirado.");
 
-                // Validar la existencia de la cuenta
+                // Validar la existencia de la cuenta dentro de las cuentras propias.
                 var cuenta = await _context.Cuentas.Include(c => c.Actividades).FirstOrDefaultAsync(c => c.Id == CuentaId && c.Usuario!.UID == UID && c.IsActive);
                 if (cuenta == null) throw new Exception($"No se ha encontrado ninguna cuenta coincidente.");
 
@@ -453,30 +606,36 @@ namespace Api.Services.CuentaService
                 if (UID == usuario.UID) throw new Exception($"Usted ya es propietario de esta cuenta.");
 
                 // Verificar si el usuario ya existe en la colección Usuarios de la Cuenta
-                if (await _context.Cuentas.AnyAsync(c => c.Id == CuentaId && c.Usuarios.Any(u => u.Id == usuario.Id)))
+                if (await _context.Cuentas.AnyAsync(c => c.Id == CuentaId && c.UsuariosCompartidos.Any(u => u.Id == usuario.Id)))
                     throw new Exception($"Esta cuenta ya ha sido previamente registrada.");
 
                 // Agregar el Usuario a la colección Usuarios de la Cuenta
-                cuenta.Usuarios.Add(usuario);
+                cuenta.UsuariosCompartidos.Add(usuario);
 
                 // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
 
-                // Modificar en la tabla de compartir cuenta
+                await transaction.CommitAsync();
+
+                // Retorna la misma cuenta con el nuevo usuario compartidos
                 serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuenta);
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = ex.Message;
             }
-
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetCuentaDto>> UnshareCuenta(int id)
+
+        public async Task<ServiceResponse<List<GetCuentaDto>>> UnshareCuenta(int id)
         {
-            var serviceResponse = new ServiceResponse<GetCuentaDto>();
+            var serviceResponse = new ServiceResponse<List<GetCuentaDto>>();
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
@@ -484,25 +643,26 @@ namespace Api.Services.CuentaService
                 var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
                 if (usuario == null) throw new Exception($"Usuario no encontrado.");
 
-                // Verificar si el usuario existe en la colección Usuarios de la Cuenta
-                if (!await _context.Cuentas.AnyAsync(c => c.Id == id && c.Usuarios.Any(u => u.Id == usuario.Id)))throw new Exception($"Cuenta no encontrada.");
-
                 // Verificar si el usuario existe en la colección Usuarios de la Cuenta y obtener la cuenta
-                var cuenta = await _context.Cuentas.Include(c => c.Usuarios).FirstOrDefaultAsync(c => c.Id == id && c.Usuarios.Any(u => u.Id == usuario.Id));
+                var cuenta = await _context.Cuentas.Include(c => c.UsuariosCompartidos).FirstOrDefaultAsync(c => c.Id == id && c.UsuariosCompartidos.Any(u => u.Id == usuario.Id));
                 if (cuenta == null) throw new Exception($"No se ha encontrado ninguna cuenta coincidente.");
 
                 // Eliminar el Usuario de la colección Usuarios de la Cuenta
-                cuenta.Usuarios.Remove(usuario);
+                cuenta.UsuariosCompartidos.Remove(usuario);
 
                 // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
 
-                // Asignar null para indicar que la cuenta se eliminó
-                serviceResponse.Data = null;
-                serviceResponse.Message = "Acceso de usuario a esta cuenta revocado.";
+                await transaction.CommitAsync();
+
+                // Retornar cuentas
+                var cuentas = await GetCuentas();
+                serviceResponse.Data = cuentas;
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = ex.Message;
             }
@@ -510,40 +670,43 @@ namespace Api.Services.CuentaService
             return serviceResponse;
         }
 
-        // Método para encriptar un mensaje
-        private static string encryptMessage(string mensaje, string key)
+        public async Task<ServiceResponse<List<GetCuentaDto>>> UnshareCuenta(int id, string username)
         {
-            byte[] messageBytes = Encoding.UTF8.GetBytes(mensaje);
-            byte[] keyBytes = Encoding.UTF8.GetBytes(key.PadRight(32, '0').Substring(0, 32)); // Utiliza una key de 256 bits (32 bytes)
+            var serviceResponse = new ServiceResponse<List<GetCuentaDto>>();
 
-            Aes aes = Aes.Create();
-            aes.Key = keyBytes;
-            aes.IV = new byte[aes.BlockSize / 8];
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
-            ICryptoTransform encrypter = aes.CreateEncryptor();
+            try
+            {
+                // Obtener el usuario a eliminar
+                var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Username == username);
+                if (usuario == null) throw new Exception($"Usuario no encontrado.");
 
-            byte[] encryptedBytes = encrypter.TransformFinalBlock(messageBytes, 0, messageBytes.Length);
-            string encryptedMessage = Convert.ToBase64String(encryptedBytes);
+                // Verificar si el usuario existe en la colección Usuarios de la Cuenta y obtener la cuenta
+                var cuenta = await _context.Cuentas.Include(c => c.UsuariosCompartidos).FirstOrDefaultAsync(c => c.Id == id && c.UsuariosCompartidos.Any(u => u.Id == usuario.Id));
+                if (cuenta == null) throw new Exception($"No se ha encontrado ninguna cuenta coincidente.");
 
-            return encryptedMessage;
-        }
+                // Eliminar el Usuario de la colección Usuarios de la Cuenta
+                cuenta.UsuariosCompartidos.Remove(usuario);
 
-        // Método para desencriptar un mensaje
-        private static string decryptMessage(string encryptedMessage, string key)
-        {
-            byte[] encryptedBytes = Convert.FromBase64String(encryptedMessage);
-            byte[] keyBytes = Encoding.UTF8.GetBytes(key.PadRight(32, '0').Substring(0, 32)); // Utiliza una key de 256 bits (32 bytes)
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
 
-            Aes aes = Aes.Create();
-            aes.Key = keyBytes;
-            aes.IV = new byte[aes.BlockSize / 8];
+                await transaction.CommitAsync();
 
-            ICryptoTransform decryptor = aes.CreateDecryptor();
+                // Retornar cuentas
+                var cuentas = await GetCuentas();
+                serviceResponse.Data = cuentas;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
 
-            byte[] decryptedBytes = decryptor.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
-            string decryptedMessage = Encoding.UTF8.GetString(decryptedBytes);
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
 
-            return decryptedMessage;
+            return serviceResponse;
         }
 
     }

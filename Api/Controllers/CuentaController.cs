@@ -181,10 +181,22 @@ namespace Api.Controllers
             return Ok(await _cuentaService.GetCuentaTemporal(nombreUsuario, id));
         }
 
-        [HttpGet("{id}/qr")]
-        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> GetCuentaQR(int id)
+        [HttpGet("{id}/billing/qr")]
+        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> GetBillingCuentaQR(int id)
         {
-            return Ok(await _cuentaService.GenerateCuentaQr(id));
+            return Ok(await _cuentaService.GenerateBillingCuentaQr(id));
+        }
+
+        [HttpPost("billing/cuentabyqr")]
+        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> GetCuentaByQR(QrBody qrBody)
+        {
+            return Ok(await _cuentaService.GetCuentaByQR(qrBody.Codigo));
+        }
+
+        [HttpGet("{id}/share/qr")]
+        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> GetShareCuentaQR(int id)
+        {
+            return Ok(await _cuentaService.GenerateShareCuentaQr(id));
         }
 
         [HttpPost("share")]
@@ -197,6 +209,12 @@ namespace Api.Controllers
         public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> UnshareCuenta(int id)
         {
             return Ok(await _cuentaService.UnshareCuenta(id));
+        }
+
+        [HttpPost("{id}/unshare/{username}")]
+        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> UnshareCuenta(int id, string username)
+        {
+            return Ok(await _cuentaService.UnshareCuenta(id, username));
         }
     }
 }

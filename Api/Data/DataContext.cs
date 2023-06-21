@@ -20,7 +20,6 @@ namespace Api.Data
         public virtual DbSet<Cuenta> Cuentas { get; set; }
         public virtual DbSet<Ubicacion> Ubicaciones { get; set; }
         public virtual DbSet<Usuario> Usuarios { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Apply entity configurations
@@ -109,7 +108,7 @@ namespace Api.Data
                     .HasColumnName("UID");
                 entity.Property(e => e.Username).HasMaxLength(20);
 
-                entity.HasMany(d => d.CuentasCompartidas).WithMany(p => p.Usuarios)
+                entity.HasMany(d => d.CuentasCompartidas).WithMany(p => p.UsuariosCompartidos)
                     .UsingEntity<Dictionary<string, object>>(
                         "cuentascompartidas",
                         r => r.HasOne<Cuenta>().WithMany()
@@ -126,5 +125,6 @@ namespace Api.Data
                         });
             }
         }
+
     }
 }
