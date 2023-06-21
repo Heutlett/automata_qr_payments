@@ -123,56 +123,75 @@ namespace Api.Services.CuentaService
 
             return serviceResponse;
         }
-
-        private async Task<List<GetCuentaDto>> GetCuentas(string UID)
+        private async Task<List<GetCuentaDto>> GetMyCuentas()
         {
-            var cuentas = await _context.VwCuentasUsuarios
-                .Where(c => c.UID == UID && c.IsActive)
-                .ToListAsync();
+            var dbCuentasPropias = await _context.Cuentas
+               .Include(c => c.Actividades)
+               .Include(c => c.UsuariosCompartidos)
+               .Where(c => c.Usuario!.UID == GetUserUid() && c.IsActive)
+               .ToListAsync();
 
-            List<GetCuentaDto> cuentaDtos = cuentas.Select(async c =>
+            List<GetCuentaDto> myCuentas = dbCuentasPropias.Select(c =>
             {
-                var cuentaDto = _mapper.Map<GetCuentaDto>(c);
-                cuentaDto.UsuariosCompartidos = c.EsCompartida ? new List<string>() : await GetUsuariosCompartidos(c.CuentaId);
-                return cuentaDto;
-            }).Select(task => task.Result) // Wait for all the async tasks to complete
-              .ToList();
+                var cuenta = _mapper.Map<GetCuentaDto>(c);
+                cuenta.UsuariosCompartidos = c.UsuariosCompartidos.Select(u => u.Username).ToList();
+                cuenta.EsCompartida = false; // La cuenta es propia, por lo tanto no es compartida
+                return cuenta;
+            }).ToList();
 
-            return cuentaDtos;
+            return myCuentas;
         }
 
-        private async Task<List<string>> GetUsuariosCompartidos(int cuentaId)
+        private async Task<List<GetCuentaDto>> GetSharedWithMeCuentas()
         {
-            var usuariosCompartidos = await _context.VwCuentasUsuarios
-                .Where(c => c.CuentaId == cuentaId && c.EsCompartida)
-                .Select(c => c.Username)
+            var dbCuentasCompartidas = await _context.Cuentas
+                .Include(c => c.Actividades)
+                .Include(c => c.Usuario) // Include the Usuario for each shared account
+                .Where(c => c.UsuariosCompartidos.Any(u => u!.UID == GetUserUid()) && c.IsActive)
                 .ToListAsync();
 
-            return usuariosCompartidos ?? new List<string>();
+            List<GetCuentaDto> sharedWithMeCuentas = dbCuentasCompartidas.Select(c =>
+            {
+                var cuenta = _mapper.Map<GetCuentaDto>(c);
+                cuenta.EsCompartida = true; // La cuenta es compartida
+                return cuenta;
+            }).ToList();
+
+            return sharedWithMeCuentas;
+        }
+
+        private async Task<List<GetCuentaDto>> GetCuentas()
+        {
+            var myCuentas = await GetMyCuentas();
+            var sharedWithMeCuentas = await GetSharedWithMeCuentas();
+            var cuentas = myCuentas.Concat(sharedWithMeCuentas).ToList();
+            return cuentas;
         }
 
         public async Task<ServiceResponse<List<GetCuentaDto>>> GetAllCuentas()
         {
             var serviceResponse = new ServiceResponse<List<GetCuentaDto>>();
-            try
-            {
-                // Obtener el usuario actual
-                var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
-                if (usuario == null) throw new Exception($"Usuario no encontrado.");
 
-                // Obtener cuentas
-                var cuentas = await GetCuentas(usuario.UID);
+            // Obtener el usuario actual
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
+            if (usuario == null) throw new Exception($"Usuario no encontrado.");
 
-                serviceResponse.Data = cuentas;
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Success = false;
-                serviceResponse.Message = ex.Message;
-            }
+            // Obtener cuentas
+            var cuentas = await GetCuentas();
+
+            serviceResponse.Data = cuentas;
 
             return serviceResponse;
         }
+
+        private async Task<GetCuentaDto?> GetCuenta(int id)
+        {
+            // Obtener la cuenta
+            var cuentasDto = await GetCuentas();
+            var cuenta = cuentasDto.FirstOrDefault(c => c.Id == id);
+            return cuenta;
+        }
+
 
         public async Task<ServiceResponse<GetCuentaDto>> GetCuentaById(int id)
         {
@@ -181,15 +200,11 @@ namespace Api.Services.CuentaService
             try
             {
                 // Obtener la cuenta
-                var cuenta = await _context.VwCuentasUsuarios.FirstOrDefaultAsync(c => c.UID == GetUserUid() && c.CuentaId == id && c.IsActive);
+                var cuenta = await GetCuenta(id);
                 if (cuenta == null) throw new Exception("No se ha encontrado cuenta coincidente.");
 
-                // Obtener los usuarios compartidos en caso de que sea cuenta propia
-                var cuentaDto = _mapper.Map<GetCuentaDto>(cuenta);
-                cuentaDto.UsuariosCompartidos = cuentaDto.EsCompartida ? new List<string>() : await GetUsuariosCompartidos(cuenta.CuentaId);
-                serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuentaDto);
+                serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuenta);
             }
-
             catch (Exception ex)
             {
                 serviceResponse.Success = false;
@@ -475,10 +490,10 @@ namespace Api.Services.CuentaService
             try
             {
                 // Validar la existencia de la cuenta dentro de todas las cuentas, titulares y compartidas conmigo
-                var cuenta = await _context.VwCuentasUsuarios.FirstOrDefaultAsync(c => c.UID == GetUserUid() && c.CuentaId == CuentaId && c.IsActive);
+                var cuenta = await GetCuenta(CuentaId);
                 if (cuenta == null) throw new Exception("No se ha encontrado cuenta coincidente.");
 
-                serviceResponse.Data =  GenerateCuentaQR("billing", CuentaId);
+                serviceResponse.Data = GenerateCuentaQR("billing", CuentaId);
             }
             catch (Exception ex)
             {
@@ -495,10 +510,10 @@ namespace Api.Services.CuentaService
             try
             {
                 // Validar la existencia de la cuenta dentro de las cuentas titulares
-                var cuenta = await _context.Cuentas.Include(c => c.Actividades).FirstOrDefaultAsync(c => c.Id == CuentaId && c.Usuario!.UID == GetUserUid()  && c.IsActive);
+                var cuenta = await _context.Cuentas.Include(c => c.Actividades).FirstOrDefaultAsync(c => c.Id == CuentaId && c.Usuario!.UID == GetUserUid() && c.IsActive);
                 if (cuenta == null) throw new Exception("No se ha encontrado cuenta coincidente.");
 
-                serviceResponse.Data =  GenerateCuentaQR("share", CuentaId);
+                serviceResponse.Data = GenerateCuentaQR("share", CuentaId);
             }
             catch (Exception ex)
             {
@@ -534,9 +549,12 @@ namespace Api.Services.CuentaService
                 // Validar el tiempo que ha pasado
                 if (duration.TotalMinutes > _qrExpirationTime) throw new Exception($"El tiempo del codigo ha expirado.");
 
-                // Validar la existencia de la cuenta
-                var cuenta = await _context.VwCuentasUsuarios.FirstOrDefaultAsync(c => c.UID == GetUserUid() && c.CuentaId == CuentaId && c.IsActive);
+                // Validar la existencia de la cuenta dentro de todas las cuentas, titulares y compartidas conmigo
+                var cuenta = await GetCuenta(CuentaId);
                 if (cuenta == null) throw new Exception("No se ha encontrado cuenta coincidente.");
+
+                // Quitar los usuarios compartidos, para conservar la privacidad
+                cuenta.UsuariosCompartidos.Clear();
 
                 serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuenta);
             }
@@ -599,7 +617,7 @@ namespace Api.Services.CuentaService
 
                 await transaction.CommitAsync();
 
-                // Modificar en la tabla de compartir cuenta
+                // Retorna la misma cuenta con el nuevo usuario compartidos
                 serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuenta);
             }
             catch (Exception ex)
@@ -638,7 +656,7 @@ namespace Api.Services.CuentaService
                 await transaction.CommitAsync();
 
                 // Retornar cuentas
-                var cuentas = await GetCuentas(usuario.UID);
+                var cuentas = await GetCuentas();
                 serviceResponse.Data = cuentas;
             }
             catch (Exception ex)
@@ -664,7 +682,7 @@ namespace Api.Services.CuentaService
                 var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Username == username);
                 if (usuario == null) throw new Exception($"Usuario no encontrado.");
 
-                // Verificar si el usuario existe dentro de los usuarios compartidos
+                // Verificar si el usuario existe en la colección Usuarios de la Cuenta y obtener la cuenta
                 var cuenta = await _context.Cuentas.Include(c => c.UsuariosCompartidos).FirstOrDefaultAsync(c => c.Id == id && c.UsuariosCompartidos.Any(u => u.Id == usuario.Id));
                 if (cuenta == null) throw new Exception($"No se ha encontrado ninguna cuenta coincidente.");
 
@@ -677,7 +695,7 @@ namespace Api.Services.CuentaService
                 await transaction.CommitAsync();
 
                 // Retornar cuentas
-                var cuentas = await GetCuentas(usuario.UID);
+                var cuentas = await GetCuentas();
                 serviceResponse.Data = cuentas;
             }
             catch (Exception ex)

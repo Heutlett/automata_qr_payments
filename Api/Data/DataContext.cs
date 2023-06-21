@@ -14,14 +14,12 @@ namespace Api.Data
             Cuentas = Set<Cuenta>();
             Ubicaciones = Set<Ubicacion>();
             Usuarios = Set<Usuario>();
-            VwCuentasUsuarios = Set<VwCuentasUsuarios>();
         }
 
         public virtual DbSet<Actividad> Actividades { get; set; }
         public virtual DbSet<Cuenta> Cuentas { get; set; }
         public virtual DbSet<Ubicacion> Ubicaciones { get; set; }
         public virtual DbSet<Usuario> Usuarios { get; set; }
-        public virtual DbSet<VwCuentasUsuarios> VwCuentasUsuarios { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Apply entity configurations
@@ -29,7 +27,6 @@ namespace Api.Data
             modelBuilder.ApplyConfiguration(new CuentaConfiguration());
             modelBuilder.ApplyConfiguration(new UbicacionConfiguration());
             modelBuilder.ApplyConfiguration(new UsuarioConfiguration());
-            modelBuilder.ApplyConfiguration(new VwCuentasUsuariosConfiguration());
         }
 
         public class ActividadConfiguration : IEntityTypeConfiguration<Actividad>
@@ -129,34 +126,5 @@ namespace Api.Data
             }
         }
 
-        public class VwCuentasUsuariosConfiguration : IEntityTypeConfiguration<VwCuentasUsuarios>
-        {
-            public void Configure(EntityTypeBuilder<VwCuentasUsuarios> builder)
-            {
-                builder.ToView("vw_cuentas_usuarios");
-                builder.HasNoKey();
-                // Map the view columns to the entity properties
-                builder.Property(c => c.UsuarioId).HasColumnName("UsuarioId");
-                builder.Property(c => c.UID).HasColumnName("UID");
-                builder.Property(c => c.CuentaId).HasColumnName("CuentaId");
-                builder.Property(c => c.Username).HasColumnName("Username");
-                builder.Property(c => c.EsCompartida).HasColumnName("EsCompartida");
-                builder.Property(c => c.CedulaTipo).HasColumnName("CedulaTipo");
-                builder.Property(c => c.CedulaNumero).HasColumnName("CedulaNumero");
-                builder.Property(c => c.IdExtranjero).HasColumnName("IdExtranjero");
-                builder.Property(c => c.Nombre).HasColumnName("Nombre");
-                builder.Property(c => c.NombreComercial).HasColumnName("NombreComercial");
-                builder.Property(c => c.TelCodigoPais).HasColumnName("TelCodigoPais");
-                builder.Property(c => c.TelNumero).HasColumnName("TelNumero");
-                builder.Property(c => c.FaxCodigoPais).HasColumnName("FaxCodigoPais");
-                builder.Property(c => c.FaxNumero).HasColumnName("FaxNumero");
-                builder.Property(c => c.Correo).HasColumnName("Correo");
-                builder.Property(c => c.UbicacionCodigo).HasColumnName("UbicacionCodigo");
-                builder.Property(c => c.UbicacionSenas).HasColumnName("UbicacionSenas");
-                builder.Property(c => c.UbicacionSenasExtranjero).HasColumnName("UbicacionSenasExtranjero");
-                builder.Property(c => c.IsActive).HasColumnName("IsActive");
-                builder.Property(c => c.Tipo).HasColumnName("Tipo");
-            }
-        }
     }
 }
