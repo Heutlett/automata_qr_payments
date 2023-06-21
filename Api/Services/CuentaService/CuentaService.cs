@@ -33,8 +33,12 @@ namespace Api.Services.CuentaService
         public async Task<ServiceResponse<List<GetCuentaDto>>> AddCuenta(AddCuentaDto newCuenta)
         {
             var serviceResponse = new ServiceResponse<List<GetCuentaDto>>();
-            var cuenta =
-                new Cuenta
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                var cuenta = new Cuenta
                 {
                     CedulaNumero = newCuenta.CedulaNumero,
                     CedulaTipo = newCuenta.CedulaTipo,
@@ -52,35 +56,43 @@ namespace Api.Services.CuentaService
                     UbicacionSenasExtranjero = newCuenta.UbicacionSenasExtranjero
                 };
 
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
-            if (usuario == null)
-            {
-                serviceResponse.Success = false;
-                serviceResponse.Message = "Error agregando la cuenta.";
-                return serviceResponse;
-            }
-            cuenta.Usuario = usuario;
+                var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
+                if (usuario == null) throw new Exception($"Error agregando la cuenta.");
+                cuenta.Usuario = usuario;
 
-            _context.Cuentas.Add(cuenta); // (No es Async) Aun no se llama la db, solo se agrega un Cuenta al dataContext
-            await _context.SaveChangesAsync();  // Aqui es donde ya se envia a la db (Async)
+                _context.Cuentas.Add(cuenta);
+                await _context.SaveChangesAsync();
 
-            var actividades = newCuenta.actividades!;
+                var actividades = newCuenta.actividades!;
 
-            var addCuentaActividades = new AddCuentaActividadesDto { CuentaId = cuenta.Id, ActividadesId = actividades };
+                var addCuentaActividades = new AddCuentaActividadesDto { CuentaId = cuenta.Id, ActividadesId = actividades };
 
-            await AddCuentaActividades(addCuentaActividades);
+                await AddCuentaActividades(addCuentaActividades);
 
-            serviceResponse.Data =
-                await _context.Cuentas
+                await transaction.CommitAsync();
+
+                serviceResponse.Data = await _context.Cuentas
                     .Where(c => c.Usuario!.UID == GetUserUid())
                     .Select(c => _mapper.Map<GetCuentaDto>(c))
                     .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                // Manejar el error de alguna manera adecuada
+                await transaction.RollbackAsync();
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
             return serviceResponse;
         }
+
 
         public async Task<ServiceResponse<List<GetCuentaDto>>> DeleteCuenta(int id)
         {
             var serviceResponse = new ServiceResponse<List<GetCuentaDto>>();
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
@@ -94,19 +106,25 @@ namespace Api.Services.CuentaService
                 cuenta.IsActive = false;
                 await _context.SaveChangesAsync();
 
+                await transaction.CommitAsync();
+
                 serviceResponse.Data =
                     await _context.Cuentas
                         .Where(c => c.Usuario!.UID == GetUserUid() && c.IsActive)
-                        .Select(c => _mapper.Map<GetCuentaDto>(c)).ToListAsync();
+                        .Select(c => _mapper.Map<GetCuentaDto>(c))
+                        .ToListAsync();
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = ex.Message;
             }
 
             return serviceResponse;
         }
+
 
         public async Task<ServiceResponse<List<GetCuentaDto>>> GetAllCuentas()
         {
@@ -484,9 +502,6 @@ namespace Api.Services.CuentaService
                 var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
                 if (usuario == null) throw new Exception($"Usuario no encontrado.");
 
-                // Verificar si el usuario existe en la colección Usuarios de la Cuenta
-                if (!await _context.Cuentas.AnyAsync(c => c.Id == id && c.Usuarios.Any(u => u.Id == usuario.Id)))throw new Exception($"Cuenta no encontrada.");
-
                 // Verificar si el usuario existe en la colección Usuarios de la Cuenta y obtener la cuenta
                 var cuenta = await _context.Cuentas.Include(c => c.Usuarios).FirstOrDefaultAsync(c => c.Id == id && c.Usuarios.Any(u => u.Id == usuario.Id));
                 if (cuenta == null) throw new Exception($"No se ha encontrado ninguna cuenta coincidente.");
@@ -500,6 +515,43 @@ namespace Api.Services.CuentaService
                 // Asignar null para indicar que la cuenta se eliminó
                 serviceResponse.Data = null;
                 serviceResponse.Message = "Acceso de usuario a esta cuenta revocado.";
+
+                // Retornar las cuentas
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<GetCuentaDto>> UnshareCuenta(int id, string username)
+        {
+            var serviceResponse = new ServiceResponse<GetCuentaDto>();
+
+            try
+            {
+                // Obtener el usuario a eliminar
+                var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Username == username);
+                if (usuario == null) throw new Exception($"Usuario no encontrado.");
+
+                // Verificar si el usuario existe en la colección Usuarios de la Cuenta y obtener la cuenta
+                var cuenta = await _context.Cuentas.Include(c => c.Usuarios).FirstOrDefaultAsync(c => c.Id == id && c.Usuarios.Any(u => u.Id == usuario.Id));
+                if (cuenta == null) throw new Exception($"No se ha encontrado ninguna cuenta coincidente.");
+
+                // Eliminar el Usuario de la colección Usuarios de la Cuenta
+                cuenta.Usuarios.Remove(usuario);
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+
+                // Asignar null para indicar que la cuenta se eliminó
+                serviceResponse.Data = null;
+                serviceResponse.Message = "Acceso del usuario a esta cuenta revocado.";
+
+                // Retornar las cuentas
             }
             catch (Exception ex)
             {

@@ -198,5 +198,11 @@ namespace Api.Controllers
         {
             return Ok(await _cuentaService.UnshareCuenta(id));
         }
+
+        [HttpPost("{id}/unshare/{username}")]
+        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> UnshareCuenta(int id, string username)
+        {
+            return Ok(await _cuentaService.UnshareCuenta(id, username));
+        }
     }
 }

@@ -22,6 +22,7 @@ namespace Api.Services.CuentaService
         Task<ServiceResponse<string>> GenerateCuentaQr(int CuentaId);
         Task<ServiceResponse<GetCuentaDto>> ShareCuenta(string encryptedcode);
         Task<ServiceResponse<GetCuentaDto>> UnshareCuenta(int id);
+        Task<ServiceResponse<GetCuentaDto>> UnshareCuenta(int id, string username);
 
     }
 }
