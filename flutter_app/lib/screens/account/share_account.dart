@@ -87,6 +87,8 @@ class _ShareAccountScreenState extends State<ShareAccountScreen> {
   }
 
   void _showHome(BuildContext context) {
-    Navigator.of(context).pop();
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        "/home_logged", (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamed('/account_management');
   }
 }

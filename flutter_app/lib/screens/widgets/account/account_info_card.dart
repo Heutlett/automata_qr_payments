@@ -95,9 +95,13 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
                 editAcc: () {
                   editAcc(context);
                 },
-                deleteAcc: () {
-                  deleteAcc(context, account.id);
-                },
+                deleteAcc: account.esCompartida
+                    ? () {
+                        deleteSharedAcc(context, account.id);
+                      }
+                    : () {
+                        deleteOwnAcc(context, account.id);
+                      },
                 shareAcc: () {
                   shareAcc(context);
                 },
@@ -228,31 +232,59 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
     }
   }
 
-  void deleteAcc(BuildContext context, String accountId) async {
+  void deleteOwnAcc(BuildContext context, String accountId) async {
     showAlertDialog2Options(
         context,
         'Aviso',
         '¿Está seguro de que desea eliminar esta cuenta?',
         'Si, acepto',
         'No, cancelar', () {
-      deleteAccConfirm(context, accountId);
+      deleteOwnAccConfirm(context, accountId);
     });
   }
-}
 
-void deleteAccConfirm(BuildContext context, String accountId) async {
-  var deleteResponse = await deleteAccount(accountId);
-  if (context.mounted) {
-    if (deleteResponse.success) {
-      showAlertDialog(context, 'Cuenta eliminada',
-          'La cuenta ha sido eliminada correctamente.', 'Aceptar');
-    } else {
-      showAlertDialog(context, 'Error', deleteResponse.message, 'Aceptar');
+  void deleteOwnAccConfirm(BuildContext context, String accountId) async {
+    var deleteResponse = await deleteOwnAccount(accountId);
+    if (context.mounted) {
+      if (deleteResponse.success) {
+        showAlertDialog(context, 'Cuenta eliminada',
+            'La cuenta ha sido eliminada correctamente.', 'Aceptar');
+      } else {
+        showAlertDialog(context, 'Error', deleteResponse.message, 'Aceptar');
+      }
+    }
+    if (context.mounted) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          "/home_logged", (Route<dynamic> route) => false);
+      Navigator.of(context).pushNamed('/account_management');
     }
   }
-  if (context.mounted) {
-    Navigator.of(context).pushNamedAndRemoveUntil(
-        "/home_logged", (Route<dynamic> route) => false);
-    Navigator.of(context).pushNamed('/account_management');
+
+  void deleteSharedAcc(BuildContext context, String accountId) async {
+    showAlertDialog2Options(
+        context,
+        'Aviso',
+        '¿Está seguro de que desea eliminar esta cuenta?',
+        'Si, acepto',
+        'No, cancelar', () {
+      deleteSharedAccConfirm(context, accountId);
+    });
+  }
+
+  void deleteSharedAccConfirm(BuildContext context, String accountId) async {
+    var deleteResponse = await deleteSharedAccount(accountId);
+    if (context.mounted) {
+      if (deleteResponse.success) {
+        showAlertDialog(context, 'Cuenta eliminada',
+            'La cuenta ha sido eliminada correctamente.', 'Aceptar');
+      } else {
+        showAlertDialog(context, 'Error', deleteResponse.message, 'Aceptar');
+      }
+    }
+    if (context.mounted) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          "/home_logged", (Route<dynamic> route) => false);
+      Navigator.of(context).pushNamed('/account_management');
+    }
   }
 }

@@ -44,13 +44,50 @@ Future<http.Response> putEditAccount(String id, Object? cuenta) async {
   return responseCreateAcc;
 }
 
-Future<ServerResponse<String>> deleteAccount(String id) async {
+Future<ServerResponse<String>> deleteOwnAccount(String id) async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
   String host = await Config.load(selectedHost);
 
   var responseDeleteAcc = await http.delete(
     Uri.parse('http://$host/api/Cuenta/$id'),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'bearer $token'
+    },
+  );
+
+  ServerResponse<String> serverResponse;
+
+  if (responseDeleteAcc.statusCode == 200) {
+    var data = jsonDecode(responseDeleteAcc.body);
+
+    if (data['success']) {
+      data = data['data'];
+
+      serverResponse =
+          ServerResponse(data: "Success", message: '', success: true);
+    } else {
+      serverResponse =
+          ServerResponse(data: null, message: data['message'], success: true);
+    }
+  } else {
+    serverResponse = ServerResponse(
+        data: null,
+        message: 'Ha ocurrido un error, probablemente el token ha expirado',
+        success: false);
+  }
+
+  return serverResponse;
+}
+
+Future<ServerResponse<String>> deleteSharedAccount(String id) async {
+  final prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('accessToken');
+  String host = await Config.load(selectedHost);
+
+  var responseDeleteAcc = await http.post(
+    Uri.parse('http://$host/api/Cuenta/$id/unshare'),
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'bearer $token'
