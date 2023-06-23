@@ -22,6 +22,7 @@ class Account {
   String? nombreDistrito;
   String? nombreBarrio;
   final bool esCompartida;
+  final List<String> usuariosCompartidos;
 
   Account(
       {required this.id,
@@ -44,5 +45,6 @@ class Account {
       this.nombreCanton,
       this.nombreDistrito,
       this.nombreBarrio,
-      required this.esCompartida});
+      required this.esCompartida,
+      required this.usuariosCompartidos});
 }

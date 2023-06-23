@@ -8,6 +8,7 @@ import 'package:flutter_app/screens/widgets/account/account_info_header.dart';
 import 'package:flutter_app/screens/widgets/account/account_info_card_shared_acc.dart';
 import 'package:flutter_app/models/ubicacion.dart';
 import 'package:flutter_app/utils/utils.dart';
+import 'package:flutter_app/screens/widgets/general/my_text.dart';
 
 class AccountInfoCard extends StatefulWidget {
   final Account account;
@@ -59,7 +60,33 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
             ? AccountInfoCardExpand(account: account)
             : const SizedBox(),
         AccountInfoCardActivities(activities: widget.account.actividades),
-        account.esCompartida
+        addButtons == 2
+            ? account.esCompartida
+                ? Card(
+                    color: Colors.amber[300],
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(2.0),
+                          child:
+                              MyText(text: "Compartida conmigo (no soy dueño)"),
+                        ),
+                      ],
+                    ))
+                : Card(
+                    color: Colors.green[300],
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(2.0),
+                          child: MyText(text: "Dueño"),
+                        ),
+                      ],
+                    ))
+            : const SizedBox(),
+        addButtons == 2
             ? AccountInfoCardSharedAcc(account: account)
             : const SizedBox(),
         addButtons != 0

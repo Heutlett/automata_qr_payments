@@ -111,10 +111,17 @@ Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
       List<dynamic> dataActividades = data['actividades'];
       List<Actividad> actividades = [];
 
+      List<dynamic> dataUsuariosCompartidos = data['usuariosCompartidos'];
+      List<String> usuariosCompartidos = [];
+
       for (var e = 0; e < dataActividades.length; e++) {
         actividades.add(Actividad(
             codigoActividad: dataActividades[e]['codigo'].toString(),
             nombre: dataActividades[e]['nombre']));
+      }
+
+      for (var e = 0; e < dataUsuariosCompartidos.length; e++) {
+        usuariosCompartidos.add(dataUsuariosCompartidos[e]);
       }
 
       Account acc = Account(
@@ -134,7 +141,8 @@ Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
           ubicacionSenasExtranjero: data['ubicacionSenasExtranjero'],
           tipo: data['tipo'],
           actividades: actividades,
-          esCompartida: data['esCompartida']);
+          esCompartida: data['esCompartida'],
+          usuariosCompartidos: usuariosCompartidos);
 
       ServerResponse<Ubicacion> ubicacion =
           await getUbicacion(acc.ubicacionCodigo);
@@ -191,10 +199,17 @@ Future<ServerResponse<Account?>> shareAccountByQr(String codigoQr) async {
       List<dynamic> dataActividades = data['actividades'];
       List<Actividad> actividades = [];
 
+      List<dynamic> dataUsuariosCompartidos = data['usuariosCompartidos'];
+      List<String> usuariosCompartidos = [];
+
       for (var e = 0; e < dataActividades.length; e++) {
         actividades.add(Actividad(
             codigoActividad: dataActividades[e]['codigo'].toString(),
             nombre: dataActividades[e]['nombre']));
+      }
+
+      for (var e = 0; e < dataUsuariosCompartidos.length; e++) {
+        usuariosCompartidos.add(dataUsuariosCompartidos[e]);
       }
 
       Account acc = Account(
@@ -214,7 +229,8 @@ Future<ServerResponse<Account?>> shareAccountByQr(String codigoQr) async {
           ubicacionSenasExtranjero: data['ubicacionSenasExtranjero'],
           tipo: data['tipo'],
           actividades: actividades,
-          esCompartida: data['esCompartida']);
+          esCompartida: data['esCompartida'],
+          usuariosCompartidos: usuariosCompartidos);
 
       ServerResponse<Ubicacion> ubicacion =
           await getUbicacion(acc.ubicacionCodigo);
@@ -321,12 +337,18 @@ Future<List<Account>> getCuentasList() async {
 
   for (var i = 0; i < data.length; i++) {
     List<dynamic> dataActividades = data[i]['actividades'];
+    List<dynamic> dataUsuariosCompartidos = data[i]['usuariosCompartidos'];
     List<Actividad> actividades = [];
+    List<String> usuariosCompartidos = [];
 
     for (var e = 0; e < dataActividades.length; e++) {
       actividades.add(Actividad(
           codigoActividad: dataActividades[e]['codigo'].toString(),
           nombre: dataActividades[e]['nombre']));
+    }
+
+    for (var e = 0; e < dataUsuariosCompartidos.length; e++) {
+      usuariosCompartidos.add(dataUsuariosCompartidos[e]);
     }
 
     ServerResponse<Ubicacion> ubicacion =
@@ -354,7 +376,8 @@ Future<List<Account>> getCuentasList() async {
           nombreCanton: ubicacion.data!.canton.nombre,
           nombreDistrito: ubicacion.data!.distrito.nombre,
           nombreBarrio: ubicacion.data!.barrio.nombre,
-          esCompartida: data[i]['esCompartida']));
+          esCompartida: data[i]['esCompartida'],
+          usuariosCompartidos: usuariosCompartidos));
     } else {
       accounts.add(Account(
           id: data[i]['id'].toString(),
@@ -373,7 +396,8 @@ Future<List<Account>> getCuentasList() async {
           ubicacionSenasExtranjero: data[i]['ubicacionSenasExtranjero'],
           tipo: data[i]['tipo'],
           actividades: actividades,
-          esCompartida: data[i]['esCompartida']));
+          esCompartida: data[i]['esCompartida'],
+          usuariosCompartidos: usuariosCompartidos));
     }
   }
   return accounts;
