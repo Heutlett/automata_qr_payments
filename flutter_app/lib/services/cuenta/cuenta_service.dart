@@ -110,9 +110,43 @@ Future<ServerResponse<String>> deleteSharedAccount(String id) async {
     }
   } else {
     serverResponse = ServerResponse(
-        data: null,
-        message: 'Ha ocurrido un error, probablemente el token ha expirado',
-        success: false);
+        data: null, message: 'Ha ocurrido un error.', success: false);
+  }
+
+  return serverResponse;
+}
+
+Future<ServerResponse<String>> unshareUserAccount(
+    String accountId, String username) async {
+  final prefs = await SharedPreferences.getInstance();
+  String? token = prefs.getString('accessToken');
+  String host = await Config.load(selectedHost);
+
+  var responseDeleteAcc = await http.post(
+    Uri.parse('http://$host/api/Cuenta/$accountId/unshare/$username'),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'bearer $token'
+    },
+  );
+
+  ServerResponse<String> serverResponse;
+
+  if (responseDeleteAcc.statusCode == 200) {
+    var data = jsonDecode(responseDeleteAcc.body);
+
+    if (data['success']) {
+      data = data['data'];
+
+      serverResponse =
+          ServerResponse(data: "Success", message: '', success: true);
+    } else {
+      serverResponse =
+          ServerResponse(data: null, message: data['message'], success: true);
+    }
+  } else {
+    serverResponse = ServerResponse(
+        data: null, message: 'Ha ocurrido un error.', success: false);
   }
 
   return serverResponse;

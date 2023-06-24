@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/screens/widgets/general/my_button.dart';
 import 'package:flutter_app/screens/widgets/general/my_text.dart';
+import 'package:flutter_app/utils/utils.dart';
+import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 
 class AccountInfoCardSharedAcc extends StatefulWidget {
   const AccountInfoCardSharedAcc({
@@ -61,7 +63,9 @@ class _AccountInfoCardSharedAccState extends State<AccountInfoCardSharedAcc> {
                                     ),
                                     MyButton(
                                       text: 'Eliminar usuario',
-                                      function: deleteUser,
+                                      function: () {
+                                        deleteUserAcc(context, acc.id, user);
+                                      },
                                       fontSize: 13,
                                       size: const Size(130, 20),
                                       backgroundColor: Colors.red,
@@ -85,5 +89,36 @@ class _AccountInfoCardSharedAccState extends State<AccountInfoCardSharedAcc> {
     );
   }
 
-  void deleteUser() {}
+  void deleteUserAcc(
+      BuildContext context, String accountId, String username) async {
+    showAlertDialog2Options(
+        context,
+        'Aviso',
+        '¿Está seguro de que desea dejar de compartir la cuenta con $username?',
+        'Si, acepto',
+        'No, cancelar', () {
+      deleteUserAccConfirm(context, accountId, username);
+    });
+  }
+
+  void deleteUserAccConfirm(
+      BuildContext context, String accountId, String username) async {
+    var deleteResponse = await unshareUserAccount(accountId, username);
+    if (context.mounted) {
+      if (deleteResponse.success) {
+        showAlertDialog(
+            context,
+            'Usuario eliminado',
+            'La cuenta se ha dejado de compartir con $username correctamente.',
+            'Aceptar');
+      } else {
+        showAlertDialog(context, 'Error', deleteResponse.message, 'Aceptar');
+      }
+    }
+    if (context.mounted) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          "/home_logged", (Route<dynamic> route) => false);
+      Navigator.of(context).pushNamed('/account_management');
+    }
+  }
 }

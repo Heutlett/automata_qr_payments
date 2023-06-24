@@ -47,8 +47,8 @@ class _AddedSharedAccountState extends State<AddedSharedAccount> {
             ),
             const SizedBox(height: 20),
             MyButton(
-              text: 'Volver al inicio',
-              function: () => _goHome(context),
+              text: 'Volver a cuentas',
+              function: () => _goAccountManagement(context),
               size: const Size(170, 60),
             ),
             const SizedBox(height: 20)
@@ -58,7 +58,9 @@ class _AddedSharedAccountState extends State<AddedSharedAccount> {
     );
   }
 
-  void _goHome(BuildContext context) {
-    Navigator.pushNamed(context, '/home_logged');
+  void _goAccountManagement(BuildContext context) {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        "/home_logged", (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamed('/account_management');
   }
 }
