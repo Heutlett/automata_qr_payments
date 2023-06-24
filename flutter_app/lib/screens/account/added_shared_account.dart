@@ -49,7 +49,7 @@ class _AddedSharedAccountState extends State<AddedSharedAccount> {
             MyButton(
               text: 'Volver a cuentas',
               function: () => _goAccountManagement(context),
-              size: const Size(170, 60),
+              size: const Size(180, 60),
             ),
             const SizedBox(height: 20)
           ],
