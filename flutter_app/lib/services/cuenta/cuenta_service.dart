@@ -362,30 +362,6 @@ Future<String> getAccountShareQr(int id) async {
   return data;
 }
 
-Future<Actividad?> getActividadByCode(int code) async {
-  final prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('accessToken');
-  String host = await Config.load(selectedHost);
-
-  var url = "http://$host/api/Cuenta/getActividadByCodigo/$code";
-
-  var headers = {"Authorization": "bearer $token"};
-
-  var response = await http.get(Uri.parse(url), headers: headers);
-
-  var data = jsonDecode(response.body);
-
-  if (data['success']) {
-    data = data['data'];
-
-    var actividad = Actividad(
-        codigoActividad: data['codigo'].toString(), nombre: data['nombre']);
-
-    return actividad;
-  }
-  return null;
-}
-
 Future<http.Response> _getCuentas() async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');

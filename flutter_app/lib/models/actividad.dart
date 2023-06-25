@@ -1,6 +1,12 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
+
 class Actividad {
   final String codigoActividad;
   final String nombre;
+
+  static Actividad nullActivity =
+      Actividad(codigoActividad: '0', nombre: 'Null');
 
   Actividad({
     required this.codigoActividad,
@@ -30,5 +36,24 @@ class Actividad {
       'codigoActividad': codigoActividad,
       'nombre': nombre,
     };
+  }
+
+  static Future<List<Actividad>> cargarActividades() async {
+    // Lee el contenido del archivo JSON
+    String jsonString =
+        await rootBundle.loadString('assets/data/actividades.json');
+
+    // Decodifica el JSON en un mapa
+    Map<String, dynamic> jsonMap = json.decode(jsonString);
+
+    // Mapea los elementos del mapa a una lista de objetos Actividad
+    List<Actividad> actividades = jsonMap.entries.map((entry) {
+      return Actividad(
+        codigoActividad: entry.key,
+        nombre: entry.value,
+      );
+    }).toList();
+
+    return actividades;
   }
 }

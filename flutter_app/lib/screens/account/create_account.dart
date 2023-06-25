@@ -926,11 +926,17 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
           'El campo Codigo de actividad está vacío, por favor ingresar un codigo de actividad',
           'Aceptar');
     } else {
-      Actividad? actividad =
-          await getActividadByCode(int.parse(_codigoActividadController.text));
+      String codigoBuscado = _codigoActividadController.text;
+
+      List<Actividad> listaActividades = await Actividad.cargarActividades();
+
+      Actividad actividad = listaActividades.firstWhere(
+        (actividad) => actividad.codigoActividad == codigoBuscado,
+        orElse: () => Actividad.nullActivity,
+      );
 
       if (context.mounted) {
-        if (actividad != null) {
+        if (actividad != Actividad.nullActivity) {
           bool containsActividad = actividades.contains(actividad);
 
           if (!containsActividad) {

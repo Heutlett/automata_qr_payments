@@ -741,10 +741,15 @@ class _EditAccountState extends State<EditAccount> {
   }
 
   void initActivities(BuildContext context, String activity) async {
-    Actividad? actividad = await getActividadByCode(int.parse(activity));
+    List<Actividad> listaActividades = await Actividad.cargarActividades();
+
+    Actividad actividad = listaActividades.firstWhere(
+      (actividad) => actividad.codigoActividad == activity,
+      orElse: () => Actividad.nullActivity,
+    );
 
     setState(() {
-      actividades.add(actividad!);
+      actividades.add(actividad);
     });
   }
 
@@ -756,11 +761,17 @@ class _EditAccountState extends State<EditAccount> {
           'El campo Codigo de actividad está vacío, por favor ingresar un codigo de actividad',
           'Aceptar');
     } else {
-      Actividad? actividad =
-          await getActividadByCode(int.parse(_codigoActividadController.text));
+      String activityCode = _codigoActividadController.text;
+
+      List<Actividad> listaActividades = await Actividad.cargarActividades();
+
+      Actividad actividad = listaActividades.firstWhere(
+        (actividad) => actividad.codigoActividad == activityCode,
+        orElse: () => Actividad.nullActivity,
+      );
 
       if (context.mounted) {
-        if (actividad != null) {
+        if (actividad != Actividad.nullActivity) {
           bool containsActividad = actividades.contains(actividad);
 
           if (!containsActividad) {
