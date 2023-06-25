@@ -22,6 +22,7 @@ class _EditAccountState extends State<EditAccount> {
 
   final List<Actividad> actividades = [];
   final List<Actividad> actividadesSearchName = [];
+  List<Actividad> activityList = [];
 
   String? _cedulaTipo;
   String? _tipoCuenta;
@@ -53,6 +54,9 @@ class _EditAccountState extends State<EditAccount> {
   final _codigoActividadController = TextEditingController();
   final _nombreActividadController = TextEditingController();
 
+  UbicacionService ubicacionService = UbicacionService();
+
+  List<Provincia> provincias = [];
   List<Canton> cantones = [];
   List<Distrito> distritos = [];
   List<Barrio> barrios = [];
@@ -69,6 +73,9 @@ class _EditAccountState extends State<EditAccount> {
     setState(() {
       _isInitialized = false;
     });
+
+    loadPronvincias();
+    loadActivities();
   }
 
   @override
@@ -90,26 +97,38 @@ class _EditAccountState extends State<EditAccount> {
   }
 
   void loadUbicacion(Account account) async {
-    var response = await getUbicacion(account.ubicacionCodigo);
+    var response = await ubicacionService.getUbicacion(account.ubicacionCodigo);
 
-    if (response.success) {
-      var ubicacion = response.data;
-      if (ubicacion != null) {
-        setState(() {
-          selectedProvincia = provincias.firstWhere(
-              (provincia) => provincia.id == ubicacion.provincia.id);
+    var ubicacion = response;
+    if (ubicacion != null) {
+      setState(() {
+        selectedProvincia = provincias
+            .firstWhere((provincia) => provincia.id == ubicacion.provincia.id);
 
-          selectedCanton =
-              cantones.firstWhere((canton) => canton.id == ubicacion.canton.id);
+        selectedCanton =
+            cantones.firstWhere((canton) => canton.id == ubicacion.canton.id);
 
-          selectedDistrito = distritos
-              .firstWhere((distrito) => distrito.id == ubicacion.distrito.id);
+        selectedDistrito = distritos
+            .firstWhere((distrito) => distrito.id == ubicacion.distrito.id);
 
-          selectedBarrio =
-              barrios.firstWhere((barrio) => barrio.id == ubicacion.barrio.id);
-        });
-      }
+        selectedBarrio =
+            barrios.firstWhere((barrio) => barrio.id == ubicacion.barrio.id);
+      });
     }
+  }
+
+  void loadPronvincias() async {
+    List<Provincia> fetchedProvincias = await ubicacionService.getProvincias();
+    setState(() {
+      provincias = fetchedProvincias;
+    });
+  }
+
+  void loadActivities() async {
+    List<Actividad> fetchedActivityList = await Actividad.cargarActividades();
+    setState(() {
+      activityList = fetchedActivityList;
+    });
   }
 
   @override
@@ -151,696 +170,716 @@ class _EditAccountState extends State<EditAccount> {
       appBar: AppBar(
         title: const Text('Editar cuenta'),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(8.0),
-          child: WillPopScope(
-            onWillPop: () async {
-              // Mostrar AlertDialog cuando se intenta ir hacia atrás o salir de la aplicación
-              bool shouldExit = await showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('¿Estás seguro?'),
-                    content: const Text(
-                        'Si sales ahora, perderás el progreso del formulario.'),
-                    actions: <Widget>[
-                      TextButton(
-                        child: const Text('Cancelar'),
-                        onPressed: () {
-                          Navigator.of(context)
-                              .pop(false); // Permanecer en la pantalla actual
-                        },
-                      ),
-                      TextButton(
-                        child: const Text('Salir'),
-                        onPressed: () {
-                          Navigator.of(context)
-                              .pop(true); // Salir de la pantalla actual
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
+      body: provincias.isEmpty | activityList.isEmpty
+          ? const CircularProgressIndicator() // Indicador de carga
+          : SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                child: WillPopScope(
+                  onWillPop: () async {
+                    // Mostrar AlertDialog cuando se intenta ir hacia atrás o salir de la aplicación
+                    bool shouldExit = await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('¿Estás seguro?'),
+                          content: const Text(
+                              'Si sales ahora, perderás el progreso del formulario.'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text('Cancelar'),
+                              onPressed: () {
+                                Navigator.of(context).pop(
+                                    false); // Permanecer en la pantalla actual
+                              },
+                            ),
+                            TextButton(
+                              child: const Text('Salir'),
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .pop(true); // Salir de la pantalla actual
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
 
-              return shouldExit;
-            },
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 232, 232, 232),
-                        border: Border.all(color: Colors.black)),
+                    return shouldExit;
+                  },
+                  child: Form(
+                    key: _formKey,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 8.0),
                         Container(
-                          padding: const EdgeInsets.all(8),
-                          color: const Color.fromARGB(255, 255, 255, 255),
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 232, 232, 232),
+                              border: Border.all(color: Colors.black)),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Identificacion',
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              DropdownButtonFormField<String>(
-                                value: _cedulaTipo,
-                                decoration: const InputDecoration(
-                                  labelText: 'Tipo de cédula',
-                                ),
-                                items: _cedulaTipos
-                                    .map((cedulaTipo) => DropdownMenuItem(
-                                          value: cedulaTipo,
-                                          child: Text(cedulaTipo),
-                                        ))
-                                    .toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    _cedulaTipo = value;
-                                  });
-                                },
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Este campo es obligatorio.';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                controller: _cedulaNumeroController,
-                                decoration: const InputDecoration(
-                                    labelText: 'Número de cédula'),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Este campo es obligatorio.';
-                                  }
-                                  return null;
-                                },
-                                keyboardType: TextInputType.number,
-                              ),
-                              TextFormField(
-                                controller: _idExtranjeroController,
-                                decoration: const InputDecoration(
-                                    labelText: 'ID extranjero'),
-                                keyboardType: TextInputType.number,
-                              ),
-                              TextFormField(
-                                controller: _nombreController,
-                                decoration:
-                                    const InputDecoration(labelText: 'Nombre'),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Este campo es obligatorio.';
-                                  }
-                                  return null;
-                                },
-                                keyboardType: TextInputType.name,
-                              ),
-                              TextFormField(
-                                controller: _nombreComercialController,
-                                decoration: const InputDecoration(
-                                    labelText: 'Nombre comercial'),
-                                keyboardType: TextInputType.name,
-                              ),
-                              DropdownButtonFormField<String>(
-                                value: _tipoCuenta,
-                                decoration: const InputDecoration(
-                                  labelText: 'Tipo de cuenta',
-                                ),
-                                items: _tiposCuenta
-                                    .map((tipoCuenta) => DropdownMenuItem(
-                                          value: tipoCuenta,
-                                          child: Text(tipoCuenta),
-                                        ))
-                                    .toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    _tipoCuenta = value;
-                                  });
-                                },
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Este campo es obligatorio.';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 16.0),
-                        Container(
-                            padding: const EdgeInsets.all(8),
-                            color: const Color.fromARGB(255, 255, 255, 255),
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Teléfono',
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: TextFormField(
-                                          controller: _telCodigoPaisController,
-                                          decoration: const InputDecoration(
-                                              labelText: 'Código de país'),
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Este campo es obligatorio.';
-                                            }
-                                            return null;
-                                          },
-                                          keyboardType: TextInputType.number,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 16.0),
-                                      Expanded(
-                                        flex: 2,
-                                        child: TextFormField(
-                                          controller: _telNumeroController,
-                                          decoration: const InputDecoration(
-                                              labelText: 'Número de télefono'),
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Este campo es obligatorio.';
-                                            }
-                                            return null;
-                                          },
-                                          keyboardType: TextInputType.number,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                  const Text(
-                                    'Fax',
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: TextFormField(
-                                          controller: _faxCodigoPaisController,
-                                          decoration: const InputDecoration(
-                                              labelText: 'Código de país'),
-                                          keyboardType: TextInputType.number,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 16.0),
-                                      Expanded(
-                                        flex: 2,
-                                        child: TextFormField(
-                                          controller: _faxNumeroController,
-                                          decoration: const InputDecoration(
-                                              labelText: 'Número de fax'),
-                                          keyboardType: TextInputType.number,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                  const Text(
-                                    'Correo electrónico',
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  TextFormField(
-                                    controller: _correoController,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Correo electrónico',
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Este campo es obligatorio.';
-                                      }
-
-                                      // Expresión regular para validar la estructura del correo electrónico
-                                      RegExp regex = RegExp(
-                                        r'^\s*(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()\[\]\.,;:\s@\"]+\.)+[^<>()\[\]\.,;:\s@\"]{0,})\s*$',
-                                      );
-
-                                      if (!regex.hasMatch(value)) {
-                                        return 'Ingrese un correo electrónico válido.';
-                                      }
-
-                                      return null;
-                                    },
-                                    autocorrect: false,
-                                    enableSuggestions: false,
-                                    keyboardType: TextInputType.emailAddress,
-                                  ),
-                                ])),
-                        const SizedBox(height: 16.0),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          color: const Color.fromARGB(255, 255, 255, 255),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Ubicación',
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              DropdownButtonFormField<Provincia>(
-                                value: selectedProvincia,
-                                items: provincias.map((province) {
-                                  return DropdownMenuItem<Provincia>(
-                                    value: province,
-                                    child: Text(province.nombre),
-                                  );
-                                }).toList(),
-                                onChanged: (province) {
-                                  setState(() {
-                                    selectedProvincia = province;
-                                    selectedCanton = null;
-                                    selectedDistrito = null;
-                                    selectedBarrio = null;
-                                    cantones =
-                                        []; // Reinicia la lista de cantones
-                                    distritos =
-                                        []; // Reinicia la lista de distritos
-                                    barrios =
-                                        []; // Reinicia la lista de barrios
-                                    // Simula la carga de los cantones para la provincia seleccionada
-                                    loadCantones(context);
-                                  });
-                                },
-                                decoration: const InputDecoration(
-                                  labelText: 'Provincia',
-                                ),
-                              ),
-                              DropdownButtonFormField<Canton>(
-                                value: selectedCanton,
-                                items: cantones.map((canton) {
-                                  return DropdownMenuItem<Canton>(
-                                    value: canton,
-                                    child: Text(canton.nombre),
-                                  );
-                                }).toList(),
-                                onChanged: (canton) {
-                                  setState(() {
-                                    selectedCanton = canton;
-                                    selectedDistrito = null;
-                                    selectedBarrio = null;
-                                    distritos =
-                                        []; // Reinicia la lista de distritos
-                                    barrios =
-                                        []; // Reinicia la lista de barrios
-                                    // Simula la carga de los distritos para el cantón seleccionado
-                                    loadDistritos(context);
-                                  });
-                                },
-                                decoration: const InputDecoration(
-                                  labelText: 'Cantón',
-                                ),
-                              ),
-                              DropdownButtonFormField<Distrito>(
-                                value: selectedDistrito,
-                                items: distritos.map((district) {
-                                  return DropdownMenuItem<Distrito>(
-                                    value: district,
-                                    child: Text(district.nombre),
-                                  );
-                                }).toList(),
-                                onChanged: (district) {
-                                  setState(() {
-                                    selectedDistrito = district;
-                                    selectedBarrio = null;
-                                    barrios =
-                                        []; // Reinicia la lista de barrios
-                                    // Simula la carga de los barrios para el distrito seleccionado
-                                    loadBarrios(context);
-                                  });
-                                },
-                                decoration: const InputDecoration(
-                                  labelText: 'Distrito',
-                                ),
-                              ),
-                              DropdownButtonFormField<Barrio>(
-                                value: selectedBarrio,
-                                items: barrios.map((neighborhood) {
-                                  return DropdownMenuItem<Barrio>(
-                                    value: neighborhood,
-                                    child: Text(neighborhood.nombre),
-                                  );
-                                }).toList(),
-                                onChanged: (neighborhood) {
-                                  setState(() {
-                                    selectedBarrio = neighborhood;
-                                  });
-                                },
-                                decoration: const InputDecoration(
-                                  labelText: 'Barrio',
-                                ),
-                              ),
-                              TextFormField(
-                                controller: _ubicacionSenasController,
-                                decoration: const InputDecoration(
-                                    labelText: 'Otras señas'),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Este campo es obligatorio.';
-                                  }
-                                  return null;
-                                },
-                              ),
-                              TextFormField(
-                                controller: _ubicacionSenasExtranjeroController,
-                                decoration: const InputDecoration(
-                                    labelText: 'Otras señas (extranjero)'),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 16.0),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          color: const Color.fromARGB(255, 255, 255, 255),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Actividades economicas',
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
                               const SizedBox(height: 8.0),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(8),
-                                    color: Colors.amber[100],
-                                    child: Column(
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                color: const Color.fromARGB(255, 255, 255, 255),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Identificacion',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    DropdownButtonFormField<String>(
+                                      value: _cedulaTipo,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Tipo de cédula',
+                                      ),
+                                      items: _cedulaTipos
+                                          .map((cedulaTipo) => DropdownMenuItem(
+                                                value: cedulaTipo,
+                                                child: Text(cedulaTipo),
+                                              ))
+                                          .toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _cedulaTipo = value;
+                                        });
+                                      },
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Este campo es obligatorio.';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    TextFormField(
+                                      controller: _cedulaNumeroController,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Número de cédula'),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Este campo es obligatorio.';
+                                        }
+                                        return null;
+                                      },
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                    TextFormField(
+                                      controller: _idExtranjeroController,
+                                      decoration: const InputDecoration(
+                                          labelText: 'ID extranjero'),
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                    TextFormField(
+                                      controller: _nombreController,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Nombre'),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Este campo es obligatorio.';
+                                        }
+                                        return null;
+                                      },
+                                      keyboardType: TextInputType.name,
+                                    ),
+                                    TextFormField(
+                                      controller: _nombreComercialController,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Nombre comercial'),
+                                      keyboardType: TextInputType.name,
+                                    ),
+                                    DropdownButtonFormField<String>(
+                                      value: _tipoCuenta,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Tipo de cuenta',
+                                      ),
+                                      items: _tiposCuenta
+                                          .map((tipoCuenta) => DropdownMenuItem(
+                                                value: tipoCuenta,
+                                                child: Text(tipoCuenta),
+                                              ))
+                                          .toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _tipoCuenta = value;
+                                        });
+                                      },
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Este campo es obligatorio.';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 16.0),
+                              Container(
+                                  padding: const EdgeInsets.all(8),
+                                  color:
+                                      const Color.fromARGB(255, 255, 255, 255),
+                                  child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const MyText(
-                                          fontSize: 14,
-                                          text:
-                                              'Buscar por código de actividad:',
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        const Divider(
-                                          thickness: 1,
+                                        const Text(
+                                          'Teléfono',
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                         Row(
                                           children: [
                                             Expanded(
                                               child: TextFormField(
                                                 controller:
-                                                    _codigoActividadController,
-                                                keyboardType:
-                                                    TextInputType.number,
-                                                inputFormatters: [
-                                                  FilteringTextInputFormatter
-                                                      .digitsOnly
-                                                ],
+                                                    _telCodigoPaisController,
                                                 decoration:
                                                     const InputDecoration(
-                                                  labelText:
-                                                      'Código de actividad',
-                                                ),
+                                                        labelText:
+                                                            'Código de país'),
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'Este campo es obligatorio.';
+                                                  }
+                                                  return null;
+                                                },
+                                                keyboardType:
+                                                    TextInputType.number,
                                               ),
                                             ),
                                             const SizedBox(width: 16.0),
                                             Expanded(
-                                              flex: 1,
-                                              child: ElevatedButton(
-                                                onPressed: () {
-                                                  addActivity(context);
-                                                  _codigoActividadController
-                                                      .clear(); // Limpiar el TextFormField
-                                                  FocusScope.of(context)
-                                                      .unfocus(); // Ocultar el teclado
+                                              flex: 2,
+                                              child: TextFormField(
+                                                controller:
+                                                    _telNumeroController,
+                                                decoration: const InputDecoration(
+                                                    labelText:
+                                                        'Número de télefono'),
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return 'Este campo es obligatorio.';
+                                                  }
+                                                  return null;
                                                 },
-                                                child: const Text(
-                                                    "Agregar actividad"),
+                                                keyboardType:
+                                                    TextInputType.number,
                                               ),
-                                            ),
+                                            )
                                           ],
                                         ),
-                                        const SizedBox(height: 10),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                  Container(
-                                      padding: const EdgeInsets.all(8),
-                                      color: Colors.green[100],
-                                      child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                        const SizedBox(height: 16.0),
+                                        const Text(
+                                          'Fax',
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Row(
                                           children: [
-                                            const MyText(
-                                              fontSize: 14,
-                                              text:
-                                                  'Buscar por nombre de actividad:',
-                                              fontWeight: FontWeight.bold,
+                                            Expanded(
+                                              child: TextFormField(
+                                                controller:
+                                                    _faxCodigoPaisController,
+                                                decoration:
+                                                    const InputDecoration(
+                                                        labelText:
+                                                            'Código de país'),
+                                                keyboardType:
+                                                    TextInputType.number,
+                                              ),
                                             ),
-                                            const Divider(
-                                              thickness: 1,
-                                            ),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: TextFormField(
-                                                    controller:
-                                                        _nombreActividadController,
-                                                    decoration:
-                                                        const InputDecoration(
-                                                      labelText:
-                                                          'Nombre de actividad',
+                                            const SizedBox(width: 16.0),
+                                            Expanded(
+                                              flex: 2,
+                                              child: TextFormField(
+                                                controller:
+                                                    _faxNumeroController,
+                                                decoration:
+                                                    const InputDecoration(
+                                                        labelText:
+                                                            'Número de fax'),
+                                                keyboardType:
+                                                    TextInputType.number,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        const SizedBox(height: 16.0),
+                                        const Text(
+                                          'Correo electrónico',
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        TextFormField(
+                                          controller: _correoController,
+                                          decoration: const InputDecoration(
+                                            labelText: 'Correo electrónico',
+                                          ),
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return 'Este campo es obligatorio.';
+                                            }
+
+                                            // Expresión regular para validar la estructura del correo electrónico
+                                            RegExp regex = RegExp(
+                                              r'^\s*(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()\[\]\.,;:\s@\"]+\.)+[^<>()\[\]\.,;:\s@\"]{0,})\s*$',
+                                            );
+
+                                            if (!regex.hasMatch(value)) {
+                                              return 'Ingrese un correo electrónico válido.';
+                                            }
+
+                                            return null;
+                                          },
+                                          autocorrect: false,
+                                          enableSuggestions: false,
+                                          keyboardType:
+                                              TextInputType.emailAddress,
+                                        ),
+                                      ])),
+                              const SizedBox(height: 16.0),
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                color: const Color.fromARGB(255, 255, 255, 255),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Ubicación',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    DropdownButtonFormField<Provincia>(
+                                      value: selectedProvincia,
+                                      items: provincias.map((province) {
+                                        return DropdownMenuItem<Provincia>(
+                                          value: province,
+                                          child: Text(province.nombre),
+                                        );
+                                      }).toList(),
+                                      onChanged: (province) {
+                                        setState(() {
+                                          selectedProvincia = province;
+                                          selectedCanton = null;
+                                          selectedDistrito = null;
+                                          selectedBarrio = null;
+                                          cantones =
+                                              []; // Reinicia la lista de cantones
+                                          distritos =
+                                              []; // Reinicia la lista de distritos
+                                          barrios =
+                                              []; // Reinicia la lista de barrios
+                                          // Simula la carga de los cantones para la provincia seleccionada
+                                          loadCantones(context);
+                                        });
+                                      },
+                                      decoration: const InputDecoration(
+                                        labelText: 'Provincia',
+                                      ),
+                                    ),
+                                    DropdownButtonFormField<Canton>(
+                                      value: selectedCanton,
+                                      items: cantones.map((canton) {
+                                        return DropdownMenuItem<Canton>(
+                                          value: canton,
+                                          child: Text(canton.nombre),
+                                        );
+                                      }).toList(),
+                                      onChanged: (canton) {
+                                        setState(() {
+                                          selectedCanton = canton;
+                                          selectedDistrito = null;
+                                          selectedBarrio = null;
+                                          distritos =
+                                              []; // Reinicia la lista de distritos
+                                          barrios =
+                                              []; // Reinicia la lista de barrios
+                                          // Simula la carga de los distritos para el cantón seleccionado
+                                          loadDistritos(context);
+                                        });
+                                      },
+                                      decoration: const InputDecoration(
+                                        labelText: 'Cantón',
+                                      ),
+                                    ),
+                                    DropdownButtonFormField<Distrito>(
+                                      value: selectedDistrito,
+                                      items: distritos.map((district) {
+                                        return DropdownMenuItem<Distrito>(
+                                          value: district,
+                                          child: Text(district.nombre),
+                                        );
+                                      }).toList(),
+                                      onChanged: (district) {
+                                        setState(() {
+                                          selectedDistrito = district;
+                                          selectedBarrio = null;
+                                          barrios =
+                                              []; // Reinicia la lista de barrios
+                                          // Simula la carga de los barrios para el distrito seleccionado
+                                          loadBarrios(context);
+                                        });
+                                      },
+                                      decoration: const InputDecoration(
+                                        labelText: 'Distrito',
+                                      ),
+                                    ),
+                                    DropdownButtonFormField<Barrio>(
+                                      value: selectedBarrio,
+                                      items: barrios.map((neighborhood) {
+                                        return DropdownMenuItem<Barrio>(
+                                          value: neighborhood,
+                                          child: Text(neighborhood.nombre),
+                                        );
+                                      }).toList(),
+                                      onChanged: (neighborhood) {
+                                        setState(() {
+                                          selectedBarrio = neighborhood;
+                                        });
+                                      },
+                                      decoration: const InputDecoration(
+                                        labelText: 'Barrio',
+                                      ),
+                                    ),
+                                    TextFormField(
+                                      controller: _ubicacionSenasController,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Otras señas'),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Este campo es obligatorio.';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    TextFormField(
+                                      controller:
+                                          _ubicacionSenasExtranjeroController,
+                                      decoration: const InputDecoration(
+                                          labelText:
+                                              'Otras señas (extranjero)'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 16.0),
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                color: const Color.fromARGB(255, 255, 255, 255),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Actividades economicas',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8.0),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(8),
+                                          color: Colors.amber[100],
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const MyText(
+                                                fontSize: 14,
+                                                text:
+                                                    'Buscar por código de actividad:',
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              const Divider(
+                                                thickness: 1,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: TextFormField(
+                                                      controller:
+                                                          _codigoActividadController,
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                      inputFormatters: [
+                                                        FilteringTextInputFormatter
+                                                            .digitsOnly
+                                                      ],
+                                                      decoration:
+                                                          const InputDecoration(
+                                                        labelText:
+                                                            'Código de actividad',
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                const SizedBox(width: 16.0),
-                                                MyButton(
-                                                    size: const Size(80, 20),
-                                                    fontSize: 14,
-                                                    text: 'Buscar',
-                                                    function: () {
-                                                      searchActivityByName(
-                                                          context);
-                                                      _nombreActividadController
-                                                          .clear(); // Limpiar el TextFormField
-                                                      FocusScope.of(context)
-                                                          .unfocus(); // Ocultar el teclado
-                                                    }),
-                                                const SizedBox(width: 10),
-                                                MyButton(
-                                                    size: const Size(85, 20),
-                                                    fontSize: 14,
-                                                    text: 'Limpiar',
-                                                    function: () {
-                                                      setState(() {
-                                                        actividadesSearchName
-                                                            .clear();
-                                                      });
-                                                    })
-                                              ],
-                                            ),
-                                            const SizedBox(height: 10),
-                                            actividadesSearchName.isEmpty
-                                                ? const SizedBox(width: 16.0)
-                                                : Column(
-                                                    children:
-                                                        actividadesSearchName
-                                                            .map(
-                                                      (act) {
-                                                        return Card(
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Row(
-                                                                  children: [
-                                                                    Expanded(
-                                                                      child:
-                                                                          Text(
-                                                                        act.codigoActividad,
-                                                                        style: const TextStyle(
-                                                                            fontSize:
-                                                                                15),
-                                                                      ),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        width:
-                                                                            16.0),
-                                                                    Expanded(
-                                                                      flex: 1,
-                                                                      child:
-                                                                          ElevatedButton(
-                                                                        onPressed:
-                                                                            () {
-                                                                          setState(
-                                                                              () {
-                                                                            actividades.add(act);
-                                                                            actividadesSearchName.remove(act);
-                                                                            showAlertDialog(
-                                                                                context,
-                                                                                'Actividad agregada',
-                                                                                'La actividad se agregó correctamente.',
-                                                                                'Aceptar');
-                                                                          });
-                                                                        },
-                                                                        child: const Text(
-                                                                            "Agregar"),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                Text(
-                                                                  act.nombre,
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          15),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        );
+                                                  const SizedBox(width: 16.0),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: ElevatedButton(
+                                                      onPressed: () {
+                                                        addActivity(context);
+                                                        _codigoActividadController
+                                                            .clear(); // Limpiar el TextFormField
+                                                        FocusScope.of(context)
+                                                            .unfocus(); // Ocultar el teclado
                                                       },
-                                                    ).toList(),
+                                                      child: const Text(
+                                                          "Agregar actividad"),
+                                                    ),
                                                   ),
-                                          ])),
-                                  const SizedBox(height: 16.0),
-                                  Container(
-                                      padding: const EdgeInsets.all(8),
-                                      width: double.infinity,
-                                      color: Colors.red[100],
-                                      child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const MyText(
-                                              text: 'Mis actividades:',
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            const Divider(thickness: 1),
-                                            actividades.isEmpty
-                                                ? const SizedBox(width: 16.0)
-                                                : Column(
-                                                    children: actividades.map(
-                                                      (act) {
-                                                        return Card(
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Row(
-                                                                  children: [
-                                                                    Expanded(
-                                                                      child:
-                                                                          Text(
-                                                                        act.codigoActividad,
+                                                ],
+                                              ),
+                                              const SizedBox(height: 10),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 16.0),
+                                        Container(
+                                            padding: const EdgeInsets.all(8),
+                                            color: Colors.green[100],
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const MyText(
+                                                    fontSize: 14,
+                                                    text:
+                                                        'Buscar por nombre de actividad:',
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  const Divider(
+                                                    thickness: 1,
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: TextFormField(
+                                                          controller:
+                                                              _nombreActividadController,
+                                                          decoration:
+                                                              const InputDecoration(
+                                                            labelText:
+                                                                'Nombre de actividad',
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                          width: 16.0),
+                                                      MyButton(
+                                                          size: const Size(
+                                                              80, 20),
+                                                          fontSize: 14,
+                                                          text: 'Buscar',
+                                                          function: () {
+                                                            searchActivityByName(
+                                                                context);
+                                                            _nombreActividadController
+                                                                .clear(); // Limpiar el TextFormField
+                                                            FocusScope.of(
+                                                                    context)
+                                                                .unfocus(); // Ocultar el teclado
+                                                          }),
+                                                      const SizedBox(width: 10),
+                                                      MyButton(
+                                                          size: const Size(
+                                                              85, 20),
+                                                          fontSize: 14,
+                                                          text: 'Limpiar',
+                                                          function: () {
+                                                            setState(() {
+                                                              actividadesSearchName
+                                                                  .clear();
+                                                            });
+                                                          })
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  actividadesSearchName.isEmpty
+                                                      ? const SizedBox(
+                                                          width: 16.0)
+                                                      : Column(
+                                                          children:
+                                                              actividadesSearchName
+                                                                  .map(
+                                                            (act) {
+                                                              return Card(
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                              .all(
+                                                                          8.0),
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      Row(
+                                                                        children: [
+                                                                          Expanded(
+                                                                            child:
+                                                                                Text(
+                                                                              act.codigoActividad,
+                                                                              style: const TextStyle(fontSize: 15),
+                                                                            ),
+                                                                          ),
+                                                                          const SizedBox(
+                                                                              width: 16.0),
+                                                                          Expanded(
+                                                                            flex:
+                                                                                1,
+                                                                            child:
+                                                                                ElevatedButton(
+                                                                              onPressed: () {
+                                                                                setState(() {
+                                                                                  actividades.add(act);
+                                                                                  actividadesSearchName.remove(act);
+                                                                                  showAlertDialog(context, 'Actividad agregada', 'La actividad se agregó correctamente.', 'Aceptar');
+                                                                                });
+                                                                              },
+                                                                              child: const Text("Agregar"),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      Text(
+                                                                        act.nombre,
                                                                         style: const TextStyle(
                                                                             fontSize:
                                                                                 15),
                                                                       ),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                        width:
-                                                                            16.0),
-                                                                    Expanded(
-                                                                      flex: 1,
-                                                                      child:
-                                                                          ElevatedButton(
-                                                                        onPressed:
-                                                                            () {
-                                                                          setState(
-                                                                              () {
-                                                                            actividades.remove(act);
-                                                                          });
-                                                                        },
-                                                                        child: const Text(
-                                                                            "Eliminar"),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
+                                                          ).toList(),
+                                                        ),
+                                                ])),
+                                        const SizedBox(height: 16.0),
+                                        Container(
+                                            padding: const EdgeInsets.all(8),
+                                            width: double.infinity,
+                                            color: Colors.red[100],
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const MyText(
+                                                    text: 'Mis actividades:',
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  const Divider(thickness: 1),
+                                                  actividades.isEmpty
+                                                      ? const SizedBox(
+                                                          width: 16.0)
+                                                      : Column(
+                                                          children:
+                                                              actividades.map(
+                                                            (act) {
+                                                              return Card(
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                              .all(
+                                                                          8.0),
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      Row(
+                                                                        children: [
+                                                                          Expanded(
+                                                                            child:
+                                                                                Text(
+                                                                              act.codigoActividad,
+                                                                              style: const TextStyle(fontSize: 15),
+                                                                            ),
+                                                                          ),
+                                                                          const SizedBox(
+                                                                              width: 16.0),
+                                                                          Expanded(
+                                                                            flex:
+                                                                                1,
+                                                                            child:
+                                                                                ElevatedButton(
+                                                                              onPressed: () {
+                                                                                setState(() {
+                                                                                  actividades.remove(act);
+                                                                                });
+                                                                              },
+                                                                              child: const Text("Eliminar"),
+                                                                            ),
+                                                                          ),
+                                                                        ],
                                                                       ),
-                                                                    ),
-                                                                  ],
+                                                                      Text(
+                                                                        act.nombre,
+                                                                        style: const TextStyle(
+                                                                            fontSize:
+                                                                                15),
+                                                                      ),
+                                                                    ],
+                                                                  ),
                                                                 ),
-                                                                Text(
-                                                                  act.nombre,
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          15),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        );
-                                                      },
-                                                    ).toList(),
-                                                  )
-                                          ])),
-                                ],
+                                                              );
+                                                            },
+                                                          ).toList(),
+                                                        )
+                                                ])),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16.0),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    if (_formKey.currentState!.validate()) {
+                                      _submitForm(context, account.id);
+                                    } else {
+                                      showAlertDialog(
+                                          context,
+                                          "Error",
+                                          "El formulario se encuentra incompleto o algún campo es incorrecto.",
+                                          "Corregir");
+                                    }
+                                  },
+                                  child: Text(confirmButtonText),
+                                ),
                               ),
                             ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                _submitForm(context, account.id);
-                              } else {
-                                showAlertDialog(
-                                    context,
-                                    "Error",
-                                    "El formulario se encuentra incompleto o algún campo es incorrecto.",
-                                    "Corregir");
-                              }
-                            },
-                            child: Text(confirmButtonText),
                           ),
                         ),
                       ],
                     ),
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -848,8 +887,8 @@ class _EditAccountState extends State<EditAccount> {
     final cedulaTipo = _cedulaTipo;
     final cedulaNumero = _cedulaNumeroController.text;
     final idExtranjero = _idExtranjeroController.text;
-    final nombre = _nombreController.text;
-    final nombreComercial = _nombreComercialController.text;
+    final nombre = _nombreController.text.toUpperCase();
+    final nombreComercial = _nombreComercialController.text.toUpperCase();
     final telCodigoPais = _telCodigoPaisController.text;
     final telNumero = _telNumeroController.text;
     final faxCodigoPais = _faxCodigoPaisController.text;
@@ -977,84 +1016,49 @@ class _EditAccountState extends State<EditAccount> {
 
   void loadCantones(BuildContext context) async {
     if (selectedProvincia != null) {
-      var cantonesResponse = await getCantones(selectedProvincia!.id);
-      if (cantonesResponse.success) {
-        var cantonesList = cantonesResponse.data;
-        if (cantonesList != null) {
-          setState(() {
-            cantones = cantonesList.map((data) {
-              return Canton(
-                id: data['canton'],
-                nombre: data['nombreCanton'].toUpperCase(),
-              );
-            }).toList();
-          });
-        }
-      } else {
-        if (context.mounted) {
-          showAlertDialog(context, 'Error',
-              'No se han podido obtener los cantones.', 'Aceptar');
-        }
-      }
-    } else {
-      showAlertDialog(
-          context, 'Error', 'No se ha seleccionado una provincia.', 'Aceptar');
+      var cantonesList =
+          await ubicacionService.getCantonesByProvincia(selectedProvincia!.id);
+
+      setState(() {
+        cantones = cantonesList.map((data) {
+          return Canton(
+            id: data.id,
+            nombre: data.nombre.toUpperCase(),
+          );
+        }).toList();
+      });
     }
   }
 
   void loadDistritos(BuildContext context) async {
     if (selectedCanton != null) {
-      var distritosResponse =
-          await getDistritos(selectedProvincia!.id, selectedCanton!.id);
-      if (distritosResponse.success) {
-        var distritosList = distritosResponse.data;
-        if (distritosList != null) {
-          setState(() {
-            distritos = distritosList.map((data) {
-              return Distrito(
-                id: data['distrito'],
-                nombre: data['nombreDistrito'].toUpperCase(),
-              );
-            }).toList();
-          });
-        }
-      } else {
-        if (context.mounted) {
-          showAlertDialog(context, 'Error',
-              'No se han podido obtener los distritos.', 'Aceptar');
-        }
-      }
-    } else {
-      showAlertDialog(
-          context, 'Error', 'No se ha seleccionado un cantón.', 'Aceptar');
+      var distritosList = await ubicacionService.getDistritosByCanton(
+          selectedProvincia!.id, selectedCanton!.id);
+
+      setState(() {
+        distritos = distritosList.map((data) {
+          return Distrito(
+            id: data.id,
+            nombre: data.nombre.toUpperCase(),
+          );
+        }).toList();
+      });
     }
   }
 
   void loadBarrios(BuildContext context) async {
     if (selectedDistrito != null) {
-      var barriosResponse = await getBarrios(
+      var barriosList = await ubicacionService.getBarriosByDistrito(
           selectedProvincia!.id, selectedCanton!.id, selectedDistrito!.id);
-      if (barriosResponse.success) {
-        var barriosList = barriosResponse.data;
-        if (barriosList != null) {
-          setState(() {
-            barrios = barriosList.map((data) {
-              return Barrio(
-                id: data['barrio'],
-                nombre: data['nombreBarrio'].toUpperCase(),
-              );
-            }).toList();
-          });
-        }
-      } else {
-        if (context.mounted) {
-          showAlertDialog(context, 'Error',
-              'No se han podido obtener los barrios.', 'Aceptar');
-        }
-      }
-    } else {
-      showAlertDialog(
-          context, 'Error', 'No se ha seleccionado un distrito.', 'Aceptar');
+
+      setState(() {
+        barrios = barriosList.map((data) {
+          return Barrio(
+            id: data.id,
+            nombre: data.nombre.toUpperCase(),
+          );
+        }).toList();
+      });
     }
   }
 
@@ -1067,8 +1071,6 @@ class _EditAccountState extends State<EditAccount> {
           'Aceptar');
     } else {
       String activityName = _nombreActividadController.text;
-
-      List<Actividad> activityList = await Actividad.cargarActividades();
 
       List<Actividad> foundedActivities = activityList
           .where(

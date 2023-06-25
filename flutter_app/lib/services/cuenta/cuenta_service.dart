@@ -157,6 +157,8 @@ Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
   String? token = prefs.getString('accessToken');
   String host = await Config.load(selectedHost);
 
+  UbicacionService ubicacionService = UbicacionService();
+
   final Map<String, dynamic> body = {
     "codigo": codigoQr,
   };
@@ -215,15 +217,13 @@ Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
           esCompartida: data['esCompartida'],
           usuariosCompartidos: usuariosCompartidos);
 
-      ServerResponse<Ubicacion> ubicacion =
-          await getUbicacion(acc.ubicacionCodigo);
+      Ubicacion? ubicacion =
+          await ubicacionService.getUbicacion(acc.ubicacionCodigo);
 
-      if (ubicacion.success) {
-        acc.nombreProvincia = ubicacion.data!.provincia.nombre;
-        acc.nombreCanton = ubicacion.data!.canton.nombre;
-        acc.nombreDistrito = ubicacion.data!.distrito.nombre;
-        acc.nombreBarrio = ubicacion.data!.barrio.nombre;
-      }
+      acc.nombreProvincia = ubicacion!.provincia.nombre;
+      acc.nombreCanton = ubicacion.canton.nombre;
+      acc.nombreDistrito = ubicacion.distrito.nombre;
+      acc.nombreBarrio = ubicacion.barrio.nombre;
 
       serverResponse = ServerResponse(data: acc, message: '', success: true);
     } else {
@@ -244,6 +244,8 @@ Future<ServerResponse<Account?>> shareAccountByQr(String codigoQr) async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
   String host = await Config.load(selectedHost);
+
+  UbicacionService ubicacionService = UbicacionService();
 
   final Map<String, dynamic> body = {
     "codigo": codigoQr,
@@ -303,15 +305,13 @@ Future<ServerResponse<Account?>> shareAccountByQr(String codigoQr) async {
           esCompartida: data['esCompartida'],
           usuariosCompartidos: usuariosCompartidos);
 
-      ServerResponse<Ubicacion> ubicacion =
-          await getUbicacion(acc.ubicacionCodigo);
+      Ubicacion? ubicacion =
+          await ubicacionService.getUbicacion(acc.ubicacionCodigo);
 
-      if (ubicacion.success) {
-        acc.nombreProvincia = ubicacion.data!.provincia.nombre;
-        acc.nombreCanton = ubicacion.data!.canton.nombre;
-        acc.nombreDistrito = ubicacion.data!.distrito.nombre;
-        acc.nombreBarrio = ubicacion.data!.barrio.nombre;
-      }
+      acc.nombreProvincia = ubicacion!.provincia.nombre;
+      acc.nombreCanton = ubicacion.canton.nombre;
+      acc.nombreDistrito = ubicacion.distrito.nombre;
+      acc.nombreBarrio = ubicacion.barrio.nombre;
 
       serverResponse = ServerResponse(data: acc, message: '', success: true);
     } else {
@@ -398,54 +398,34 @@ Future<List<Account>> getCuentasList() async {
       usuariosCompartidos.add(dataUsuariosCompartidos[e]);
     }
 
-    ServerResponse<Ubicacion> ubicacion =
-        await getUbicacion(data[i]['ubicacionCodigo']);
+    UbicacionService ubicacionService = UbicacionService();
 
-    if (ubicacion.success) {
-      accounts.add(Account(
-          id: data[i]['id'].toString(),
-          cedulaTipo: data[i]['cedulaTipo'],
-          cedulaNumero: data[i]['cedulaNumero'],
-          idExtranjero: data[i]['idExtranjero'],
-          nombre: data[i]['nombre'],
-          nombreComercial: data[i]['nombreComercial'],
-          telCodigoPais: data[i]['telCodigoPais'],
-          telNumero: data[i]['telNumero'],
-          faxCodigoPais: data[i]['faxCodigoPais'],
-          faxNumero: data[i]['faxNumero'],
-          correo: data[i]['correo'],
-          ubicacionCodigo: data[i]['ubicacionCodigo'],
-          ubicacionSenas: data[i]['ubicacionSenas'],
-          ubicacionSenasExtranjero: data[i]['ubicacionSenasExtranjero'],
-          tipo: data[i]['tipo'],
-          actividades: actividades,
-          nombreProvincia: ubicacion.data!.provincia.nombre,
-          nombreCanton: ubicacion.data!.canton.nombre,
-          nombreDistrito: ubicacion.data!.distrito.nombre,
-          nombreBarrio: ubicacion.data!.barrio.nombre,
-          esCompartida: data[i]['esCompartida'],
-          usuariosCompartidos: usuariosCompartidos));
-    } else {
-      accounts.add(Account(
-          id: data[i]['id'].toString(),
-          cedulaTipo: data[i]['cedulaTipo'],
-          cedulaNumero: data[i]['cedulaNumero'],
-          idExtranjero: data[i]['idExtranjero'],
-          nombre: data[i]['nombre'],
-          nombreComercial: data[i]['nombreComercial'],
-          telCodigoPais: data[i]['telCodigoPais'],
-          telNumero: data[i]['telNumero'],
-          faxCodigoPais: data[i]['faxCodigoPais'],
-          faxNumero: data[i]['faxNumero'],
-          correo: data[i]['correo'],
-          ubicacionCodigo: data[i]['ubicacionCodigo'],
-          ubicacionSenas: data[i]['ubicacionSenas'],
-          ubicacionSenasExtranjero: data[i]['ubicacionSenasExtranjero'],
-          tipo: data[i]['tipo'],
-          actividades: actividades,
-          esCompartida: data[i]['esCompartida'],
-          usuariosCompartidos: usuariosCompartidos));
-    }
+    Ubicacion? ubicacion =
+        await ubicacionService.getUbicacion(data[i]['ubicacionCodigo']);
+
+    accounts.add(Account(
+        id: data[i]['id'].toString(),
+        cedulaTipo: data[i]['cedulaTipo'],
+        cedulaNumero: data[i]['cedulaNumero'],
+        idExtranjero: data[i]['idExtranjero'],
+        nombre: data[i]['nombre'],
+        nombreComercial: data[i]['nombreComercial'],
+        telCodigoPais: data[i]['telCodigoPais'],
+        telNumero: data[i]['telNumero'],
+        faxCodigoPais: data[i]['faxCodigoPais'],
+        faxNumero: data[i]['faxNumero'],
+        correo: data[i]['correo'],
+        ubicacionCodigo: data[i]['ubicacionCodigo'],
+        ubicacionSenas: data[i]['ubicacionSenas'],
+        ubicacionSenasExtranjero: data[i]['ubicacionSenasExtranjero'],
+        tipo: data[i]['tipo'],
+        actividades: actividades,
+        nombreProvincia: ubicacion!.provincia.nombre,
+        nombreCanton: ubicacion.canton.nombre,
+        nombreDistrito: ubicacion.distrito.nombre,
+        nombreBarrio: ubicacion.barrio.nombre,
+        esCompartida: data[i]['esCompartida'],
+        usuariosCompartidos: usuariosCompartidos));
   }
   return accounts;
 }
@@ -454,201 +434,4 @@ Future<ServerResponse<Account?>> getCuentaByQr(String codigoQr) async {
   var response = await _getCuentaByQr(codigoQr);
 
   return response;
-}
-
-Future<ServerResponse<Ubicacion>> getUbicacion(String codigo) async {
-  String host = await Config.load(selectedHost);
-  var url = "http://$host/api/Cuenta/Ubicacion/$codigo";
-
-  var response = await http.get(Uri.parse(url));
-  ServerResponse<Ubicacion> serverResponse;
-
-  if (response.statusCode == 200) {
-    var data = jsonDecode(response.body);
-    if (data['success']) {
-      data = data['data'];
-      serverResponse = ServerResponse(
-        data: Ubicacion(
-            provincia: Provincia(
-                id: data['provincia'],
-                nombre: data['nombreProvincia'].toUpperCase()),
-            canton: Canton(
-                id: data['canton'], nombre: data['nombreCanton'].toUpperCase()),
-            distrito: Distrito(
-                id: data['distrito'],
-                nombre: data['nombreDistrito'].toUpperCase()),
-            barrio: Barrio(
-                id: data['barrio'],
-                nombre: data['nombreBarrio'].toUpperCase())),
-        message: '',
-        success: true,
-      );
-    } else {
-      serverResponse = ServerResponse(
-        data: null,
-        message: data['message'],
-        success: false,
-      );
-    }
-  } else {
-    serverResponse = ServerResponse(
-      data: null,
-      message: 'Ha ocurrido un error al obtener la informacion de la ubicacion',
-      success: false,
-    );
-  }
-
-  return serverResponse;
-}
-
-Future<ServerResponse<List<Map<String, dynamic>>>> getProvincias() async {
-  ServerResponse<List<Map<String, dynamic>>> serverResponse;
-  String host = await Config.load(selectedHost);
-
-  var url = "http://$host/api/Cuenta/UbicacionProvincias";
-
-  var response = await http.get(Uri.parse(url));
-
-  if (response.statusCode == 200) {
-    var responseDecoded = jsonDecode(response.body);
-
-    if (responseDecoded['success']) {
-      var data = responseDecoded['data'];
-      List<Map<String, dynamic>> provincias = data.cast<Map<String, dynamic>>();
-      serverResponse = ServerResponse(
-        data: provincias,
-        message: responseDecoded['message'],
-        success: true,
-      );
-    } else {
-      serverResponse = ServerResponse(
-        data: null,
-        message: responseDecoded['message'],
-        success: false,
-      );
-    }
-  } else {
-    serverResponse = ServerResponse(
-      data: null,
-      message: 'Ha ocurrido un error al obtener la informacion de la ubicacion',
-      success: false,
-    );
-  }
-
-  return serverResponse;
-}
-
-Future<ServerResponse<List<Map<String, dynamic>>>> getCantones(
-    int provincia) async {
-  ServerResponse<List<Map<String, dynamic>>> serverResponse;
-  String host = await Config.load(selectedHost);
-  var url = "http://$host/api/Cuenta/UbicacionCantones?provincia=$provincia";
-
-  var response = await http.get(Uri.parse(url));
-
-  if (response.statusCode == 200) {
-    var responseDecoded = jsonDecode(response.body);
-
-    if (responseDecoded['success']) {
-      var data = responseDecoded['data'];
-      List<Map<String, dynamic>> cantones = data.cast<Map<String, dynamic>>();
-      serverResponse = ServerResponse(
-        data: cantones,
-        message: responseDecoded['message'],
-        success: true,
-      );
-    } else {
-      serverResponse = ServerResponse(
-        data: null,
-        message: responseDecoded['message'],
-        success: false,
-      );
-    }
-  } else {
-    serverResponse = ServerResponse(
-      data: null,
-      message: 'Ha ocurrido un error al obtener la informacion de la ubicacion',
-      success: false,
-    );
-  }
-
-  return serverResponse;
-}
-
-Future<ServerResponse<List<Map<String, dynamic>>>> getDistritos(
-    int provincia, int canton) async {
-  ServerResponse<List<Map<String, dynamic>>> serverResponse;
-  String host = await Config.load(selectedHost);
-
-  var url =
-      "http://$host/api/Cuenta/UbicacionDistritos?provincia=$provincia&canton=$canton";
-
-  var response = await http.get(Uri.parse(url));
-
-  if (response.statusCode == 200) {
-    var responseDecoded = jsonDecode(response.body);
-
-    if (responseDecoded['success']) {
-      var data = responseDecoded['data'];
-      List<Map<String, dynamic>> distritos = data.cast<Map<String, dynamic>>();
-      serverResponse = ServerResponse(
-        data: distritos,
-        message: responseDecoded['message'],
-        success: true,
-      );
-    } else {
-      serverResponse = ServerResponse(
-        data: null,
-        message: responseDecoded['message'],
-        success: false,
-      );
-    }
-  } else {
-    serverResponse = ServerResponse(
-      data: null,
-      message: 'Ha ocurrido un error al obtener la informacion de la ubicacion',
-      success: false,
-    );
-  }
-
-  return serverResponse;
-}
-
-Future<ServerResponse<List<Map<String, dynamic>>>> getBarrios(
-    int provincia, int canton, int distrito) async {
-  ServerResponse<List<Map<String, dynamic>>> serverResponse;
-
-  String host = await Config.load(selectedHost);
-  var url =
-      "http://$host/api/Cuenta/UbicacionBarrios?provincia=$provincia&canton=$canton&distrito=$distrito";
-
-  var response = await http.get(Uri.parse(url));
-
-  if (response.statusCode == 200) {
-    var responseDecoded = jsonDecode(response.body);
-
-    if (responseDecoded['success']) {
-      var data = responseDecoded['data'];
-      List<Map<String, dynamic>> barrios = data.cast<Map<String, dynamic>>();
-      serverResponse = ServerResponse(
-        data: barrios,
-        message: responseDecoded['message'],
-        success: true,
-      );
-    } else {
-      serverResponse = ServerResponse(
-        data: null,
-        message: responseDecoded['message'],
-        success: false,
-      );
-    }
-  } else {
-    serverResponse = ServerResponse(
-      data: null,
-      message: 'Ha ocurrido un error al obtener la informacion de la ubicacion',
-      success: false,
-    );
-  }
-
-  return serverResponse;
 }
