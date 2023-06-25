@@ -5,6 +5,8 @@ import 'package:flutter_app/models/actividad.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/utils/utils.dart';
 import 'package:flutter_app/models/ubicacion.dart';
+import 'package:flutter_app/screens/widgets/general/my_button.dart';
+import 'package:flutter_app/screens/widgets/general/my_text.dart';
 
 class EditAccount extends StatefulWidget {
   const EditAccount({super.key});
@@ -19,6 +21,7 @@ class _EditAccountState extends State<EditAccount> {
   bool _isInitialized = false;
 
   final List<Actividad> actividades = [];
+  final List<Actividad> actividadesSearchName = [];
 
   String? _cedulaTipo;
   String? _tipoCuenta;
@@ -47,8 +50,8 @@ class _EditAccountState extends State<EditAccount> {
   final _correoController = TextEditingController();
   final _ubicacionSenasController = TextEditingController();
   final _ubicacionSenasExtranjeroController = TextEditingController();
-
   final _codigoActividadController = TextEditingController();
+  final _nombreActividadController = TextEditingController();
 
   List<Canton> cantones = [];
   List<Distrito> distritos = [];
@@ -82,6 +85,7 @@ class _EditAccountState extends State<EditAccount> {
     _ubicacionSenasController.dispose();
     _ubicacionSenasExtranjeroController.dispose();
     _codigoActividadController.dispose();
+    _nombreActividadController.dispose();
     super.dispose();
   }
 
@@ -550,90 +554,262 @@ class _EditAccountState extends State<EditAccount> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: TextFormField(
-                                          controller:
-                                              _codigoActividadController,
-                                          keyboardType: TextInputType.number,
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter
-                                                .digitsOnly
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    color: Colors.amber[100],
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const MyText(
+                                          fontSize: 14,
+                                          text:
+                                              'Buscar por código de actividad:',
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        const Divider(
+                                          thickness: 1,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextFormField(
+                                                controller:
+                                                    _codigoActividadController,
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly
+                                                ],
+                                                decoration:
+                                                    const InputDecoration(
+                                                  labelText:
+                                                      'Código de actividad',
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 16.0),
+                                            Expanded(
+                                              flex: 1,
+                                              child: ElevatedButton(
+                                                onPressed: () {
+                                                  addActivity(context);
+                                                  _codigoActividadController
+                                                      .clear(); // Limpiar el TextFormField
+                                                  FocusScope.of(context)
+                                                      .unfocus(); // Ocultar el teclado
+                                                },
+                                                child: const Text(
+                                                    "Agregar actividad"),
+                                              ),
+                                            ),
                                           ],
-                                          decoration: const InputDecoration(
-                                            labelText: 'Codigo de actividad',
-                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 16.0),
-                                      Expanded(
-                                        flex: 1,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            addActivity(context);
-                                            _codigoActividadController
-                                                .clear(); // Limpiar el TextFormField
-                                            FocusScope.of(context)
-                                                .unfocus(); // Ocultar el teclado
-                                          },
-                                          child:
-                                              const Text("Agregar actividad"),
-                                        ),
-                                      ),
-                                    ],
+                                        const SizedBox(height: 10),
+                                      ],
+                                    ),
                                   ),
                                   const SizedBox(height: 16.0),
-                                  actividades.isEmpty
-                                      ? const SizedBox(width: 16.0)
-                                      : Column(
-                                          children: actividades.map(
-                                            (act) {
-                                              return Card(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Expanded(
-                                                          child: Text(
-                                                            act.codigoActividad,
-                                                            style:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        15),
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 16.0),
-                                                        Expanded(
-                                                          flex: 1,
-                                                          child: ElevatedButton(
-                                                            onPressed: () {
-                                                              setState(() {
-                                                                actividades
-                                                                    .remove(
-                                                                        act);
-                                                              });
-                                                            },
-                                                            child: const Text(
-                                                                "Eliminar"),
-                                                          ),
-                                                        ),
-                                                      ],
+                                  Container(
+                                      padding: const EdgeInsets.all(8),
+                                      color: Colors.green[100],
+                                      child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const MyText(
+                                              fontSize: 14,
+                                              text:
+                                                  'Buscar por nombre de actividad:',
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            const Divider(
+                                              thickness: 1,
+                                            ),
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: TextFormField(
+                                                    controller:
+                                                        _nombreActividadController,
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      labelText:
+                                                          'Nombre de actividad',
                                                     ),
-                                                    Text(
-                                                      act.nombre,
-                                                      style: const TextStyle(
-                                                          fontSize: 15),
-                                                    ),
-                                                  ],
+                                                  ),
                                                 ),
-                                              );
-                                            },
-                                          ).toList(),
-                                        )
+                                                const SizedBox(width: 16.0),
+                                                MyButton(
+                                                    size: const Size(80, 20),
+                                                    fontSize: 14,
+                                                    text: 'Buscar',
+                                                    function: () {
+                                                      searchActivityByName(
+                                                          context);
+                                                      _nombreActividadController
+                                                          .clear(); // Limpiar el TextFormField
+                                                      FocusScope.of(context)
+                                                          .unfocus(); // Ocultar el teclado
+                                                    }),
+                                                const SizedBox(width: 10),
+                                                MyButton(
+                                                    size: const Size(85, 20),
+                                                    fontSize: 14,
+                                                    text: 'Limpiar',
+                                                    function: () {
+                                                      setState(() {
+                                                        actividadesSearchName
+                                                            .clear();
+                                                      });
+                                                    })
+                                              ],
+                                            ),
+                                            const SizedBox(height: 10),
+                                            actividadesSearchName.isEmpty
+                                                ? const SizedBox(width: 16.0)
+                                                : Column(
+                                                    children:
+                                                        actividadesSearchName
+                                                            .map(
+                                                      (act) {
+                                                        return Card(
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8.0),
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                      child:
+                                                                          Text(
+                                                                        act.codigoActividad,
+                                                                        style: const TextStyle(
+                                                                            fontSize:
+                                                                                15),
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            16.0),
+                                                                    Expanded(
+                                                                      flex: 1,
+                                                                      child:
+                                                                          ElevatedButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          setState(
+                                                                              () {
+                                                                            actividades.add(act);
+                                                                            actividadesSearchName.remove(act);
+                                                                            showAlertDialog(
+                                                                                context,
+                                                                                'Actividad agregada',
+                                                                                'La actividad se agregó correctamente.',
+                                                                                'Aceptar');
+                                                                          });
+                                                                        },
+                                                                        child: const Text(
+                                                                            "Agregar"),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                Text(
+                                                                  act.nombre,
+                                                                  style: const TextStyle(
+                                                                      fontSize:
+                                                                          15),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    ).toList(),
+                                                  ),
+                                          ])),
+                                  const SizedBox(height: 16.0),
+                                  Container(
+                                      padding: const EdgeInsets.all(8),
+                                      width: double.infinity,
+                                      color: Colors.red[100],
+                                      child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const MyText(
+                                              text: 'Mis actividades:',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            const Divider(thickness: 1),
+                                            actividades.isEmpty
+                                                ? const SizedBox(width: 16.0)
+                                                : Column(
+                                                    children: actividades.map(
+                                                      (act) {
+                                                        return Card(
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8.0),
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                      child:
+                                                                          Text(
+                                                                        act.codigoActividad,
+                                                                        style: const TextStyle(
+                                                                            fontSize:
+                                                                                15),
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            16.0),
+                                                                    Expanded(
+                                                                      flex: 1,
+                                                                      child:
+                                                                          ElevatedButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          setState(
+                                                                              () {
+                                                                            actividades.remove(act);
+                                                                          });
+                                                                        },
+                                                                        child: const Text(
+                                                                            "Eliminar"),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                Text(
+                                                                  act.nombre,
+                                                                  style: const TextStyle(
+                                                                      fontSize:
+                                                                          15),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    ).toList(),
+                                                  )
+                                          ])),
                                 ],
                               ),
                             ],
@@ -763,20 +939,20 @@ class _EditAccountState extends State<EditAccount> {
     } else {
       String activityCode = _codigoActividadController.text;
 
-      List<Actividad> listaActividades = await Actividad.cargarActividades();
+      List<Actividad> activityList = await Actividad.cargarActividades();
 
-      Actividad actividad = listaActividades.firstWhere(
+      Actividad activity = activityList.firstWhere(
         (actividad) => actividad.codigoActividad == activityCode,
         orElse: () => Actividad.nullActivity,
       );
 
       if (context.mounted) {
-        if (actividad != Actividad.nullActivity) {
-          bool containsActividad = actividades.contains(actividad);
+        if (activity != Actividad.nullActivity) {
+          bool containsActividad = actividades.contains(activity);
 
           if (!containsActividad) {
             setState(() {
-              actividades.add(actividad);
+              actividades.add(activity);
             });
 
             showAlertDialog(context, 'Resultado',
@@ -879,6 +1055,45 @@ class _EditAccountState extends State<EditAccount> {
     } else {
       showAlertDialog(
           context, 'Error', 'No se ha seleccionado un distrito.', 'Aceptar');
+    }
+  }
+
+  void searchActivityByName(BuildContext context) async {
+    if (_nombreActividadController.text.isEmpty) {
+      showAlertDialog(
+          context,
+          'Error',
+          'El campo Codigo de actividad está vacío, por favor ingresar un codigo de actividad',
+          'Aceptar');
+    } else {
+      String activityName = _nombreActividadController.text;
+
+      List<Actividad> activityList = await Actividad.cargarActividades();
+
+      List<Actividad> foundedActivities = activityList
+          .where(
+            (actividad) => actividad.nombre
+                .toLowerCase()
+                .contains(activityName.toLowerCase()),
+          )
+          .toList();
+
+      if (context.mounted) {
+        if (foundedActivities.isNotEmpty) {
+          setState(() {
+            actividadesSearchName.addAll(foundedActivities);
+            for (int i = 0; i < actividades.length; i++) {
+              actividadesSearchName.remove(actividades[i]);
+            }
+          });
+        } else {
+          showAlertDialog(
+              context,
+              'Error',
+              'No se han encontrado actividades economica asociadas a ese nombre.',
+              'Aceptar');
+        }
+      }
     }
   }
 }
