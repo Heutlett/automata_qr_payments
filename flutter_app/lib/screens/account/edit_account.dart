@@ -171,7 +171,8 @@ class _EditAccountState extends State<EditAccount> {
         title: const Text('Editar cuenta'),
       ),
       body: provincias.isEmpty | activityList.isEmpty
-          ? const CircularProgressIndicator() // Indicador de carga
+          ? const Center(
+              child: CircularProgressIndicator()) // Indicador de carga
           : SingleChildScrollView(
               child: Container(
                 padding: const EdgeInsets.all(8.0),

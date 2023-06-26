@@ -52,27 +52,29 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: accounts == null
-              ? const [CircularProgressIndicator()] // Indicador de carga
-              : accounts!.map((acc) {
-                  return Card(
-                    margin: const EdgeInsets.all(8),
-                    elevation: 5,
-                    color: acc.cedulaTipo == 'Juridica'
-                        ? const Color.fromARGB(255, 180, 193, 255)
-                        : const Color.fromARGB(255, 180, 234, 255),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          AccountInfoCard(account: acc, addButtons: 2),
-                        ],
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            children: accounts == null
+                ? const [CircularProgressIndicator()] // Indicador de carga
+                : accounts!.map((acc) {
+                    return Card(
+                      margin: const EdgeInsets.all(8),
+                      elevation: 5,
+                      color: acc.cedulaTipo == 'Juridica'
+                          ? const Color.fromARGB(255, 180, 193, 255)
+                          : const Color.fromARGB(255, 180, 234, 255),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            AccountInfoCard(account: acc, addButtons: 2),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                }).toList(),
+                    );
+                  }).toList(),
+          ),
         ),
       ),
     );
