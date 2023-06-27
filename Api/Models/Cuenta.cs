@@ -56,8 +56,8 @@ namespace Api.Models
         // Navigation property to the Usuario entity
         public virtual Usuario Usuario { get; set; } = null!;
 
-        // One-to-many relationship with the Actividad entity
-        public virtual ICollection<Actividad> Actividades { get; } = new List<Actividad>();
+        // Many-to-many relationship with the CodigoActividad entity
+        public virtual ICollection<CodigoActividadCuenta> CodigosActividad { get; set; } = new List<CodigoActividadCuenta>();
 
         // Many-to-many relationship with the Usuario entity
         public virtual ICollection<Usuario> UsuariosCompartidos { get; } = new List<Usuario>();

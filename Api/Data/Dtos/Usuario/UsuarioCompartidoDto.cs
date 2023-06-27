@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Api.Dtos.Usuario
+namespace Api.Data.Dtos.Usuario
 {
     public class UsuarioCompartidoDto
     {

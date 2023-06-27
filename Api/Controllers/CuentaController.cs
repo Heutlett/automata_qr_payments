@@ -1,5 +1,5 @@
-using Api.Dtos.Cuenta;
-using Api.Dtos.Cuenta.Ubicacion;
+using Api.Data.Dtos.Cuenta;
+using Api.Data.Dtos.Cuenta.Ubicacion;
 using Api.Models;
 using Api.Services.CuentaService;
 using Microsoft.AspNetCore.Authorization;
@@ -90,25 +90,14 @@ namespace Api.Controllers
         }
 
         /// <summary>
-        /// Devuelve una actividad por su codigo.
-        /// </summary>
-        /// <param name="int">Entero con el codigo de la actividad.</param>
-        /// <returns>Un ActionResult con un objeto ServiceResponse de tipo GetActividadDto.</returns>
-        [HttpGet("getActividadByCodigo/{codigo}")]
-        public async Task<ActionResult<ServiceResponse<GetActividadDto>>> GetActividadByCodigo(int codigo)
-        {
-            return Ok(await _cuentaService.GetActividadByCodigo(codigo));
-        }
-
-        /// <summary>
-        /// Agrega una actividad a la cuenta especificada.
+        /// Agrega un codigo de actividad a la cuenta especificada.
         /// </summary>
         /// <param name="newCuentaActividad">Objeto AddCuentaActividadDto con la información de la actividad a agregar.</param>
         /// <returns>Un ActionResult con un objeto ServiceResponse de tipo GetActividadDto.</returns>
-        [HttpPost("AddCuentaActividades")]
-        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> AddCuentaActividades(AddCuentaActividadesDto newCuentaActividades)
+        [HttpPost("AddCuentaCodigosActividad")]
+        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> AddCuentaActividades(AddCuentaCodigosActividadDto newCuentaActividades)
         {
-            return Ok(await _cuentaService.AddCuentaActividades(newCuentaActividades));
+            return Ok(await _cuentaService.AddCuentaCodigosActividad(newCuentaActividades));
         }
 
         /// <summary>

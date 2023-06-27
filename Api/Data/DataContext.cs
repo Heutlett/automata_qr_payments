@@ -10,48 +10,40 @@ namespace Api.Data
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-            Actividades = Set<Actividad>();
+            CodigosActividadCuenta = Set<CodigoActividadCuenta>();
             Cuentas = Set<Cuenta>();
             Ubicaciones = Set<Ubicacion>();
             Usuarios = Set<Usuario>();
         }
 
-        public virtual DbSet<Actividad> Actividades { get; set; }
+        public virtual DbSet<CodigoActividadCuenta> CodigosActividadCuenta { get; set; }
         public virtual DbSet<Cuenta> Cuentas { get; set; }
         public virtual DbSet<Ubicacion> Ubicaciones { get; set; }
         public virtual DbSet<Usuario> Usuarios { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Apply entity configurations
-            modelBuilder.ApplyConfiguration(new ActividadConfiguration());
+            modelBuilder.ApplyConfiguration(new CodigoActividadConfiguration());
             modelBuilder.ApplyConfiguration(new CuentaConfiguration());
             modelBuilder.ApplyConfiguration(new UbicacionConfiguration());
             modelBuilder.ApplyConfiguration(new UsuarioConfiguration());
         }
 
-        public class ActividadConfiguration : IEntityTypeConfiguration<Actividad>
+
+        public class CodigoActividadConfiguration : IEntityTypeConfiguration<CodigoActividadCuenta>
         {
-            public void Configure(EntityTypeBuilder<Actividad> builder)
+            public void Configure(EntityTypeBuilder<CodigoActividadCuenta> entity)
             {
-                builder.HasKey(e => e.Codigo).HasName("PRIMARY");
-                builder.ToTable("actividades");
-                // Configure many-to-many relationship with Cuenta entity
-                builder.HasMany(a => a.Cuentas)
-                    .WithMany(c => c.Actividades)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "actividadcuenta",
-                        r => r.HasOne<Cuenta>().WithMany()
-                            .HasForeignKey("CuentasId")
-                            .HasConstraintName("FK_ActividadCuenta_Cuentas_CuentasId"),
-                        l => l.HasOne<Actividad>().WithMany()
-                            .HasForeignKey("ActividadesCodigo")
-                            .HasConstraintName("FK_ActividadCuenta_Actividades_ActividadesCodigo"),
-                        j =>
-                        {
-                            j.HasKey("ActividadesCodigo", "CuentasId").HasName("PRIMARY");
-                            j.ToTable("actividadcuenta");
-                            j.HasIndex(new[] { "CuentasId" }, "IX_ActividadCuenta_CuentasId");
-                        });
+
+                entity.HasKey(e => new { e.Codigo, e.CuentaId }).HasName("PRIMARY");
+
+                entity.ToTable("codigoactividadcuenta");
+
+                entity.HasIndex(e => e.CuentaId, "IX_CuentaId");
+
+                entity.HasOne(d => d.Cuenta).WithMany(p => p.CodigosActividad)
+                    .HasForeignKey(d => d.CuentaId)
+                    .HasConstraintName("FK_CodigoActividadCuenta_Cuentas_CuentasId");
             }
         }
 

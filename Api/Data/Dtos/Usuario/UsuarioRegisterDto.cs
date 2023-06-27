@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Api.Models;
 
-namespace Api.Dtos.Usuario
+namespace Api.Data.Dtos.Usuario
 {
     public class UsuarioRegisterDto
     {

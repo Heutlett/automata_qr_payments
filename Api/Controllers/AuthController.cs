@@ -1,5 +1,5 @@
 using Api.Data;
-using Api.Dtos.Usuario;
+using Api.Data.Dtos.Usuario;
 using Api.Models;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,5 +1,5 @@
-using Api.Dtos.Cuenta;
-using Api.Dtos.Cuenta.Ubicacion;
+using Api.Data.Dtos.Cuenta;
+using Api.Data.Dtos.Cuenta.Ubicacion;
 using Api.Models;
 
 namespace Api.Services.CuentaService
@@ -11,8 +11,7 @@ namespace Api.Services.CuentaService
         Task<ServiceResponse<List<GetCuentaDto>>> AddCuenta(AddCuentaDto newCuenta);
         Task<ServiceResponse<GetCuentaDto>> UpdateCuenta(UpdateCuentaDto updatedCuenta);
         Task<ServiceResponse<List<GetCuentaDto>>> DeleteCuenta(int id);
-        Task<ServiceResponse<GetActividadDto>> GetActividadByCodigo(int codigo);
-        Task<ServiceResponse<GetCuentaDto>> AddCuentaActividades(AddCuentaActividadesDto newCuentaActivdades);
+        Task<ServiceResponse<GetCuentaDto>> AddCuentaCodigosActividad(AddCuentaCodigosActividadDto newCuentaActivdades);
         Task<ServiceResponse<GetUbicacionDto>> GetUbicacion(string codigoUbicacion);
         Task<ServiceResponse<List<GetUbicacionProvinciaDto>>> GetUbicacionProvincias();
         Task<ServiceResponse<List<GetUbicacionCantonDto>>> GetUbicacionCanton(int provincia);

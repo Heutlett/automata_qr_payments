@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Api.Dtos.Cuenta.Ubicacion
+namespace Api.Data.Dtos.Cuenta.Ubicacion
 {
     public class GetUbicacionCantonDto
     {

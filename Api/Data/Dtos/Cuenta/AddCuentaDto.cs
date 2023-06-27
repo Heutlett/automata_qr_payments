@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Api.Models;
 
-namespace Api.Dtos.Cuenta
+namespace Api.Data.Dtos.Cuenta
 {
     public class AddCuentaDto
     {
@@ -22,6 +22,6 @@ namespace Api.Dtos.Cuenta
         public string UbicacionSenas { get; set; } = String.Empty;
         public string UbicacionSenasExtranjero { get; set; } = String.Empty;
         public TipoCuenta Tipo { get; set; } = TipoCuenta.Receptor;
-        public List<int> actividades { get; set; } = new List<int>();
+        public List<int> CodigosActividad { get; set; } = new List<int>();
     }
 }

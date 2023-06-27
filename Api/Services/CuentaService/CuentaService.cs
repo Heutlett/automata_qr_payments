@@ -1,8 +1,7 @@
 using System.Security.Claims;
 using Api.Data;
-using Api.Utils;
-using Api.Dtos.Cuenta;
-using Api.Dtos.Cuenta.Ubicacion;
+using Api.Data.Dtos.Cuenta;
+using Api.Data.Dtos.Cuenta.Ubicacion;
 using Api.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -33,10 +32,12 @@ namespace Api.Services.CuentaService
         {
             var serviceResponse = new ServiceResponse<List<GetCuentaDto>>();
 
+            // Iniciar transaccion
             using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
+                // Crear la instancia de cuenta
                 var cuenta = new Cuenta
                 {
                     CedulaNumero = newCuenta.CedulaNumero,
@@ -55,30 +56,43 @@ namespace Api.Services.CuentaService
                     UbicacionSenasExtranjero = newCuenta.UbicacionSenasExtranjero
                 };
 
+                // Obtener el usuario correspondiente
                 var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.UID == GetUserUid());
                 if (usuario == null) throw new Exception($"Error agregando la cuenta.");
                 cuenta.Usuario = usuario;
 
+                // Agregar los codigos de actividad sin duplicados
+                var codigos = newCuenta.CodigosActividad!.Distinct().ToList();
+
+                // Iterar sobre los nuevos códigos de actividad y verifica si ya existen en la cuenta
+                foreach (int codigo in codigos)
+                {
+                    // Agregar el codigo de actividad a la cuenta
+                    cuenta.CodigosActividad!.Add(new CodigoActividadCuenta
+                    {
+                        Codigo = codigo,
+                        CuentaId = cuenta.Id
+                    });
+                }
+
+                // Agregar la cuenta y guardar los cambios
                 _context.Cuentas.Add(cuenta);
+
+                // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
 
-                var actividades = newCuenta.actividades!;
-
-                var addCuentaActividades = new AddCuentaActividadesDto { CuentaId = cuenta.Id, ActividadesId = actividades };
-
-                await AddCuentaActividades(addCuentaActividades);
-
+                // Completar la transaccion
                 await transaction.CommitAsync();
 
-                serviceResponse.Data = await _context.Cuentas
-                    .Where(c => c.Usuario!.UID == GetUserUid())
-                    .Select(c => _mapper.Map<GetCuentaDto>(c))
-                    .ToListAsync();
+                // Devolver cuentas actualizadas
+                var cuentas = await GetCuentas();
+                serviceResponse.Data = cuentas;
             }
             catch (Exception ex)
             {
                 // Manejar el error de alguna manera adecuada
                 await transaction.RollbackAsync();
+
                 serviceResponse.Success = false;
                 serviceResponse.Message = ex.Message;
             }
@@ -127,10 +141,10 @@ namespace Api.Services.CuentaService
         {
             // Asume la existencia del usuario
             var dbMyCuentas = await _context.Cuentas
-               .Include(c => c.Actividades)
-               .Include(c => c.UsuariosCompartidos)
-               .Where(c => c.Usuario!.UID == GetUserUid() && c.IsActive)
-               .ToListAsync();
+                .Include(c => c.CodigosActividad)
+                .Include(c => c.UsuariosCompartidos)
+                .Where(c => c.Usuario!.UID == GetUserUid() && c.IsActive)
+                .ToListAsync();
 
             List<GetCuentaDto> myCuentas = _mapper.Map<List<GetCuentaDto>>(dbMyCuentas);
 
@@ -144,7 +158,7 @@ namespace Api.Services.CuentaService
         {
             // Asume la existencia del usuario
             var dbSharedCuentas = await _context.Cuentas
-                .Include(c => c.Actividades)
+                .Include(c => c.CodigosActividad)
                 .Include(c => c.Usuario) // Include the Usuario for each shared account
                 .Where(c => c.UsuariosCompartidos.Any(u => u!.UID == GetUserUid()) && c.IsActive)
                 .ToListAsync();
@@ -152,7 +166,7 @@ namespace Api.Services.CuentaService
             List<GetCuentaDto> sharedWithMeCuentas = _mapper.Map<List<GetCuentaDto>>(dbSharedCuentas);
 
             foreach (var cuenta in sharedWithMeCuentas)
-                cuenta.EsCompartida = false; // La cuenta es propia, por lo tanto no es compartida
+                cuenta.EsCompartida = true; // La cuenta es compartida a mi
 
             return sharedWithMeCuentas;
         }
@@ -266,76 +280,66 @@ namespace Api.Services.CuentaService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetActividadDto>> GetActividadByCodigo(int codigo)
+        public async Task<ServiceResponse<GetCuentaDto>> AddCuentaCodigosActividad(AddCuentaCodigosActividadDto newCuentaActividades)
         {
-            var response = new ServiceResponse<GetActividadDto>();
+            var serviceResponse = new ServiceResponse<GetCuentaDto>();
+
+            // Iniciar transaccion
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
-                var actividad = await _context.Actividades
-                    .FirstOrDefaultAsync(s => s.Codigo == codigo);
-
-                if (actividad is null)
-                {
-                    throw new Exception($"No se ha encontrado la actividad con el codigo {codigo}.");
-                }
-
-                actividad.Nombre = actividad.Nombre.ToUpper();
-
-                response.Data = _mapper.Map<GetActividadDto>(actividad);
-
-            }
-            catch (Exception ex)
-            {
-                response.Success = false;
-                response.Message = ex.Message;
-            }
-
-            return response;
-        }
-        public async Task<ServiceResponse<GetCuentaDto>> AddCuentaActividades(AddCuentaActividadesDto newCuentaActividades)
-        {
-            var response = new ServiceResponse<GetCuentaDto>();
-            try
-            {
+                // Obtener la cuenta correspondiente
                 var cuenta = await _context.Cuentas
-                    .Include(c => c.Actividades)
+                    .Include(c => c.CodigosActividad)
                     .FirstOrDefaultAsync(c => c.Id == newCuentaActividades.CuentaId &&
                     c.Usuario!.UID == GetUserUid());
 
                 if (cuenta is null)
+                    throw new Exception($"Cuenta inexistente.");
+
+                // Remueve cualquier duplicado de los nuevos códigos de actividad
+                List<int> newCodigos = newCuentaActividades.CodigosActividad.Distinct().ToList();
+
+                // Obtener los códigos de actividad existentes en la cuenta
+                List<int> codigos = cuenta.CodigosActividad.Select(ca => ca.Codigo).ToList();
+
+                // Iterar sobre los nuevos códigos de actividad y verifica si ya existen en la cuenta
+                foreach (int newCodigo in newCodigos)
                 {
-                    throw new Exception($"No se ha encontrado la cuenta.");
-                }
-                for (int i = 0; i < newCuentaActividades.ActividadesId.Count; i++)
-                {
-                    var actividad = await _context.Actividades
-                    .FirstOrDefaultAsync(s => s.Codigo == newCuentaActividades.ActividadesId[i]);
+                    // Validar unicidad
+                    if (codigos.Contains(newCodigo))
+                        throw new Exception($"El codigo {newCodigo} ya se encuentra resgistrado.");
 
-                    if (actividad is null)
+                    // Agregar el codigo de actividad a la cuenta
+                    cuenta.CodigosActividad!.Add(new CodigoActividadCuenta
                     {
-                        throw new Exception($"No se ha encontrado la actividad.");
-                    }
-
-                    var isRepeated = cuenta.Actividades!.Contains(actividad);
-
-                    if (isRepeated)
-                    {
-                        throw new Exception($"La actividad economica {actividad.Nombre} ya se encuentra registrada en esta cuenta.");
-                    }
-                    actividad.Nombre = actividad.Nombre.ToUpper();
-                    cuenta.Actividades!.Add(actividad);
-                    await _context.SaveChangesAsync();
-                    response.Data = _mapper.Map<GetCuentaDto>(cuenta);
+                        Codigo = newCodigo,
+                        CuentaId = cuenta.Id
+                    });
                 }
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+
+                // Completar la transaccion
+                await transaction.CommitAsync();
+
+                // Devolver cuentas actualizadas
+                var updatedCuenta = await GetCuenta(cuenta.Id);
+                serviceResponse.Data = updatedCuenta;
             }
-            catch (Exception ex)
+
+            catch (DbUpdateException ex)
             {
-                response.Success = false;
-                response.Message = ex.Message;
+                // Devolver la transaccion
+                await transaction.RollbackAsync();
+
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Error al guardar los cambios en la base de datos: " + ex.InnerException?.Message;
             }
 
-            return response;
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<GetUbicacionDto>> GetUbicacion(string codigoUbicacion)
@@ -476,7 +480,7 @@ namespace Api.Services.CuentaService
         {
             var serviceResponse = new ServiceResponse<GetCuentaDto>();
             var cuenta = await _context.Cuentas
-                .Include(c => c.Actividades)
+                .Include(c => c.CodigosActividad)
                 .FirstOrDefaultAsync(c => c.Id == id && c.Usuario!.Username == username && c.IsActive);
             serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuenta);
             return serviceResponse;

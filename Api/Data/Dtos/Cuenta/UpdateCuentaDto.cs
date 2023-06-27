@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Api.Models;
 
-namespace Api.Dtos.Cuenta
+namespace Api.Data.Dtos.Cuenta
 {
     public class UpdateCuentaDto
     {
