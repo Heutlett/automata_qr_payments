@@ -12,6 +12,10 @@ namespace Api.Models
         public String UID { get; set; } = Guid.NewGuid().ToString();
 
         [Required]
+        [MaxLength(100)]
+        public string NombreCompleto { get; set; } = string.Empty;
+
+        [Required]
         [MaxLength(20)]
         public string Username { get; set; } = string.Empty;
         public byte[] PasswordHash { get; set; } = new byte[0];

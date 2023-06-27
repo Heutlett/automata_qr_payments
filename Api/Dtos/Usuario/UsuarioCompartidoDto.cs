@@ -7,7 +7,7 @@ namespace Api.Dtos.Usuario
 {
     public class UsuarioCompartidoDto
     {
-        public string Nombre { get; set; } = string.Empty;
+        public string NombreCompleto { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
     }
 }

@@ -21,7 +21,7 @@ namespace Api.Dtos.Cuenta
         public string UbicacionSenasExtranjero { get; set; } = String.Empty;
         public TipoCuenta Tipo { get; set; } = TipoCuenta.Receptor;
         public List<GetActividadDto> Actividades { get; set; } = new List<GetActividadDto>();
-        public List<string> UsuariosCompartidos { get; set; } = new List<string>();
+        public List<UsuarioCompartidoDto> UsuariosCompartidos { get; set; } = new List<UsuarioCompartidoDto>();
         public bool EsCompartida { get; internal set; }
     }
 }

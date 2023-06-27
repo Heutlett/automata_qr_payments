@@ -1,5 +1,6 @@
 using Api.Dtos.Cuenta;
 using Api.Dtos.Cuenta.Ubicacion;
+using Api.Dtos.Usuario;
 using Api.Models;
 using AutoMapper;
 
@@ -19,7 +20,11 @@ namespace Api
             CreateMap<Ubicacion, GetUbicacionBarrioDto>();
 
             CreateMap<Cuenta, GetCuentaDto>()
-                .ForMember(dest => dest.UsuariosCompartidos, opt => opt.MapFrom(src => src.UsuariosCompartidos.Select(u => u.Username).ToList()));
+                .ForMember(dest => dest.UsuariosCompartidos, opt => opt.MapFrom(src => src.UsuariosCompartidos.Select(u => new UsuarioCompartidoDto
+                {
+                    NombreCompleto = u.NombreCompleto,
+                    Username = u.Username
+                }).ToList()));
 
         }
     }
