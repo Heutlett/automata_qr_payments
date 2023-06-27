@@ -62,11 +62,11 @@ CREATE TABLE ubicaciones (
     PRIMARY KEY (Provincia, Canton, Distrito, Barrio)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS codigoactividadcuenta;
-CREATE TABLE codigoactividadcuenta (
+DROP TABLE IF EXISTS codigosactividadcuenta;
+CREATE TABLE codigosactividadcuenta (
   Codigo INT NOT NULL,
   CuentaId INT NOT NULL,
   PRIMARY KEY (Codigo, CuentaId),
   KEY IX_CuentaId (CuentaId),
-  CONSTRAINT FK_CodigoActividadCuenta_Cuentas_CuentasId FOREIGN KEY (CuentaId) REFERENCES cuentas(Id) ON DELETE CASCADE
+  CONSTRAINT FK_CodigosActividadCuenta_Cuentas_CuentasId FOREIGN KEY (CuentaId) REFERENCES cuentas(Id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
