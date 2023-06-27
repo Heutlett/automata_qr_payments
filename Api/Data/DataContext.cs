@@ -20,6 +20,7 @@ namespace Api.Data
         public virtual DbSet<Cuenta> Cuentas { get; set; }
         public virtual DbSet<Ubicacion> Ubicaciones { get; set; }
         public virtual DbSet<Usuario> Usuarios { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Apply entity configurations
@@ -37,13 +38,13 @@ namespace Api.Data
 
                 entity.HasKey(e => new { e.Codigo, e.CuentaId }).HasName("PRIMARY");
 
-                entity.ToTable("codigoactividadcuenta");
+                entity.ToTable("codigosactividadcuenta");
 
                 entity.HasIndex(e => e.CuentaId, "IX_CuentaId");
 
                 entity.HasOne(d => d.Cuenta).WithMany(p => p.CodigosActividad)
                     .HasForeignKey(d => d.CuentaId)
-                    .HasConstraintName("FK_CodigoActividadCuenta_Cuentas_CuentasId");
+                    .HasConstraintName("FK_CodigosActividadCuenta_Cuentas_CuentasId");
             }
         }
 

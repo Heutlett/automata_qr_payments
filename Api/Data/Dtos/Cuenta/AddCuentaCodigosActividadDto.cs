@@ -8,6 +8,6 @@ namespace Api.Data.Dtos.Cuenta
     public class AddCuentaCodigosActividadDto
     {
         public int CuentaId { get; set; }
-        public List<int> CodigosActividad { get; set; } = new List<int>();
+        public List<string> CodigosActividad { get; set; } = new List<string>();
     }
 }

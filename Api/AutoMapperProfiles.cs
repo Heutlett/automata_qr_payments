@@ -12,7 +12,7 @@ namespace Api
         {
 
             CreateMap<Cuenta, GetCuentaDto>()
-                .ForMember(dest => dest.CodigosActividad, opt => opt.MapFrom(src => src.CodigosActividad.Select(ca => ca.Codigo).ToList()))
+                .ForMember(dest => dest.CodigosActividad, opt => opt.MapFrom(src => src.CodigosActividad.Select(ca => ca.Codigo.ToString()).ToList()))
                 .ForMember(dest => dest.UsuariosCompartidos, opt => opt.MapFrom(src => src.UsuariosCompartidos.Select(u => new UsuarioCompartidoDto
                 {
                     NombreCompleto = u.NombreCompleto,

@@ -298,8 +298,11 @@ namespace Api.Services.CuentaService
                 if (cuenta is null)
                     throw new Exception($"Cuenta inexistente.");
 
-                // Remueve cualquier duplicado de los nuevos códigos de actividad
-                List<int> newCodigos = newCuentaActividades.CodigosActividad.Distinct().ToList();
+                // // Remueve cualquier duplicado de los nuevos códigos de actividad
+                // List<int> newCodigos = newCuentaActividades.CodigosActividad.Distinct().ToList();
+                
+                // Remueve cualquier duplicado de los nuevos códigos de actividad y los convierte a enteros
+                List<int> newCodigos = newCuentaActividades.CodigosActividad.Distinct().Select(c => int.Parse(c)).ToList();
 
                 // Obtener los códigos de actividad existentes en la cuenta
                 List<int> codigos = cuenta.CodigosActividad.Select(ca => ca.Codigo).ToList();
