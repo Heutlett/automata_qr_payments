@@ -90,17 +90,6 @@ namespace Api.Controllers
         }
 
         /// <summary>
-        /// Agrega un codigo de actividad a la cuenta especificada.
-        /// </summary>
-        /// <param name="newCuentaActividad">Objeto AddCuentaActividadDto con la información de la actividad a agregar.</param>
-        /// <returns>Un ActionResult con un objeto ServiceResponse de tipo GetActividadDto.</returns>
-        [HttpPost("AddCuentaCodigosActividad")]
-        public async Task<ActionResult<ServiceResponse<GetCuentaDto>>> AddCuentaActividades(AddCuentaCodigosActividadDto newCuentaActividades)
-        {
-            return Ok(await _cuentaService.AddCuentaCodigosActividad(newCuentaActividades));
-        }
-
-        /// <summary>
         /// Obtiene la ubicación de una cuenta en base al código de ubicación proporcionado.
         /// </summary>
         /// <param name="codigoUbicacion">Código de ubicación de la cuenta.</param>

@@ -23,5 +23,7 @@ namespace Api.Data.Dtos.Cuenta
         public string UbicacionSenas { get; set; } = String.Empty;
         public string UbicacionSenasExtranjero { get; set; } = String.Empty;
         public TipoCuenta Tipo { get; set; } = TipoCuenta.Receptor;
+
+        public List<string> CodigosActividad { get; set; } = new List<string>();
     }
 }

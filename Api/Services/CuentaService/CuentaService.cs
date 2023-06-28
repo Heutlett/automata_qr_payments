@@ -46,14 +46,14 @@ namespace Api.Services.CuentaService
                     FaxCodigoPais = newCuenta.FaxCodigoPais,
                     FaxNumero = newCuenta.FaxCodigoPais,
                     IdExtranjero = newCuenta.IdExtranjero,
-                    Nombre = newCuenta.Nombre,
-                    NombreComercial = newCuenta.NombreComercial,
+                    Nombre = newCuenta.Nombre.ToUpper(),
+                    NombreComercial = newCuenta.NombreComercial.ToUpper(),
                     TelCodigoPais = newCuenta.TelCodigoPais,
                     TelNumero = newCuenta.TelNumero,
                     Tipo = newCuenta.Tipo,
                     UbicacionCodigo = newCuenta.UbicacionCodigo,
-                    UbicacionSenas = newCuenta.UbicacionSenas,
-                    UbicacionSenasExtranjero = newCuenta.UbicacionSenasExtranjero
+                    UbicacionSenas = newCuenta.UbicacionSenas.ToUpper(),
+                    UbicacionSenasExtranjero = newCuenta.UbicacionSenasExtranjero.ToUpper()
                 };
 
                 // Obtener el usuario correspondiente
@@ -61,19 +61,8 @@ namespace Api.Services.CuentaService
                 if (usuario == null) throw new Exception($"Error agregando la cuenta.");
                 cuenta.Usuario = usuario;
 
-                // Agregar los codigos de actividad sin duplicados
-                var codigos = newCuenta.CodigosActividad!.Distinct().ToList();
-
-                // Iterar sobre los nuevos códigos de actividad y verifica si ya existen en la cuenta
-                foreach (int codigo in codigos)
-                {
-                    // Agregar el codigo de actividad a la cuenta
-                    cuenta.CodigosActividad!.Add(new CodigoActividadCuenta
-                    {
-                        Codigo = codigo,
-                        CuentaId = cuenta.Id
-                    });
-                }
+                // Agregar los codigos de actividad a la cuenta
+                AddCodigosActividadCuenta(cuenta, newCuenta.CodigosActividad!);
 
                 // Agregar la cuenta y guardar los cambios
                 _context.Cuentas.Add(cuenta);
@@ -242,11 +231,15 @@ namespace Api.Services.CuentaService
         {
             var serviceResponse = new ServiceResponse<GetCuentaDto>();
 
+            // Iniciar transaccion
+            // using var transaction = await _context.Database.BeginTransactionAsync();
+
             try
             {
                 var cuenta =
                     await _context.Cuentas
                     .Include(c => c.Usuario)
+                    .Include(ca => ca.CodigosActividad)
                     .FirstOrDefaultAsync(c => c.Id == updatedCuenta.Id && c.IsActive);
 
                 if (cuenta is null || cuenta.Usuario!.UID != GetUserUid())
@@ -255,94 +248,62 @@ namespace Api.Services.CuentaService
                 cuenta.CedulaTipo = updatedCuenta.CedulaTipo;
                 cuenta.CedulaNumero = updatedCuenta.CedulaNumero;
                 cuenta.IdExtranjero = updatedCuenta.IdExtranjero;
-                cuenta.Nombre = updatedCuenta.Nombre;
-                cuenta.NombreComercial = updatedCuenta.NombreComercial;
+                cuenta.Nombre = updatedCuenta.Nombre.ToUpper();
+                cuenta.NombreComercial = updatedCuenta.NombreComercial.ToUpper();
                 cuenta.TelCodigoPais = updatedCuenta.TelCodigoPais;
                 cuenta.TelNumero = updatedCuenta.TelNumero;
                 cuenta.FaxCodigoPais = updatedCuenta.FaxCodigoPais;
                 cuenta.FaxNumero = updatedCuenta.FaxNumero;
                 cuenta.Correo = updatedCuenta.Correo;
                 cuenta.UbicacionCodigo = updatedCuenta.UbicacionCodigo;
-                cuenta.UbicacionSenas = updatedCuenta.UbicacionSenas;
-                cuenta.UbicacionSenasExtranjero = updatedCuenta.UbicacionSenasExtranjero;
+                cuenta.UbicacionSenas = updatedCuenta.UbicacionSenas.ToUpper();
+                cuenta.UbicacionSenasExtranjero = updatedCuenta.UbicacionSenasExtranjero.ToUpper();
                 cuenta.Tipo = updatedCuenta.Tipo;
 
+                // Limpiar los códigos de actividad de la cuenta.
+                cuenta.CodigosActividad!.Clear();
+
+                // Agregar los codigos de actividad a la cuenta
+                AddCodigosActividadCuenta(cuenta, updatedCuenta.CodigosActividad!);
+
+                // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
-                serviceResponse.Data = _mapper.Map<GetCuentaDto>(cuenta);
+
+                // Completar la transaccion
+                // await transaction.CommitAsync();
+
+                // Devolver cuentas actualizadas
+                serviceResponse.Data = await GetCuenta(cuenta.Id);
+
             }
+
             catch (DbUpdateException ex)
             {
+                // Devolver la transaccion
+                // await transaction.RollbackAsync();
+
                 serviceResponse.Success = false;
-                // serviceResponse.Message = ex.Message;
                 serviceResponse.Message = "Error al guardar los cambios en la base de datos: " + ex.InnerException?.Message;
             }
 
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetCuentaDto>> AddCuentaCodigosActividad(AddCuentaCodigosActividadDto newCuentaActividades)
+        private void AddCodigosActividadCuenta(Cuenta cuenta, List<string> codigosActividad)
         {
-            var serviceResponse = new ServiceResponse<GetCuentaDto>();
+            // Agregar los códigos de actividad sin duplicados y los convierte a enteros
+            List<int> codigos = codigosActividad.Distinct().Select(c => int.Parse(c)).ToList();
 
-            // Iniciar transaccion
-            using var transaction = await _context.Database.BeginTransactionAsync();
-
-            try
+            // Iterar sobre los nuevos códigos de actividad y verifica si ya existen en la cuenta
+            foreach (int codigo in codigos)
             {
-                // Obtener la cuenta correspondiente
-                var cuenta = await _context.Cuentas
-                    .Include(c => c.CodigosActividad)
-                    .FirstOrDefaultAsync(c => c.Id == newCuentaActividades.CuentaId &&
-                    c.Usuario!.UID == GetUserUid());
-
-                if (cuenta is null)
-                    throw new Exception($"Cuenta inexistente.");
-
-                // // Remueve cualquier duplicado de los nuevos códigos de actividad
-                // List<int> newCodigos = newCuentaActividades.CodigosActividad.Distinct().ToList();
-                
-                // Remueve cualquier duplicado de los nuevos códigos de actividad y los convierte a enteros
-                List<int> newCodigos = newCuentaActividades.CodigosActividad.Distinct().Select(c => int.Parse(c)).ToList();
-
-                // Obtener los códigos de actividad existentes en la cuenta
-                List<int> codigos = cuenta.CodigosActividad.Select(ca => ca.Codigo).ToList();
-
-                // Iterar sobre los nuevos códigos de actividad y verifica si ya existen en la cuenta
-                foreach (int newCodigo in newCodigos)
+                // Agregar el código de actividad a la cuenta
+                cuenta.CodigosActividad!.Add(new CodigoActividadCuenta
                 {
-                    // Validar unicidad
-                    if (codigos.Contains(newCodigo))
-                        throw new Exception($"El codigo {newCodigo} ya se encuentra resgistrado.");
-
-                    // Agregar el codigo de actividad a la cuenta
-                    cuenta.CodigosActividad!.Add(new CodigoActividadCuenta
-                    {
-                        Codigo = newCodigo,
-                        CuentaId = cuenta.Id
-                    });
-                }
-
-                // Guardar los cambios en la base de datos
-                await _context.SaveChangesAsync();
-
-                // Completar la transaccion
-                await transaction.CommitAsync();
-
-                // Devolver cuentas actualizadas
-                var updatedCuenta = await GetCuenta(cuenta.Id);
-                serviceResponse.Data = updatedCuenta;
+                    Codigo = codigo,
+                    CuentaId = cuenta.Id
+                });
             }
-
-            catch (DbUpdateException ex)
-            {
-                // Devolver la transaccion
-                await transaction.RollbackAsync();
-
-                serviceResponse.Success = false;
-                serviceResponse.Message = "Error al guardar los cambios en la base de datos: " + ex.InnerException?.Message;
-            }
-
-            return serviceResponse;
         }
 
         public async Task<ServiceResponse<GetUbicacionDto>> GetUbicacion(string codigoUbicacion)

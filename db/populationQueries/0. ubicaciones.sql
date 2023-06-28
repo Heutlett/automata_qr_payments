@@ -1,4 +1,5 @@
-use qr_payments2;
+use qr_payments;
+
 INSERT INTO ubicaciones (Provincia, NombreProvincia, Canton, NombreCanton, Distrito, NombreDistrito, Barrio, NombreBarrio) VALUES
 (1, 'SAN JOSE', 1, 'SAN JOSE', 1, 'CARMEN', 1, 'SAN JOSE (PARTE)'),
 (1, 'SAN JOSE', 1, 'SAN JOSE', 1, 'CARMEN', 2, 'AMON'),

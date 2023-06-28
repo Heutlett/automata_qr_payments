@@ -6,6 +6,5 @@ namespace Api.Data
     {
         Task<ServiceResponse<int>> Register(Usuario usuario, string password);
         Task<ServiceResponse<string>> Login(string username, string password);
-        Task<bool> UserExists(string username);
     }
 }

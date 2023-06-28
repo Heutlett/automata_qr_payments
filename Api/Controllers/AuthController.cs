@@ -31,7 +31,7 @@ namespace Api.Controllers
         public async Task<ActionResult<ServiceResponse<int>>> Register(UsuarioRegisterDto request)
         {
             var response = await _authRepo.Register(
-                new Usuario { NombreCompleto = request.NombreCompleto, Username = request.Username, Email = request.Email, Rol = request.Rol }, request.Password
+                new Usuario { NombreCompleto = request.NombreCompleto.ToUpper(), Username = request.Username, Email = request.Email, Rol = request.Rol }, request.Password
             );
             if (!response.Success)
             {

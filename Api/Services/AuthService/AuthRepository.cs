@@ -48,7 +48,7 @@ namespace Api.Data
             if (await UserExists(usuario.Username))
             {
                 response.Success = false;
-                response.Message = "Error, el usuario ya existe.";
+                response.Message = "El usuario ya existe.";
                 return response;
             }
 
@@ -64,13 +64,9 @@ namespace Api.Data
             return response;
         }
 
-        public async Task<bool> UserExists(string username)
+        private async Task<bool> UserExists(string username)
         {
-            if (await _context.Usuarios.AnyAsync(u => u.Username.ToLower() == username.ToLower()))
-            {
-                return true;
-            }
-            return false;
+            return await _context.Usuarios.AnyAsync(u => u.Username.ToLower() == username.ToLower());
         }
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
