@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DataContext>(
 options =>
 {
-    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection1"),
     Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.29-mysql"));
 });
 
