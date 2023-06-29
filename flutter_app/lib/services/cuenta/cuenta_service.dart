@@ -191,9 +191,7 @@ Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
 
       for (var e = 0; e < dataActividades.length; e++) {
         Actividad activity = activityList.firstWhere(
-          (actividad) =>
-              actividad.codigoActividad ==
-              dataActividades[e]['codigo'].toString(),
+          (actividad) => actividad.codigoActividad == dataActividades[e],
           orElse: () => Actividad.nullActivity,
         );
 
