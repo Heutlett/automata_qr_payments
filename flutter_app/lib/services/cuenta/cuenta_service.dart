@@ -411,7 +411,7 @@ Future<List<Account>> getCuentasList() async {
     }
 
     for (var e = 0; e < dataUsuariosCompartidos.length; e++) {
-      usuariosCompartidos.add(dataUsuariosCompartidos[e]);
+      usuariosCompartidos.add(dataUsuariosCompartidos[e]['nombreCompleto']);
     }
 
     UbicacionService ubicacionService = UbicacionService();
