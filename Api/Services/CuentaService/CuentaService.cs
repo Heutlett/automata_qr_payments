@@ -62,7 +62,7 @@ namespace Api.Services.CuentaService
                 cuenta.Usuario = usuario;
 
                 // Agregar los codigos de actividad a la cuenta
-                AddCodigosActividadCuenta(cuenta, newCuenta.CodigosActividad!);
+                AddCodigosActividadCuenta(cuenta, newCuenta.actividades!);
 
                 // Agregar la cuenta y guardar los cambios
                 _context.Cuentas.Add(cuenta);
@@ -232,7 +232,7 @@ namespace Api.Services.CuentaService
             var serviceResponse = new ServiceResponse<GetCuentaDto>();
 
             // Iniciar transaccion
-            // using var transaction = await _context.Database.BeginTransactionAsync();
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
@@ -264,13 +264,13 @@ namespace Api.Services.CuentaService
                 cuenta.CodigosActividad!.Clear();
 
                 // Agregar los codigos de actividad a la cuenta
-                AddCodigosActividadCuenta(cuenta, updatedCuenta.CodigosActividad!);
+                AddCodigosActividadCuenta(cuenta, updatedCuenta.actividades!);
 
                 // Guardar los cambios en la base de datos
                 await _context.SaveChangesAsync();
 
                 // Completar la transaccion
-                // await transaction.CommitAsync();
+                await transaction.CommitAsync();
 
                 // Devolver cuentas actualizadas
                 serviceResponse.Data = await GetCuenta(cuenta.Id);
@@ -280,7 +280,7 @@ namespace Api.Services.CuentaService
             catch (DbUpdateException ex)
             {
                 // Devolver la transaccion
-                // await transaction.RollbackAsync();
+                await transaction.RollbackAsync();
 
                 serviceResponse.Success = false;
                 serviceResponse.Message = "Error al guardar los cambios en la base de datos: " + ex.InnerException?.Message;
@@ -289,10 +289,10 @@ namespace Api.Services.CuentaService
             return serviceResponse;
         }
 
-        private void AddCodigosActividadCuenta(Cuenta cuenta, List<string> codigosActividad)
+        private void AddCodigosActividadCuenta(Cuenta cuenta, List<GetActividadDto> actividades)
         {
-            // Agregar los códigos de actividad sin duplicados y los convierte a enteros
-            List<int> codigos = codigosActividad.Distinct().Select(c => int.Parse(c)).ToList();
+            // Extraer los códigos de la lista de actividades sin duplicados
+            List<int> codigos = actividades.Select(a => a.Codigo).Distinct().ToList();
 
             // Iterar sobre los nuevos códigos de actividad y verifica si ya existen en la cuenta
             foreach (int codigo in codigos)
