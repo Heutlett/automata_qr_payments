@@ -58,13 +58,14 @@ class _AccountInfoCardSharedAccState extends State<AccountInfoCardSharedAcc> {
                                       MainAxisAlignment.spaceAround,
                                   children: [
                                     MyText(
-                                      text: user,
+                                      text: user.nombreCompleto,
                                       fontSize: 13,
                                     ),
                                     MyButton(
                                       text: 'Eliminar usuario',
                                       function: () {
-                                        deleteUserAcc(context, acc.id, user);
+                                        deleteUserAcc(
+                                            context, acc.id, user.username);
                                       },
                                       fontSize: 13,
                                       size: const Size(130, 20),

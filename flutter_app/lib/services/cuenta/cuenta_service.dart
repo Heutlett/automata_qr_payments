@@ -185,7 +185,7 @@ Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
       List<Actividad> actividades = [];
 
       List<dynamic> dataUsuariosCompartidos = data['usuariosCompartidos'];
-      List<String> usuariosCompartidos = [];
+      List<UsuarioCompartido> usuariosCompartidos = [];
 
       List<Actividad> activityList = await Actividad.cargarActividades();
 
@@ -199,7 +199,10 @@ Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
       }
 
       for (var e = 0; e < dataUsuariosCompartidos.length; e++) {
-        usuariosCompartidos.add(dataUsuariosCompartidos[e]);
+        usuariosCompartidos.add(UsuarioCompartido(
+          nombreCompleto: dataUsuariosCompartidos[e]['nombreCompleto'],
+          username: dataUsuariosCompartidos[e]['username'],
+        ));
       }
 
       Account acc = Account(
@@ -278,7 +281,7 @@ Future<ServerResponse<Account?>> shareAccountByQr(String codigoQr) async {
       List<Actividad> actividades = [];
 
       List<dynamic> dataUsuariosCompartidos = data['usuariosCompartidos'];
-      List<String> usuariosCompartidos = [];
+      List<UsuarioCompartido> usuariosCompartidos = [];
 
       List<Actividad> activityList = await Actividad.cargarActividades();
 
@@ -292,7 +295,10 @@ Future<ServerResponse<Account?>> shareAccountByQr(String codigoQr) async {
       }
 
       for (var e = 0; e < dataUsuariosCompartidos.length; e++) {
-        usuariosCompartidos.add(dataUsuariosCompartidos[e]);
+        usuariosCompartidos.add(UsuarioCompartido(
+          nombreCompleto: dataUsuariosCompartidos[e]['nombreCompleto'],
+          username: dataUsuariosCompartidos[e]['username'],
+        ));
       }
 
       Account acc = Account(
@@ -396,7 +402,7 @@ Future<List<Account>> getCuentasList() async {
     List<dynamic> dataActividades = data[i]['codigosActividad'];
     List<dynamic> dataUsuariosCompartidos = data[i]['usuariosCompartidos'];
     List<Actividad> actividades = [];
-    List<String> usuariosCompartidos = [];
+    List<UsuarioCompartido> usuariosCompartidos = [];
     List<Actividad> activityList = await Actividad.cargarActividades();
 
     for (var e = 0; e < dataActividades.length; e++) {
@@ -409,7 +415,10 @@ Future<List<Account>> getCuentasList() async {
     }
 
     for (var e = 0; e < dataUsuariosCompartidos.length; e++) {
-      usuariosCompartidos.add(dataUsuariosCompartidos[e]['nombreCompleto']);
+      usuariosCompartidos.add(UsuarioCompartido(
+        nombreCompleto: dataUsuariosCompartidos[e]['nombreCompleto'],
+        username: dataUsuariosCompartidos[e]['username'],
+      ));
     }
 
     UbicacionService ubicacionService = UbicacionService();
