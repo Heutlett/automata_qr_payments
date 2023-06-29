@@ -545,9 +545,9 @@ namespace Api.Services.CuentaService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetCuentaDto>>> ShareCuenta(string encryptedcode)
+        public async Task<ServiceResponse<GetCuentaDto>> ShareCuenta(string encryptedcode)
         {
-            var serviceResponse = new ServiceResponse<List<GetCuentaDto>>();
+            var serviceResponse = new ServiceResponse<GetCuentaDto>();
 
             using var transaction = await _context.Database.BeginTransactionAsync();
 
@@ -599,8 +599,8 @@ namespace Api.Services.CuentaService
                 await transaction.CommitAsync();
 
                 // Devolver cuentas actualizadas
-                var cuentas = await GetCuentas();
-                serviceResponse.Data = cuentas;
+                var cuentaResponse = await GetCuenta(cuenta.Id);
+                serviceResponse.Data = cuentaResponse;
             }
             catch (DbUpdateException ex)
             {
