@@ -932,7 +932,7 @@ class _EditAccountState extends State<EditAccount> {
       "ubicacionSenas": ubicacionSenas,
       "ubicacionSenasExtranjero": ubicacionSenasExtranjero,
       "tipo": tipo,
-      "actividades": actividades.map((act) => act.codigoActividad).toList()
+      "codigosActividad": actividades.map((act) => act.codigoActividad).toList()
     };
 
     var response = await putEditAccount(accountId, cuenta);
@@ -978,8 +978,6 @@ class _EditAccountState extends State<EditAccount> {
           'Aceptar');
     } else {
       String activityCode = _codigoActividadController.text;
-
-      List<Actividad> activityList = await Actividad.cargarActividades();
 
       Actividad activity = activityList.firstWhere(
         (actividad) => actividad.codigoActividad == activityCode,

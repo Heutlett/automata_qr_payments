@@ -16,6 +16,7 @@ class RegistrationPage extends StatefulWidget {
 
 class _RegistrationPageState extends State<RegistrationPage> {
   final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
@@ -41,6 +42,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
               text: 'Regístrate para empezar',
               fontSize: 24.0,
               fontWeight: FontWeight.bold,
+            ),
+            const SizedBox(height: 20.0),
+            MyTextField(
+              labelText: 'Nombre completo',
+              controller: _nameController,
             ),
             const SizedBox(height: 20.0),
             MyTextField(
@@ -71,10 +77,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   Future<void> _submitForm(BuildContext context) async {
     final String username = _usernameController.text;
+    final String name = _nameController.text;
     final String password = _passwordController.text;
     final String email = _emailController.text;
 
-    var response = await postRegister(username, password, email);
+    var response = await postRegister(username, name, password, email);
     var data = jsonDecode(response.body);
 
     if (context.mounted) {

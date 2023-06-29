@@ -24,11 +24,12 @@ Future<http.Response> postLogin(String username, String password) async {
 }
 
 Future<http.Response> postRegister(
-    String username, String password, String email) async {
+    String username, String name, String password, String email) async {
   String host = await Config.load(selectedHost);
   var url = "http://$host/Auth/Register";
 
   final Map<String, dynamic> data = {
+    "nombreCompleto": name,
     "username": username,
     "password": password,
     "email": email

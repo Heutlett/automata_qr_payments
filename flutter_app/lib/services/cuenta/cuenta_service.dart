@@ -181,16 +181,23 @@ Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
     if (data['success']) {
       data = data['data'];
 
-      List<dynamic> dataActividades = data['actividades'];
+      List<dynamic> dataActividades = data['codigosActividad'];
       List<Actividad> actividades = [];
 
       List<dynamic> dataUsuariosCompartidos = data['usuariosCompartidos'];
       List<String> usuariosCompartidos = [];
 
+      List<Actividad> activityList = await Actividad.cargarActividades();
+
       for (var e = 0; e < dataActividades.length; e++) {
-        actividades.add(Actividad(
-            codigoActividad: dataActividades[e]['codigo'].toString(),
-            nombre: dataActividades[e]['nombre']));
+        Actividad activity = activityList.firstWhere(
+          (actividad) =>
+              actividad.codigoActividad ==
+              dataActividades[e]['codigo'].toString(),
+          orElse: () => Actividad.nullActivity,
+        );
+
+        actividades.add(activity);
       }
 
       for (var e = 0; e < dataUsuariosCompartidos.length; e++) {
@@ -269,16 +276,21 @@ Future<ServerResponse<Account?>> shareAccountByQr(String codigoQr) async {
     if (data['success']) {
       data = data['data'];
 
-      List<dynamic> dataActividades = data['actividades'];
+      List<dynamic> dataActividades = data['codigosActividad'];
       List<Actividad> actividades = [];
 
       List<dynamic> dataUsuariosCompartidos = data['usuariosCompartidos'];
       List<String> usuariosCompartidos = [];
 
+      List<Actividad> activityList = await Actividad.cargarActividades();
+
       for (var e = 0; e < dataActividades.length; e++) {
-        actividades.add(Actividad(
-            codigoActividad: dataActividades[e]['codigo'].toString(),
-            nombre: dataActividades[e]['nombre']));
+        Actividad activity = activityList.firstWhere(
+          (actividad) => actividad.codigoActividad == dataActividades[e],
+          orElse: () => Actividad.nullActivity,
+        );
+
+        actividades.add(activity);
       }
 
       for (var e = 0; e < dataUsuariosCompartidos.length; e++) {
@@ -383,15 +395,19 @@ Future<List<Account>> getCuentasList() async {
   List<Account> accounts = [];
 
   for (var i = 0; i < data.length; i++) {
-    List<dynamic> dataActividades = data[i]['actividades'];
+    List<dynamic> dataActividades = data[i]['codigosActividad'];
     List<dynamic> dataUsuariosCompartidos = data[i]['usuariosCompartidos'];
     List<Actividad> actividades = [];
     List<String> usuariosCompartidos = [];
+    List<Actividad> activityList = await Actividad.cargarActividades();
 
     for (var e = 0; e < dataActividades.length; e++) {
-      actividades.add(Actividad(
-          codigoActividad: dataActividades[e]['codigo'].toString(),
-          nombre: dataActividades[e]['nombre']));
+      Actividad activity = activityList.firstWhere(
+        (actividad) => actividad.codigoActividad == dataActividades[e],
+        orElse: () => Actividad.nullActivity,
+      );
+
+      actividades.add(activity);
     }
 
     for (var e = 0; e < dataUsuariosCompartidos.length; e++) {
