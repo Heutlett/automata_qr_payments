@@ -86,3 +86,4 @@ Thumbs.db
 # Web specific
 **/web/assets/
 **/web/packages/
+db/.data/*

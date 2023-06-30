@@ -1,0 +1,4 @@
+# Files and directories to ignore when building the Docker image
+.dockerignore
+.git
+scripts/

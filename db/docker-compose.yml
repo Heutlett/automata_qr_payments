@@ -1,0 +1,11 @@
+version: '3'
+services:
+  db:
+    container_name: db
+    image: db-image:latest
+
+    volumes:
+      - "./.data/db:/var/lib/mysql"
+
+    ports:
+      - 3306:3306

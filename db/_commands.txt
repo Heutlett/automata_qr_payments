@@ -1,0 +1,57 @@
+% ----> COMANDS
+
+% Build the Docker image
+docker build --pull . -t db-image:latest
+
+% Run the Docker container
+docker run -d --name db db-image:latest
+
+% Specific port command
+docker run -p 3306:3306 --name db  db-image:latest
+
+% Show if scripts executed
+docker logs qr_payments_db
+
+
+
+
+
+
+
+
+
+
+# Test db creation
+% docker exec -it qr_payments_db mysql -u root -p
+
+mysql -u root -p
+admin
+
+SHOW DATABASES;
+
+
+
+
+
+
+
+
+
+
+## DOCKER HUB
+
+# Login
+docker login --username=<your-username>
+
+# See current docker images
+docker images
+
+# create image
+docker build --tag <dockerhub-username>/<repo-name>:<version> .
+docker build --tag jeykime/qr_payments:latest .
+
+# to change image name
+docker tag <your-image-id> <dockerhub-username>/<repo-name>:<tag>
+
+# push image in docker hub
+docker push <dockerhub-username>/<repo-name>r
