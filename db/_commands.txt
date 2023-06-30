@@ -1,11 +1,10 @@
 % ----> COMANDS
 
 % Build the Docker image
-docker build --pull . -t db-image:latest
+docker build --pull -t db-image:latest ./db
 
 % Run the Docker container
 docker run -d --name db db-image:latest
-
 % Specific port command
 docker run -p 3306:3306 --name db db-image:latest
 
@@ -29,11 +28,11 @@ admin
 
 SHOW DATABASES;
 
-USE qr_payments-docker2
+USE qr_payments-docker
 
 SHOW TABLES;
 
-
+SELECT * FROM codigosactividad;
 
 
 

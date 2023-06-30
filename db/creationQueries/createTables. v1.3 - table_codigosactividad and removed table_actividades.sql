@@ -1,6 +1,6 @@
--- DROP DATABASE IF EXISTS qr_payments;
--- CREATE DATABASE qr_payments;
--- USE qr_payments;
+-- DROP DATABASE IF EXISTS qr_payments-local;
+-- CREATE DATABASE qr_payments-local;
+-- USE qr_payments-local;
 
 -- Log a message
 SELECT 'CREATION - Executing...';
