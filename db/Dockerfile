@@ -17,7 +17,6 @@ COPY ./creationQueries/$CREATION_FILE /docker-entrypoint-initdb.d
 COPY ./populationQueries/ /docker-entrypoint-initdb.d
 
 
-
 # <------------------------------------------------------------------------
 
 # NOTES:

@@ -1,7 +1,9 @@
-DROP DATABASE IF EXISTS qr_payments;
-CREATE DATABASE qr_payments;
+-- DROP DATABASE IF EXISTS qr_payments;
+-- CREATE DATABASE qr_payments;
+-- USE qr_payments;
 
-USE qr_payments;
+-- Log a message
+SELECT 'CREATION - Executing...';
 
 DROP TABLE IF EXISTS usuarios;
 CREATE TABLE usuarios (
@@ -15,6 +17,9 @@ CREATE TABLE usuarios (
   Rol TINYINT(1) NOT NULL,
   PRIMARY KEY (Id)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+
+-- Log a message
+SELECT 'CREATION - Table created: usuarios';
 
 DROP TABLE IF EXISTS cuentas;
 CREATE TABLE cuentas (
@@ -40,6 +45,9 @@ CREATE TABLE cuentas (
   CONSTRAINT FK_Cuentas_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES usuarios(Id)
 ) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Log a message
+SELECT 'CREATION - Table created: cuentas';
+
 DROP TABLE IF EXISTS cuentascompartidas;
 CREATE TABLE cuentascompartidas (
   UsuarioId INT NOT NULL,
@@ -49,6 +57,9 @@ CREATE TABLE cuentascompartidas (
   CONSTRAINT FK_CuentasCompartidas_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES usuarios(Id) ON DELETE CASCADE,
   CONSTRAINT FK_CuentasCompartidas_Cuentas_CuentaCompartidaId FOREIGN KEY (CuentaCompartidaId) REFERENCES cuentas(Id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Log a message
+SELECT 'CREATION - Table created: cuentascompartidas';
 
 DROP TABLE IF EXISTS ubicaciones;
 CREATE TABLE ubicaciones (
@@ -63,6 +74,9 @@ CREATE TABLE ubicaciones (
     PRIMARY KEY (Provincia, Canton, Distrito, Barrio)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Log a message
+SELECT 'CREATION - Table created: ubicaciones';
+
 DROP TABLE IF EXISTS codigosactividadcuenta;
 CREATE TABLE codigosactividadcuenta (
   Codigo INT NOT NULL,
@@ -71,3 +85,6 @@ CREATE TABLE codigosactividadcuenta (
   KEY IX_CuentaId (CuentaId),
   CONSTRAINT FK_CodigosActividadCuenta_Cuentas_CuentasId FOREIGN KEY (CuentaId) REFERENCES cuentas(Id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Log a message
+SELECT 'CREATION - Table created: codigosactividadcuenta';
