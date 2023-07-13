@@ -24,15 +24,16 @@ docker logs qr_payments_db
 % docker exec -it qr_payments_db mysql -u root -p
 
 mysql -u root -p
+
 admin
 
 SHOW DATABASES;
 
-USE qr_payments-docker
+USE qr_payments
 
 SHOW TABLES;
 
-SELECT * FROM codigosactividad;
+SELECT NombreCompleto FROM usuarios;
 
 
 

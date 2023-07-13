@@ -1,27 +1,27 @@
-# Establece la imagen base
+# Set the base image
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
 
-# Establece el directorio de trabajo dentro del contenedor
+# Set the working directory inside the container
 WORKDIR /app
 
-# Expone el puerto en el que se ejecuta la aplicación
+# Expose the port on which the application runs
 EXPOSE 80
 EXPOSE 443
 
-# Copia el archivo .csproj y restaura las dependencias
+# Copy the .csproj file and restore the dependencies
 COPY *.csproj ./
 RUN dotnet restore
 
-# Copia el resto del código fuente
+# Copy the rest of the source code
 COPY . ./
 
-# Compila la aplicación
+# Build the application
 RUN dotnet publish -c Release -o out
 
-# Crea una imagen final más pequeña
+# Create a smaller final image
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS final-env
 WORKDIR /app
 COPY --from=build-env /app/out .
 
-# Ejecuta la aplicación
+# Run the application
 ENTRYPOINT ["dotnet", "Api.dll"]

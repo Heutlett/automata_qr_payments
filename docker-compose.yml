@@ -1,11 +1,24 @@
 version: '3'
+
+networks:
+  dev:
+    driver: bridge
+
 services:
+
   db:
-    container_name: db
-    image: db-image:latest
-
-    volumes:
-      - "./.data/db:/var/lib/mysql"
-
+    image: mysql:8.0.29
+    container_name: ${MYSQL_CONTAINER_NAME}
     ports:
       - 3306:3306
+    volumes:
+      - ./db/initQueries/${MYSQL_INIT_FILENAME}:/docker-entrypoint-initdb.d/00-init.sql
+      - ./db/populationQueries:/docker-entrypoint-initdb.d
+
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    networks:
+      - dev
