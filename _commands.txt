@@ -11,10 +11,12 @@ docker run -p 3306:3306 --name db db-image:latest
 % Show if scripts executed
 docker logs qr_payments_db
 
+% Delete all volumes
+docker system prune --volumes
 
 
-
-
+% Source video for docker implementation
+https://youtu.be/9ZEbJT36-Uk?t=3131
 
 
 

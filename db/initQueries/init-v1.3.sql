@@ -1,9 +1,9 @@
 -- Update: Se agrega la tabla codigosactividadcuenta y se quita la tabla actividades
 
-DROP DATABASE IF EXISTS qr_payments;
-CREATE DATABASE qr_payments;
+DROP DATABASE IF EXISTS qr_payments_local;
+CREATE DATABASE qr_payments_local;
 
-USE qr_payments;
+USE qr_payments_local;
 
 -- Log a message
 SELECT 'CREATION - Executing...';
