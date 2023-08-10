@@ -1,12 +1,18 @@
-DROP DATABASE IF EXISTS qr_payments2;
-CREATE DATABASE qr_payments2;
+-- Update: Se agrega la tabla codigosactividadcuenta y se quita la tabla actividades
 
-USE qr_payments2;
+DROP DATABASE IF EXISTS qr_payments_local;
+CREATE DATABASE qr_payments_local;
+
+USE qr_payments_local;
+
+-- Log a message
+SELECT 'CREATION - Executing...';
 
 DROP TABLE IF EXISTS usuarios;
 CREATE TABLE usuarios (
   Id INT NOT NULL AUTO_INCREMENT,
   UID VARCHAR(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  NombreCompleto VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   Username VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL UNIQUE,
   PasswordHash LONGBLOB NOT NULL,
   PasswordSalt LONGBLOB NOT NULL,
@@ -14,6 +20,9 @@ CREATE TABLE usuarios (
   Rol TINYINT(1) NOT NULL,
   PRIMARY KEY (Id)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+
+-- Log a message
+SELECT 'CREATION - Table created: usuarios';
 
 DROP TABLE IF EXISTS cuentas;
 CREATE TABLE cuentas (
@@ -39,6 +48,9 @@ CREATE TABLE cuentas (
   CONSTRAINT FK_Cuentas_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES usuarios(Id)
 ) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Log a message
+SELECT 'CREATION - Table created: cuentas';
+
 DROP TABLE IF EXISTS cuentascompartidas;
 CREATE TABLE cuentascompartidas (
   UsuarioId INT NOT NULL,
@@ -49,22 +61,8 @@ CREATE TABLE cuentascompartidas (
   CONSTRAINT FK_CuentasCompartidas_Cuentas_CuentaCompartidaId FOREIGN KEY (CuentaCompartidaId) REFERENCES cuentas(Id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS actividades;
-CREATE TABLE actividades (
-    Codigo INT NOT NULL AUTO_INCREMENT,
-    Nombre LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    PRIMARY KEY (Codigo)
-) ENGINE=InnoDB AUTO_INCREMENT=990002 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-DROP TABLE IF EXISTS actividadcuenta;
-CREATE TABLE actividadcuenta (
-  ActividadesCodigo INT NOT NULL,
-  CuentasId INT NOT NULL,     -- Acorde a resolucion 4.3
-  PRIMARY KEY (ActividadesCodigo, CuentasId),
-  KEY IX_ActividadCuenta_CuentasId (CuentasId), -- index key - index on the CuentasId column
-  CONSTRAINT FK_ActividadCuenta_Actividades_ActividadesCodigo FOREIGN KEY (ActividadesCodigo) REFERENCES actividades(Codigo) ON DELETE CASCADE,
-  CONSTRAINT FK_ActividadCuenta_Cuentas_CuentasId FOREIGN KEY (CuentasId) REFERENCES cuentas(Id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Log a message
+SELECT 'CREATION - Table created: cuentascompartidas';
 
 DROP TABLE IF EXISTS ubicaciones;
 CREATE TABLE ubicaciones (
@@ -79,37 +77,17 @@ CREATE TABLE ubicaciones (
     PRIMARY KEY (Provincia, Canton, Distrito, Barrio)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- DROP TABLE IF EXISTS--  credenciales_atv;
--- CREATE TABLE credenciales_atv (
---   Id INT NOT NULL AUTO_INCREMENT,
---   IdCuenta INT NOT NULL,
---   LlaveP12 VARCHAR(255) NOT NULL,
---   PinP12 VARCHAR(10) NOT NULL,
---   Usuario VARCHAR(250) NOT NULL,
---   Contrasena VARCHAR(60) NOT NULL,
---   PRIMARY KEY (Id),
---   FOREIGN KEY (IdCuenta) REFERENCES cuentas(Id) ON DELETE CASCADE ON UPDATE CASCADE
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- Log a message
+SELECT 'CREATION - Table created: ubicaciones';
 
--- DROP TABLE IF EXISTS historicos;
--- CREATE TABLE historicos (
---   Id INT NOT NULL AUTO_INCREMENT,
---   IdEmisor INT NOT NULL,
---   IdReceptor INT NOT NULL,
---   Fecha DATE NOT NULL,
---   DispositivoScan VARCHAR(100) NOT NULL,
---   PRIMARY KEY (Id),
---   FOREIGN KEY (IdEmisor) REFERENCES cuentas(Id),
---   FOREIGN KEY (IdReceptor) REFERENCES cuentas(Id)
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+DROP TABLE IF EXISTS codigosactividadcuenta;
+CREATE TABLE codigosactividadcuenta (
+  Codigo INT NOT NULL,
+  CuentaId INT NOT NULL,
+  PRIMARY KEY (Codigo, CuentaId),
+  KEY IX_CuentaId (CuentaId),
+  CONSTRAINT FK_CodigosActividadCuenta_Cuentas_CuentasId FOREIGN KEY (CuentaId) REFERENCES cuentas(Id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- DROP  TABLE IF EXISTS--  comprobantes;
--- CREATE TABLE comprobantes (
---     Id INT NOT NULL AUTO_INCREMENT,
---     IdHistorico INT NOT NULL,
---     Xml VARCHAR(100) NOT NULL,
---     Tipo VARCHAR(4) NOT NULL,
---     Estado INT(2) NOT NULL,
---     PRIMARY KEY (Id),
---     FOREIGN KEY (IdHistorico) REFERENCES historicos(Id)
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- Log a message
+SELECT 'CREATION - Table created: codigosactividadcuenta';

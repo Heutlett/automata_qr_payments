@@ -1,11 +1,43 @@
 version: '3'
+
+networks:
+  dev:
+    driver: bridge
+
 services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: api-services
+    depends_on:
+      - db
+    environment:
+      - ConnectionStrings__DefaultConnection=server=db;port=3306;database=qr_payments;user=root;password=admin;
+      - ASPNETCORE_URLS=http://+:80
+    image: docker.io/library/qr_api
+    networks:
+      - dev
+    ports:
+      - 8080:80
+    restart: on-failure
+
   db:
-    container_name: db
-    image: db-image:latest
-
-    volumes:
-      - "./.data/db:/var/lib/mysql"
-
+    container_name: ${MYSQL_CONTAINER_NAME}
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    image: mysql:8.0.29
+    networks:
+      - dev
     ports:
       - 3306:3306
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/initQueries/${MYSQL_INIT_FILENAME}:/docker-entrypoint-initdb.d/00-init.sql
+      - ./db/populationQueries:/docker-entrypoint-initdb.d
+
+volumes:
+  db_data:
