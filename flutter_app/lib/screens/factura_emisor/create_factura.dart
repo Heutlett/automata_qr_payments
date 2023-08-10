@@ -37,7 +37,6 @@ class _CreateFacturaState extends State<CreateFactura> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          //crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AccountForm(
               titulo: 'Datos emisor',
@@ -48,8 +47,17 @@ class _CreateFacturaState extends State<CreateFactura> {
               account: accountReceptor,
             ),
             ProductosForm(),
-            ElevatedButton(
-                onPressed: () {}, child: const Text('Crear factura')),
+            const SizedBox(height: 15),
+            SizedBox(
+              width: 180,
+              height: 60,
+              child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text(
+                    'Crear factura',
+                    style: TextStyle(fontSize: 22),
+                  )),
+            ),
             const SizedBox(height: 15),
           ],
         ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/widgets/general/my_text.dart';
 
+import '../../models/producto.dart';
+
 class ProductosForm extends StatefulWidget {
   ProductosForm({
     super.key,
@@ -21,14 +23,17 @@ class _ProductosFormState extends State<ProductosForm> {
     'Bienes transportables.'
   ];
 
+  final List<Producto> _products = [];
+
   final List<String> _unidades_medida = ['Al', 'Alc', 'Cm', 'I', 'Os', 'Sp'];
 
   final _cantidadController = TextEditingController();
   final _detalleController = TextEditingController();
   final _precioUnitarioController = TextEditingController();
+  final _descuentoController = TextEditingController();
   final _montoTotalController = TextEditingController();
 
-  int _cantidad = 1;
+  double _cantidad = 1;
 
   void _incrementQuantity() {
     setState(() {
@@ -53,6 +58,7 @@ class _ProductosFormState extends State<ProductosForm> {
     _cantidadController.dispose();
     _precioUnitarioController.dispose();
     _montoTotalController.dispose();
+    _descuentoController.dispose();
   }
 
   @override
@@ -77,8 +83,8 @@ class _ProductosFormState extends State<ProductosForm> {
             child: Column(
               children: [
                 const MyText(
-                  text: "Detalle de productos",
-                  fontSize: 26.0,
+                  text: "Detalle de productos y servicios",
+                  fontSize: 20.0,
                   fontWeight: FontWeight.bold,
                 ),
                 const SizedBox(height: 8.0),
@@ -90,7 +96,7 @@ class _ProductosFormState extends State<ProductosForm> {
                     children: [
                       const SizedBox(height: 8.0),
                       const MyText(
-                        text: 'Agregar producto',
+                        text: 'Agregar producto o servicio',
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold,
                       ),
@@ -98,7 +104,7 @@ class _ProductosFormState extends State<ProductosForm> {
                       DropdownButtonFormField<String>(
                         value: _selectedOptionProduct,
                         decoration: const InputDecoration(
-                          labelText: 'Seleccionar producto',
+                          labelText: 'Seleccionar producto o servicio',
                         ),
                         onChanged: (newValue) {
                           setState(() {
@@ -111,7 +117,7 @@ class _ProductosFormState extends State<ProductosForm> {
                             value: value,
                             child: Text(
                               value,
-                              style: TextStyle(fontSize: 15),
+                              style: const TextStyle(fontSize: 15),
                             ),
                           );
                         }).toList(),
@@ -127,12 +133,12 @@ class _ProductosFormState extends State<ProductosForm> {
                             Row(
                               children: [
                                 IconButton(
-                                  icon: Icon(Icons.remove_circle),
+                                  icon: const Icon(Icons.remove_circle),
                                   iconSize: 45,
                                   color: Colors.red,
                                   onPressed: _decrementQuantity,
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 SizedBox(
                                   width: 40,
                                   child: Center(
@@ -145,13 +151,13 @@ class _ProductosFormState extends State<ProductosForm> {
                                         return null;
                                       },
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 25),
+                                      style: const TextStyle(fontSize: 25),
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 IconButton(
-                                  icon: Icon(Icons.add_circle),
+                                  icon: const Icon(Icons.add_circle),
                                   color: Colors.green,
                                   iconSize: 45,
                                   onPressed: _incrementQuantity,
@@ -161,13 +167,13 @@ class _ProductosFormState extends State<ProductosForm> {
                           ],
                         ),
                       ),
-                      Divider(thickness: 1),
+                      const Divider(thickness: 1),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            MyText(text: 'Unidad de medida:'),
+                            const MyText(text: 'Unidad de medida:'),
                             DropdownButton<String>(
                               value: _selectedOptionUnidadMedida,
                               onChanged: (newValue) {
@@ -182,7 +188,7 @@ class _ProductosFormState extends State<ProductosForm> {
                                   value: value,
                                   child: Text(
                                     value,
-                                    style: TextStyle(fontSize: 15),
+                                    style: const TextStyle(fontSize: 15),
                                   ),
                                 );
                               }).toList(),
@@ -190,7 +196,7 @@ class _ProductosFormState extends State<ProductosForm> {
                           ],
                         ),
                       ),
-                      Divider(thickness: 1),
+                      const Divider(thickness: 1),
                       TextFormField(
                         controller: _detalleController,
                         decoration: const InputDecoration(labelText: 'Detalle'),
@@ -202,7 +208,7 @@ class _ProductosFormState extends State<ProductosForm> {
                         },
                       ),
                       TextFormField(
-                        controller: _detalleController,
+                        controller: _precioUnitarioController,
                         decoration:
                             const InputDecoration(labelText: 'Precio unitario'),
                         validator: (value) {
@@ -214,7 +220,20 @@ class _ProductosFormState extends State<ProductosForm> {
                         keyboardType: TextInputType.number,
                       ),
                       TextFormField(
-                        controller: _detalleController,
+                        controller: _descuentoController,
+                        decoration:
+                            const InputDecoration(labelText: 'Descuento'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Este campo es obligatorio.';
+                          }
+                          return null;
+                        },
+                        keyboardType: TextInputType.number,
+                      ),
+                      TextFormField(
+                        controller: _montoTotalController,
+                        enabled: false,
                         decoration:
                             const InputDecoration(labelText: 'Monto total'),
                         validator: (value) {
@@ -229,6 +248,217 @@ class _ProductosFormState extends State<ProductosForm> {
                   ),
                 ),
                 const SizedBox(height: 16.0),
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        if (_selectedOptionProduct != null &&
+                            _selectedOptionUnidadMedida != null &&
+                            _detalleController.text != "") {
+                          _products.add(Producto(
+                              nombre: _selectedOptionProduct!,
+                              cantidad: 0.0,
+                              unidadMedida: _selectedOptionUnidadMedida!,
+                              detalle: _detalleController.text,
+                              precioUnitario: 0.0,
+                              descuento: 0.0,
+                              montoTotal: 0.0));
+                        }
+                      });
+                    },
+                    child: const Text("Agregar")),
+                const SizedBox(height: 16.0),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  color: const Color.fromARGB(255, 255, 255, 255),
+                  child: _products.isNotEmpty
+                      ? Column(
+                          children: [
+                            const MyText(
+                              text: "Detalle de productos y servicios",
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            const SizedBox(height: 15),
+                            Column(
+                              children: _products.map(
+                                (prod) {
+                                  return Column(
+                                    children: [
+                                      Card(
+                                        color: Colors.blueGrey[100],
+                                        elevation: 3,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              MyText(
+                                                text: prod.nombre,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              const SizedBox(height: 15),
+                                              SizedBox(
+                                                width: double.infinity,
+                                                child: Card(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              const MyText(
+                                                                text:
+                                                                    "Cantidad:",
+                                                                fontSize: 16,
+                                                              ),
+                                                              MyText(
+                                                                text:
+                                                                    "${prod.cantidad.toString()}",
+                                                                fontSize: 16,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const Divider(
+                                                              thickness: 1),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              const MyText(
+                                                                text:
+                                                                    "Unidad de medida:",
+                                                                fontSize: 16,
+                                                              ),
+                                                              MyText(
+                                                                text:
+                                                                    "${prod.unidadMedida.toString()}",
+                                                                fontSize: 16,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const Divider(
+                                                              thickness: 1),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              MyText(
+                                                                text:
+                                                                    "Detalle:",
+                                                                fontSize: 16,
+                                                              ),
+                                                              MyText(
+                                                                text:
+                                                                    "${prod.detalle.toString()}",
+                                                                fontSize: 16,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const Divider(
+                                                              thickness: 1),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              MyText(
+                                                                text:
+                                                                    "Precio unitario:",
+                                                                fontSize: 16,
+                                                              ),
+                                                              MyText(
+                                                                text:
+                                                                    "${prod.precioUnitario.toString()}",
+                                                                fontSize: 16,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const Divider(
+                                                              thickness: 1),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              MyText(
+                                                                text:
+                                                                    "Descuento:",
+                                                                fontSize: 16,
+                                                              ),
+                                                              MyText(
+                                                                text:
+                                                                    "${prod.descuento.toString()}",
+                                                                fontSize: 16,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const Divider(
+                                                              thickness: 1),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              MyText(
+                                                                text:
+                                                                    "Monto total:",
+                                                                fontSize: 16,
+                                                              ),
+                                                              MyText(
+                                                                text:
+                                                                    "${prod.montoTotal.toString()}",
+                                                                fontSize: 16,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ]),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 15)
+                                    ],
+                                  );
+                                },
+                              ).toList(),
+                            ),
+                          ],
+                        )
+                      : Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(8),
+                          child: const Column(
+                            children: [
+                              MyText(
+                                text: "Detalle de productos y servicios",
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              SizedBox(height: 15),
+                              MyText(
+                                text: 'No ha agregado productos o servicios',
+                                color: Colors.red,
+                                fontSize: 14,
+                              ),
+                            ],
+                          ),
+                        ),
+                ),
               ],
             ),
           ),
