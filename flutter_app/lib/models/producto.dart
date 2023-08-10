@@ -14,4 +14,16 @@ class Producto {
       required this.precioUnitario,
       required this.descuento,
       required this.montoTotal});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'nombre': nombre,
+      'cantidad': cantidad,
+      'unidadMedida': unidadMedida,
+      'detalle': detalle,
+      'precioUnitario': precioUnitario,
+      'descuento': descuento,
+      'montoTotal': montoTotal,
+    };
+  }
 }

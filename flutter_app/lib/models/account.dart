@@ -47,6 +47,35 @@ class Account {
       this.nombreBarrio,
       required this.esCompartida,
       required this.usuariosCompartidos});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'cedulaTipo': cedulaTipo,
+      'cedulaNumero': cedulaNumero,
+      'idExtranjero': idExtranjero,
+      'nombre': nombre,
+      'nombreComercial': nombreComercial,
+      'telCodigoPais': telCodigoPais,
+      'telNumero': telNumero,
+      'faxCodigoPais': faxCodigoPais,
+      'faxNumero': faxNumero,
+      'correo': correo,
+      'ubicacionCodigo': ubicacionCodigo,
+      'ubicacionSenas': ubicacionSenas,
+      'ubicacionSenasExtranjero': ubicacionSenasExtranjero,
+      'tipo': tipo,
+      'actividades':
+          actividades?.map((actividad) => actividad.toJson()).toList(),
+      'nombreProvincia': nombreProvincia,
+      'nombreCanton': nombreCanton,
+      'nombreDistrito': nombreDistrito,
+      'nombreBarrio': nombreBarrio,
+      'esCompartida': esCompartida,
+      'usuariosCompartidos':
+          usuariosCompartidos.map((usuario) => usuario.toJson()).toList(),
+    };
+  }
 }
 
 class UsuarioCompartido {
@@ -57,4 +86,11 @@ class UsuarioCompartido {
     required this.nombreCompleto,
     required this.username,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'nombreCompleto': nombreCompleto,
+      'username': username,
+    };
+  }
 }

@@ -4,9 +4,9 @@ import 'package:flutter_app/screens/widgets/general/my_text.dart';
 import '../../models/producto.dart';
 
 class ProductosForm extends StatefulWidget {
-  ProductosForm({
-    super.key,
-  });
+  final List<Producto> products;
+
+  ProductosForm({super.key, required this.products});
 
   @override
   State<ProductosForm> createState() => _ProductosFormState();
@@ -16,14 +16,14 @@ class _ProductosFormState extends State<ProductosForm> {
   String? _selectedOptionProduct;
   String? _selectedOptionUnidadMedida;
 
+  late List<Producto> products;
+
   final List<String> _options = [
     'Productos de la agricultura, silvicultura y pesca',
     'Minerales; electricidad, gas y agua',
     'Productos alimenticios, bebidas y tabaco',
     'Bienes transportables.'
   ];
-
-  final List<Producto> _products = [];
 
   final List<String> _unidades_medida = ['Al', 'Alc', 'Cm', 'I', 'Os', 'Sp'];
 
@@ -66,6 +66,7 @@ class _ProductosFormState extends State<ProductosForm> {
     // TODO: implement initState
     super.initState();
     _cantidadController.text = _cantidad.toString();
+    products = widget.products;
   }
 
   @override
@@ -254,7 +255,7 @@ class _ProductosFormState extends State<ProductosForm> {
                         if (_selectedOptionProduct != null &&
                             _selectedOptionUnidadMedida != null &&
                             _detalleController.text != "") {
-                          _products.add(Producto(
+                          products.add(Producto(
                               nombre: _selectedOptionProduct!,
                               cantidad: 0.0,
                               unidadMedida: _selectedOptionUnidadMedida!,
@@ -270,7 +271,7 @@ class _ProductosFormState extends State<ProductosForm> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   color: const Color.fromARGB(255, 255, 255, 255),
-                  child: _products.isNotEmpty
+                  child: products.isNotEmpty
                       ? Column(
                           children: [
                             const MyText(
@@ -280,7 +281,7 @@ class _ProductosFormState extends State<ProductosForm> {
                             ),
                             const SizedBox(height: 15),
                             Column(
-                              children: _products.map(
+                              children: products.map(
                                 (prod) {
                                   return Column(
                                     children: [

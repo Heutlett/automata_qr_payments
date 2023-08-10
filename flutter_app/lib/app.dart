@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/screens/factura_emisor/factura_screen.dart';
 import 'package:flutter_app/screens/home.dart';
 import 'package:flutter_app/screens/home_logged.dart';
 import 'package:flutter_app/screens/user/register.dart';
@@ -51,7 +52,8 @@ class MyApp extends StatelessWidget {
         "/add_shared_account": (BuildContext context) =>
             const AddSharedAccount(),
         "/added_shared_account": (BuildContext context) =>
-            const AddedSharedAccount()
+            const AddedSharedAccount(),
+        "/show_factura_json": (BuildContext context) => FacturaScreen()
       },
     );
   }
