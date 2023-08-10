@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/account/accounts_form.dart';
 import 'package:flutter_app/models/account.dart';
+import 'package:flutter_app/screens/factura_emisor/productos_factura.dart';
 
 class CreateFactura extends StatefulWidget {
   const CreateFactura({super.key});
@@ -46,7 +47,7 @@ class _CreateFacturaState extends State<CreateFactura> {
               titulo: 'Datos receptor',
               account: accountReceptor,
             ),
-            const SizedBox(height: 15),
+            ProductosForm(),
             ElevatedButton(
                 onPressed: () {}, child: const Text('Crear factura')),
             const SizedBox(height: 15),
