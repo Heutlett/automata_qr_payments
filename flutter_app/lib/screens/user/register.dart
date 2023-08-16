@@ -32,44 +32,46 @@ class _RegistrationPageState extends State<RegistrationPage> {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20.0),
-            const MyText(
-              text: 'Regístrate para empezar',
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
-            ),
-            const SizedBox(height: 20.0),
-            MyTextField(
-              labelText: 'Nombre completo',
-              controller: _nameController,
-            ),
-            const SizedBox(height: 20.0),
-            MyTextField(
-              labelText: 'Nombre de usuario',
-              controller: _usernameController,
-            ),
-            const SizedBox(height: 20.0),
-            MyTextField(
-                labelText: 'Contraseña',
-                isPassword: true,
-                controller: _passwordController),
-            const SizedBox(height: 20.0),
-            MyTextField(
-              labelText: 'Correo electrónico',
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 40.0),
-            MyButton(
-              text: 'Registrarse',
-              function: () => _submitForm(context),
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20.0),
+              const MyText(
+                text: 'Regístrate para empezar',
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
+              ),
+              const SizedBox(height: 20.0),
+              MyTextField(
+                labelText: 'Nombre completo',
+                controller: _nameController,
+              ),
+              const SizedBox(height: 20.0),
+              MyTextField(
+                labelText: 'Nombre de usuario',
+                controller: _usernameController,
+              ),
+              const SizedBox(height: 20.0),
+              MyTextField(
+                  labelText: 'Contraseña',
+                  isPassword: true,
+                  controller: _passwordController),
+              const SizedBox(height: 20.0),
+              MyTextField(
+                labelText: 'Correo electrónico',
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 40.0),
+              MyButton(
+                text: 'Registrarse',
+                function: () => _submitForm(context),
+              ),
+            ],
+          ),
         ),
       ),
     );

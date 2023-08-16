@@ -6,9 +6,13 @@ class Factura {
   final Account emisor;
   final Account receptor;
   final List<Producto> productos;
+  final String tipoMoneda;
 
   Factura(
-      {required this.emisor, required this.receptor, required this.productos});
+      {required this.emisor,
+      required this.receptor,
+      required this.productos,
+      required this.tipoMoneda});
 
   Map<String, dynamic> toJson() {
     return {

@@ -43,46 +43,48 @@ class _LoginPageState extends State<LoginPage> {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20.0),
-            const MyText(
-              text: 'Bienvenido a QR Payments!',
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
-            ),
-            const SizedBox(height: 20.0),
-            MyTextField(
-              labelText: 'Nombre de usuario',
-              controller: _usernameController,
-            ),
-            const SizedBox(height: 20.0),
-            MyTextField(
-              labelText: 'Contraseña',
-              controller: _passwordController,
-              isPassword: true,
-            ),
-            const SizedBox(height: 20.0),
-            Row(
-              children: [
-                Checkbox(
-                  value: _rememberUsername,
-                  onChanged: (value) {
-                    recodarUsuario(value);
-                  },
-                ),
-                const Text('Recordar nombre de usuario'),
-              ],
-            ),
-            const SizedBox(height: 20.0),
-            MyButton(
-              text: 'Iniciar sesión',
-              function: () => _submitForm(context),
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20.0),
+              const MyText(
+                text: 'Bienvenido a QR Payments!',
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
+              ),
+              const SizedBox(height: 20.0),
+              MyTextField(
+                labelText: 'Nombre de usuario',
+                controller: _usernameController,
+              ),
+              const SizedBox(height: 20.0),
+              MyTextField(
+                labelText: 'Contraseña',
+                controller: _passwordController,
+                isPassword: true,
+              ),
+              const SizedBox(height: 20.0),
+              Row(
+                children: [
+                  Checkbox(
+                    value: _rememberUsername,
+                    onChanged: (value) {
+                      recodarUsuario(value);
+                    },
+                  ),
+                  const Text('Recordar nombre de usuario'),
+                ],
+              ),
+              const SizedBox(height: 20.0),
+              MyButton(
+                text: 'Iniciar sesión',
+                function: () => _submitForm(context),
+              ),
+            ],
+          ),
         ),
       ),
     );

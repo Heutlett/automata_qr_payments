@@ -5,6 +5,7 @@ import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/screens/factura_emisor/productos_factura.dart';
 
 import '../../models/producto.dart';
+import '../widgets/general/my_text.dart';
 
 class CreateFactura extends StatefulWidget {
   const CreateFactura({super.key});
@@ -14,18 +15,9 @@ class CreateFactura extends StatefulWidget {
 }
 
 class _CreateFacturaState extends State<CreateFactura> {
-  String? cedulaTipo;
-  String? tipoCuenta;
-  final List<String> cedulaTipos = [
-    'Fisica',
-    'Juridica',
-    'DIMEX',
-    'NITE',
-  ];
-  final List<String> tiposCuenta = [
-    'Receptor',
-    'Emisor',
-  ];
+  String? _tipoMoneda = 'Colones';
+
+  final List<String> _tiposMoneda = ['Colones', 'Dolares'];
 
   final List<Producto> productos = [];
 
@@ -52,7 +44,44 @@ class _CreateFacturaState extends State<CreateFactura> {
               account: accountReceptor,
             ),
             ProductosForm(products: productos),
-            const SizedBox(height: 15),
+            const SizedBox(height: 5),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 232, 232, 232),
+                    border: Border.all(color: Colors.black)),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const MyText(text: 'Tipo moneda:'),
+                      DropdownButton<String>(
+                        value: _tipoMoneda,
+                        onChanged: (newValue) {
+                          setState(() {
+                            _tipoMoneda = newValue;
+                          });
+                        },
+                        items: _tiposMoneda
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(
+                              value,
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 5),
             SizedBox(
               width: 180,
               height: 60,
@@ -66,7 +95,7 @@ class _CreateFacturaState extends State<CreateFactura> {
                     style: TextStyle(fontSize: 22),
                   )),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 35),
           ],
         ),
       ),
@@ -76,7 +105,10 @@ class _CreateFacturaState extends State<CreateFactura> {
   void _showFacturaScreen(BuildContext context, Account accountEmisor,
       Account accountReceptor, List<Producto> productos) {
     Factura factura = Factura(
-        emisor: accountEmisor, receptor: accountReceptor, productos: productos);
+        emisor: accountEmisor,
+        receptor: accountReceptor,
+        productos: productos,
+        tipoMoneda: _tipoMoneda!);
 
     Navigator.of(context).pushNamed("/show_factura_json", arguments: factura);
   }
