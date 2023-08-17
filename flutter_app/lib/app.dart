@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
             const AddSharedAccount(),
         "/added_shared_account": (BuildContext context) =>
             const AddedSharedAccount(),
-        "/show_factura_json": (BuildContext context) => FacturaScreen()
+        "/show_factura_json": (BuildContext context) => const FacturaScreen()
       },
     );
   }

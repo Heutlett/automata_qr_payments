@@ -7,26 +7,29 @@ class RecordsPage extends StatelessWidget {
 
   List<Record> data = [
     Record(
-        id: 1,
-        numeroConsecutivo: '123456',
-        fechaEmision: DateTime(2023, 8, 14),
-        codigoMonedaId: 1,
-        descripcion: "1 Litro de diesel",
-        estado: "En espera"),
+      id: 1,
+      numeroConsecutivo: '123456',
+      fechaEmision: DateTime(2023, 8, 14),
+      codigoMonedaId: 1,
+      descripcion: "1 Litro de diesel",
+      estado: "En espera",
+    ),
     Record(
-        id: 2,
-        numeroConsecutivo: '789132',
-        fechaEmision: DateTime(2023, 8, 15),
-        codigoMonedaId: 1,
-        descripcion: "1 Litro de diesel",
-        estado: "En espera"),
+      id: 2,
+      numeroConsecutivo: '789132',
+      fechaEmision: DateTime(2023, 8, 15),
+      codigoMonedaId: 1,
+      descripcion: "1 Litro de diesel",
+      estado: "En espera",
+    ),
     Record(
-        id: 3,
-        numeroConsecutivo: '123321',
-        fechaEmision: DateTime(2023, 8, 16),
-        codigoMonedaId: 1,
-        descripcion: "1 Litro de diesel",
-        estado: "En espera"),
+      id: 3,
+      numeroConsecutivo: '123321',
+      fechaEmision: DateTime(2023, 8, 16),
+      codigoMonedaId: 1,
+      descripcion: "1 Litro de diesel",
+      estado: "En espera",
+    ),
   ];
 
   @override
@@ -39,7 +42,7 @@ class RecordsPage extends StatelessWidget {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text("Consecutivo"),
@@ -53,7 +56,7 @@ class RecordsPage extends StatelessWidget {
                 child: ListView.builder(
                   itemCount: data.length,
                   itemBuilder: (BuildContext context, int index) {
-                    Record record = data[index]!;
+                    Record record = data[index];
 
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

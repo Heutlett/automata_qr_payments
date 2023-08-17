@@ -5,11 +5,13 @@ import 'package:flutter_app/models/account.dart';
 class AccountForm extends StatelessWidget {
   final String titulo;
   final Account account;
+  final bool isEmisor;
 
   const AccountForm({
     super.key,
     required this.titulo,
     required this.account,
+    required this.isEmisor,
   });
 
   @override
@@ -89,75 +91,77 @@ class AccountForm extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16.0),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  color: const Color.fromARGB(255, 255, 255, 255),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 8.0),
-                      const Text(
-                        'Actividades economicas',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8.0),
-                      account.actividades!.isNotEmpty
-                          ? Column(
-                              children: account.actividades!.map(
-                                (act) {
-                                  return SizedBox(
-                                    width: double.infinity,
-                                    child: Card(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  act.codigoActividad,
-                                                  style: const TextStyle(
-                                                      fontSize: 15),
-                                                ),
-                                              ),
-                                              const SizedBox(width: 16.0),
-                                              Expanded(
-                                                flex: 1,
-                                                child: ElevatedButton(
-                                                  onPressed: () {},
-                                                  child:
-                                                      const Text("Seleccionar"),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Text(
-                                            act.nombre,
-                                            style:
-                                                const TextStyle(fontSize: 13),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ).toList(),
-                            )
-                          : const SizedBox(
-                              width: double.infinity,
-                              child: Text(
-                                'No cuenta con actividades económicas',
-                                style: TextStyle(color: Colors.red),
+                isEmisor
+                    ? Container(
+                        padding: const EdgeInsets.all(8),
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 8.0),
+                            const Text(
+                              'Actividades economicas',
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16.0),
+                            const SizedBox(height: 8.0),
+                            account.actividades!.isNotEmpty
+                                ? Column(
+                                    children: account.actividades!.map(
+                                      (act) {
+                                        return SizedBox(
+                                          width: double.infinity,
+                                          child: Card(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Text(
+                                                        act.codigoActividad,
+                                                        style: const TextStyle(
+                                                            fontSize: 15),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 16.0),
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: ElevatedButton(
+                                                        onPressed: () {},
+                                                        child: const Text(
+                                                            "Seleccionar"),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Text(
+                                                  act.nombre,
+                                                  style: const TextStyle(
+                                                      fontSize: 13),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ).toList(),
+                                  )
+                                : const SizedBox(
+                                    width: double.infinity,
+                                    child: Text(
+                                      'No cuenta con actividades económicas',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      )
+                    : const SizedBox(),
+                isEmisor ? const SizedBox(height: 16.0) : const SizedBox(),
                 Container(
                   padding: const EdgeInsets.all(8),
                   color: const Color.fromARGB(255, 255, 255, 255),

@@ -6,34 +6,54 @@ import '../../models/producto.dart';
 class ProductosForm extends StatefulWidget {
   final List<Producto> products;
 
-  ProductosForm({super.key, required this.products});
+  const ProductosForm({super.key, required this.products});
 
   @override
   State<ProductosForm> createState() => _ProductosFormState();
 }
 
 class _ProductosFormState extends State<ProductosForm> {
-  String? _selectedOptionProduct;
   String? _selectedOptionUnidadMedida;
+  int? _selectedOptionTipoCodigoComercial;
+  int? _selectedOptionCabysId;
+
+  int numeroLineaDetalle = 1;
 
   late List<Producto> products;
 
-  final List<String> _options = [
-    'Productos de la agricultura, silvicultura y pesca',
-    'Minerales; electricidad, gas y agua',
-    'Productos alimenticios, bebidas y tabaco',
-    'Bienes transportables.'
+  final Map<int, String> _cabysOptions = {
+    0: 'Productos de la agricultura, silvicultura y pesca',
+    1: 'Minerales; electricidad, gas y agua',
+    2: 'Productos alimenticios, bebidas y tabaco',
+    3: 'Bienes transportables.'
+  };
+
+  final List<String> _unidadesMedida = [
+    'Al',
+    'Alc',
+    'Cm',
+    'I',
+    'Os',
+    'Sp',
   ];
 
-  final List<String> _unidades_medida = ['Al', 'Alc', 'Cm', 'I', 'Os', 'Sp'];
+  final Map<int, String> _tiposCodigoComercial = {
+    1: 'Código del producto del vendedor',
+    2: 'Código del producto del comprador',
+    3: 'Código del producto asignado por la industria',
+    4: 'Código de uso interno',
+    99: 'Otros',
+  };
 
   final _cantidadController = TextEditingController();
   final _detalleController = TextEditingController();
   final _precioUnitarioController = TextEditingController();
   final _descuentoController = TextEditingController();
   final _montoTotalController = TextEditingController();
+  final _codigoComercialController = TextEditingController();
+  final _unidadMedidaComercialController = TextEditingController();
 
-  double _cantidad = 1;
+  int _cantidad = 1;
 
   void _incrementQuantity() {
     setState(() {
@@ -53,17 +73,17 @@ class _ProductosFormState extends State<ProductosForm> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _cantidadController.dispose();
     _precioUnitarioController.dispose();
     _montoTotalController.dispose();
     _descuentoController.dispose();
+    _codigoComercialController.dispose();
+    _unidadMedidaComercialController.dispose();
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _cantidadController.text = _cantidad.toString();
     products = widget.products;
@@ -102,26 +122,52 @@ class _ProductosFormState extends State<ProductosForm> {
                         fontWeight: FontWeight.bold,
                       ),
                       const SizedBox(height: 8.0),
-                      DropdownButtonFormField<String>(
-                        value: _selectedOptionProduct,
+                      DropdownButtonFormField<int>(
+                        value: _selectedOptionCabysId,
+                        items: _cabysOptions.entries.map((entry) {
+                          return DropdownMenuItem<int>(
+                            value: entry.key,
+                            child: Text(entry.value,
+                                style: const TextStyle(fontSize: 15)),
+                          );
+                        }).toList(),
+                        onChanged: (int? newValue) {
+                          setState(() {
+                            _selectedOptionCabysId = newValue;
+                          });
+                        },
                         decoration: const InputDecoration(
                           labelText: 'Seleccionar producto o servicio',
                         ),
-                        onChanged: (newValue) {
-                          setState(() {
-                            _selectedOptionProduct = newValue;
-                          });
-                        },
-                        items: _options
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(
-                              value,
-                              style: const TextStyle(fontSize: 15),
-                            ),
+                      ),
+                      DropdownButtonFormField<int>(
+                        value: _selectedOptionTipoCodigoComercial,
+                        items: _tiposCodigoComercial.entries.map((entry) {
+                          return DropdownMenuItem<int>(
+                            value: entry.key,
+                            child: Text(entry.value,
+                                style: const TextStyle(fontSize: 15)),
                           );
                         }).toList(),
+                        onChanged: (int? newValue) {
+                          setState(() {
+                            _selectedOptionTipoCodigoComercial = newValue;
+                          });
+                        },
+                        decoration: const InputDecoration(
+                          labelText: 'Seleccionar tipo de codigo comercial',
+                        ),
+                      ),
+                      TextFormField(
+                        controller: _codigoComercialController,
+                        decoration: const InputDecoration(
+                            labelText: 'Codigo comercial'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Este campo es obligatorio.';
+                          }
+                          return null;
+                        },
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -182,7 +228,7 @@ class _ProductosFormState extends State<ProductosForm> {
                                   _selectedOptionUnidadMedida = newValue;
                                 });
                               },
-                              items: _unidades_medida
+                              items: _unidadesMedida
                                   .map<DropdownMenuItem<String>>(
                                       (String value) {
                                 return DropdownMenuItem<String>(
@@ -198,6 +244,17 @@ class _ProductosFormState extends State<ProductosForm> {
                         ),
                       ),
                       const Divider(thickness: 1),
+                      TextFormField(
+                        controller: _unidadMedidaComercialController,
+                        decoration: const InputDecoration(
+                            labelText: 'Unidad de medida comercial'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Este campo es obligatorio.';
+                          }
+                          return null;
+                        },
+                      ),
                       TextFormField(
                         controller: _detalleController,
                         decoration: const InputDecoration(labelText: 'Detalle'),
@@ -232,19 +289,6 @@ class _ProductosFormState extends State<ProductosForm> {
                         },
                         keyboardType: TextInputType.number,
                       ),
-                      TextFormField(
-                        controller: _montoTotalController,
-                        enabled: false,
-                        decoration:
-                            const InputDecoration(labelText: 'Monto total'),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Este campo es obligatorio.';
-                          }
-                          return null;
-                        },
-                        keyboardType: TextInputType.number,
-                      ),
                     ],
                   ),
                 ),
@@ -252,17 +296,27 @@ class _ProductosFormState extends State<ProductosForm> {
                 ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        if (_selectedOptionProduct != null &&
+                        if (_selectedOptionCabysId != null &&
                             _selectedOptionUnidadMedida != null &&
                             _detalleController.text != "") {
-                          products.add(Producto(
-                              nombre: _selectedOptionProduct!,
-                              cantidad: 0.0,
+                          products.add(
+                            Producto(
+                              numeroLinea: numeroLineaDetalle,
+                              cabysId: _selectedOptionCabysId!, // Arreglar esto
+                              tipoCodigoComercial:
+                                  _selectedOptionTipoCodigoComercial.toString(),
+                              codigoComercial: _codigoComercialController.text,
+                              cantidad: int.parse(_cantidadController.text),
                               unidadMedida: _selectedOptionUnidadMedida!,
+                              unidadMedidaComercial:
+                                  _unidadMedidaComercialController.text,
                               detalle: _detalleController.text,
-                              precioUnitario: 0.0,
-                              descuento: 0.0,
-                              montoTotal: 0.0));
+                              precioUnitario:
+                                  int.parse(_precioUnitarioController.text),
+                              descuento: int.parse(_descuentoController.text),
+                            ),
+                          );
+                          numeroLineaDetalle++;
                         }
                       });
                     },
@@ -294,8 +348,21 @@ class _ProductosFormState extends State<ProductosForm> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
+                                              Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    MyText(
+                                                      text:
+                                                          "#${prod.numeroLinea}",
+                                                      fontSize: 22,
+                                                      color: Colors.red,
+                                                    ),
+                                                  ]),
+                                              const SizedBox(height: 5),
                                               MyText(
-                                                text: prod.nombre,
+                                                text: _cabysOptions[
+                                                    prod.cabysId]!,
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -312,6 +379,51 @@ class _ProductosFormState extends State<ProductosForm> {
                                                             CrossAxisAlignment
                                                                 .start,
                                                         children: [
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              const MyText(
+                                                                text:
+                                                                    "Tipo codigo comercial:",
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                              MyText(
+                                                                text: _tiposCodigoComercial[
+                                                                    int.parse(prod
+                                                                        .tipoCodigoComercial)]!,
+                                                                fontSize: 16,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const Divider(
+                                                              thickness: 1),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              const MyText(
+                                                                text:
+                                                                    "Codigo comercial:",
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                              MyText(
+                                                                text: prod
+                                                                    .codigoComercial,
+                                                                fontSize: 16,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const Divider(
+                                                              thickness: 1),
                                                           Row(
                                                             mainAxisAlignment:
                                                                 MainAxisAlignment
@@ -321,10 +433,14 @@ class _ProductosFormState extends State<ProductosForm> {
                                                                 text:
                                                                     "Cantidad:",
                                                                 fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
                                                               ),
                                                               MyText(
-                                                                text:
-                                                                    "${prod.cantidad.toString()}",
+                                                                text: prod
+                                                                    .cantidad
+                                                                    .toString(),
                                                                 fontSize: 16,
                                                               ),
                                                             ],
@@ -340,10 +456,13 @@ class _ProductosFormState extends State<ProductosForm> {
                                                                 text:
                                                                     "Unidad de medida:",
                                                                 fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
                                                               ),
                                                               MyText(
-                                                                text:
-                                                                    "${prod.unidadMedida.toString()}",
+                                                                text: prod
+                                                                    .unidadMedida,
                                                                 fontSize: 16,
                                                               ),
                                                             ],
@@ -355,14 +474,40 @@ class _ProductosFormState extends State<ProductosForm> {
                                                                 MainAxisAlignment
                                                                     .spaceBetween,
                                                             children: [
+                                                              const MyText(
+                                                                text:
+                                                                    "Unidad de medida comercial:",
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
                                                               MyText(
+                                                                text: prod
+                                                                    .unidadMedidaComercial,
+                                                                fontSize: 16,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const Divider(
+                                                              thickness: 1),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              const MyText(
                                                                 text:
                                                                     "Detalle:",
                                                                 fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
                                                               ),
                                                               MyText(
-                                                                text:
-                                                                    "${prod.detalle.toString()}",
+                                                                text: prod
+                                                                    .detalle
+                                                                    .toString(),
                                                                 fontSize: 16,
                                                               ),
                                                             ],
@@ -374,14 +519,18 @@ class _ProductosFormState extends State<ProductosForm> {
                                                                 MainAxisAlignment
                                                                     .spaceBetween,
                                                             children: [
-                                                              MyText(
+                                                              const MyText(
                                                                 text:
                                                                     "Precio unitario:",
                                                                 fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
                                                               ),
                                                               MyText(
-                                                                text:
-                                                                    "${prod.precioUnitario.toString()}",
+                                                                text: prod
+                                                                    .precioUnitario
+                                                                    .toString(),
                                                                 fontSize: 16,
                                                               ),
                                                             ],
@@ -393,33 +542,18 @@ class _ProductosFormState extends State<ProductosForm> {
                                                                 MainAxisAlignment
                                                                     .spaceBetween,
                                                             children: [
-                                                              MyText(
+                                                              const MyText(
                                                                 text:
                                                                     "Descuento:",
                                                                 fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
                                                               ),
                                                               MyText(
-                                                                text:
-                                                                    "${prod.descuento.toString()}",
-                                                                fontSize: 16,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const Divider(
-                                                              thickness: 1),
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              MyText(
-                                                                text:
-                                                                    "Monto total:",
-                                                                fontSize: 16,
-                                                              ),
-                                                              MyText(
-                                                                text:
-                                                                    "${prod.montoTotal.toString()}",
+                                                                text: prod
+                                                                    .descuento
+                                                                    .toString(),
                                                                 fontSize: 16,
                                                               ),
                                                             ],
@@ -432,7 +566,7 @@ class _ProductosFormState extends State<ProductosForm> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(height: 15)
+                                      const SizedBox(height: 15)
                                     ],
                                   );
                                 },
