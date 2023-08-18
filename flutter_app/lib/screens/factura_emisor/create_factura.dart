@@ -127,7 +127,7 @@ class _CreateFacturaState extends State<CreateFactura> {
                               });
                             },
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           const Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -151,7 +151,7 @@ class _CreateFacturaState extends State<CreateFactura> {
                               });
                             },
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           const Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [

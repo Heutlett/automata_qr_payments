@@ -25,7 +25,8 @@ Future<http.Response> postAddComprobante(Object? factura) async {
   return responseAddComprobante;
 }
 
-Future<ServerResponse<ComprobanteSummary>> getComprobanteSummary(int id) async {
+Future<ServerResponse<List<ComprobanteSummary>>> getComprobanteSummary(
+    int id) async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
   String host = await Config.load(selectedHost);
@@ -36,9 +37,42 @@ Future<ServerResponse<ComprobanteSummary>> getComprobanteSummary(int id) async {
 
   var response = await http.get(Uri.parse(url), headers: headers);
 
-  var data = jsonDecode(response.body);
+  ServerResponse<List<ComprobanteSummary>> serverResponse;
 
-  print(data);
+  if (response.statusCode == 200) {
+    var data = jsonDecode(response.body);
 
-  return data;
+    if (data['success']) {
+      data = data['data'];
+
+      List<ComprobanteSummary> comprobantesSummaryList = [];
+
+      for (int i = 0; i < data.length; i++) {
+        comprobantesSummaryList.add(
+          ComprobanteSummary(
+            id: data[i]['id'],
+            estado: data[i]['estado'],
+            descripcion: data[i]['descripcion'],
+            numeroConsecutivo: data[i]['numeroConsecutivo'],
+            fechaEmision: DateTime.parse(data[i]['fechaEmision']),
+            codigoMonedaId: data[i]['codigoMonedaId'],
+            totalComprobante: data[i]['totalComprobante'],
+          ),
+        );
+      }
+
+      serverResponse = ServerResponse(
+          data: comprobantesSummaryList, message: '', success: true);
+    } else {
+      serverResponse =
+          ServerResponse(data: null, message: data['message'], success: true);
+    }
+  } else {
+    serverResponse = ServerResponse(
+        data: null,
+        message: 'Ha ocurrido un error, probablemente el token ha expirado',
+        success: false);
+  }
+
+  return serverResponse;
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
-import 'package:flutter_app/screens/widgets/general/my_button.dart';
 import 'package:flutter_app/screens/widgets/general/my_text.dart';
 import 'package:flutter_app/utils/utils.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
@@ -61,16 +60,17 @@ class _AccountInfoCardSharedAccState extends State<AccountInfoCardSharedAcc> {
                                       text: user.nombreCompleto,
                                       fontSize: 13,
                                     ),
-                                    MyButton(
-                                      text: 'Eliminar usuario',
-                                      function: () {
-                                        deleteUserAcc(
-                                            context, acc.id, user.username);
-                                      },
-                                      fontSize: 13,
-                                      size: const Size(130, 20),
-                                      backgroundColor: Colors.red,
-                                    ),
+                                    ElevatedButton(
+                                        style: const ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStatePropertyAll(
+                                                    Colors.red)),
+                                        onPressed: () {
+                                          deleteUserAcc(
+                                              context, acc.id, user.username);
+                                        },
+                                        child: const Icon(
+                                            Icons.unpublished_outlined))
                                   ],
                                 ),
                                 const Divider(

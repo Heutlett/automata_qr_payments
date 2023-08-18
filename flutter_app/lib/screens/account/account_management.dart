@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
-import 'package:flutter_app/screens/widgets/general/my_button.dart';
 import 'package:flutter_app/screens/widgets/account/account_info_card.dart';
 
 class AccountManagementScreen extends StatefulWidget {
@@ -34,20 +33,31 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            MyButton(
-              text: 'Crear cuenta',
-              fontSize: 16,
-              function: () => _createAccount(context),
-              size: const Size(130, 40),
-              backgroundColor: Colors.green,
+            ElevatedButton(
+              onPressed: () {
+                _createAccount(context);
+              },
+              style: const ButtonStyle(
+                  backgroundColor: MaterialStatePropertyAll(Colors.green)),
+              child: const Row(
+                children: [
+                  Icon(Icons.add),
+                  Text('Cuenta'),
+                ],
+              ),
             ),
-            MyButton(
-              text: 'Agregar cuenta compartida',
-              fontSize: 16,
-              foregroundColor: Colors.black,
-              function: () => _addSharedAccount(context),
-              size: const Size(180, 40),
-              backgroundColor: Colors.yellow,
+            ElevatedButton(
+              onPressed: () {
+                _addSharedAccount(context);
+              },
+              style: const ButtonStyle(
+                  backgroundColor: MaterialStatePropertyAll(Colors.purple)),
+              child: const Row(
+                children: [
+                  Icon(Icons.add),
+                  Text('Cuenta compartida'),
+                ],
+              ),
             ),
           ],
         ),

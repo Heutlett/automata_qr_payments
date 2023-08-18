@@ -34,7 +34,7 @@ class FacturaScreen extends StatelessWidget {
                 onPressed: () {
                   sendFacturaHacienda(context, factura);
                 },
-                child: SizedBox(
+                child: const SizedBox(
                     width: 200,
                     height: 50,
                     child: Center(

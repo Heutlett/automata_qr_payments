@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../models/comprobante_summary.dart';
+import '../models/server_response.dart';
+import '../services/cuenta/cuenta_service.dart';
+import '../services/factura/factura_service.dart';
 import 'widgets/general/my_button.dart';
 import 'widgets/general/my_text.dart';
 
@@ -60,8 +64,21 @@ class HomeLoggedPage extends StatelessWidget {
     Navigator.of(context).pushNamed("/facturar");
   }
 
-  void _showRecordsPage(BuildContext context) {
-    Navigator.of(context).pushNamed("/records");
+  void _showRecordsPage(BuildContext context) async {
+    var loadedAccounts = await getCuentasList();
+
+    Map<int, String> accountsIds = {};
+
+    for (int i = 0; i < loadedAccounts.length; i++) {
+      accountsIds[int.parse(loadedAccounts[i].id)] = loadedAccounts[i].nombre;
+    }
+    ServerResponse<List<ComprobanteSummary>> response =
+        await getComprobanteSummary(accountsIds.keys.first);
+
+    if (context.mounted) {
+      Navigator.of(context)
+          .pushNamed("/records", arguments: [accountsIds, response.data]);
+    }
   }
 
   Future<void> _showAccountManagementPage(BuildContext context) async {
