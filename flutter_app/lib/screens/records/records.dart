@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/comprobante_summary.dart';
+import 'package:flutter_app/models/server_response.dart';
 
 import '../../models/record.dart';
+import '../../services/factura/factura_service.dart';
 
 class RecordsPage extends StatelessWidget {
   RecordsPage({Key? key}) : super(key: key);
@@ -71,8 +74,22 @@ class RecordsPage extends StatelessWidget {
                   },
                 ),
               ),
+              ElevatedButton(
+                onPressed: () {
+                  getComprobantesSummary();
+                },
+                child: Text("Press me"),
+              )
             ],
           ),
         ));
+  }
+
+  void getComprobantesSummary() async {
+    ServerResponse<ComprobanteSummary> response =
+        await getComprobanteSummary(2);
+
+    print(response.data!.id.toString());
+    print(response.message);
   }
 }
