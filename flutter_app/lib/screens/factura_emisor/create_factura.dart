@@ -17,13 +17,13 @@ class CreateFactura extends StatefulWidget {
 }
 
 class _CreateFacturaState extends State<CreateFactura> {
-  int? _selectedIdMoneda = 1;
+  int? _selectedIdMoneda = 250;
   int? _selectedMedioPago = 1;
   int? _selectedCondicionVenta = 1;
 
   final Map<int, String> _tiposMoneda = {
-    1: 'Colones',
-    2: 'Dolares',
+    250: 'Colones',
+    56: 'Dolares',
   };
 
   final Map<int, String> _mediosPago = {
