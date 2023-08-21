@@ -108,12 +108,6 @@ class _RecordsPageState extends State<RecordsPage> {
                               },
                             ),
                     ),
-              ElevatedButton(
-                onPressed: () {
-                  //getComprobantesSummary();
-                },
-                child: const Text("Press me"),
-              )
             ],
           ),
         ));

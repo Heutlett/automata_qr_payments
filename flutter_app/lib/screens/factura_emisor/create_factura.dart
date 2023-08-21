@@ -3,7 +3,9 @@ import 'package:flutter_app/models/factura.dart';
 import 'package:flutter_app/screens/account/accounts_form.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/screens/factura_emisor/productos_factura.dart';
+import 'package:flutter_app/utils/utils.dart';
 
+import '../../models/actividad.dart';
 import '../../models/producto.dart';
 import '../widgets/general/my_text.dart';
 
@@ -221,16 +223,38 @@ class _CreateFacturaState extends State<CreateFactura> {
 
   void _showFacturaScreen(BuildContext context, Account accountEmisor,
       Account accountReceptor, List<Producto> productos, String descripcion) {
-    Factura factura = Factura(
-      emisor: accountEmisor,
-      receptor: accountReceptor,
-      productos: productos,
-      idMoneda: _selectedIdMoneda!,
-      descripcion: descripcion,
-      medioPago: _selectedMedioPago!,
-      condicionVenta: _selectedCondicionVenta!,
-    );
+    Actividad? actividad;
 
-    Navigator.of(context).pushNamed("/show_factura_json", arguments: factura);
+    if (accountEmisor.actividades != null) {
+      for (int i = 0; i < accountEmisor.actividades!.length; i++) {
+        if (accountEmisor.actividades![i].selected) {
+          actividad = accountEmisor.actividades![i];
+        }
+      }
+
+      if (actividad != null) {
+        Factura factura = Factura(
+          emisor: accountEmisor,
+          receptor: accountReceptor,
+          productos: productos,
+          idMoneda: _selectedIdMoneda!,
+          descripcion: descripcion,
+          medioPago: _selectedMedioPago!,
+          condicionVenta: _selectedCondicionVenta!,
+        );
+
+        Navigator.of(context)
+            .pushNamed("/show_factura_json", arguments: [factura, actividad]);
+      } else {
+        showAlertDialog(
+            context,
+            "Error",
+            "No se ha seleccionado la actividad economica del emisor",
+            "Aceptar");
+      }
+    } else {
+      showAlertDialog(context, "Error",
+          "El emisor no cuenta con actividades economicas", "Aceptar");
+    }
   }
 }

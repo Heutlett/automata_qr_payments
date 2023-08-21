@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/widgets/general/my_text.dart';
 import 'package:flutter_app/models/account.dart';
 
-class AccountForm extends StatelessWidget {
+import '../../models/actividad.dart';
+
+class AccountForm extends StatefulWidget {
   final String titulo;
   final Account account;
   final bool isEmisor;
@@ -14,6 +16,11 @@ class AccountForm extends StatelessWidget {
     required this.isEmisor,
   });
 
+  @override
+  State<AccountForm> createState() => _AccountFormState();
+}
+
+class _AccountFormState extends State<AccountForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -29,7 +36,7 @@ class AccountForm extends StatelessWidget {
             child: Column(
               children: [
                 MyText(
-                  text: titulo,
+                  text: widget.titulo,
                   fontSize: 26.0,
                   fontWeight: FontWeight.bold,
                 ),
@@ -48,41 +55,41 @@ class AccountForm extends StatelessWidget {
                       ),
                       const SizedBox(height: 8.0),
                       TextFormField(
-                        initialValue: account.cedulaTipo,
+                        initialValue: widget.account.cedulaTipo,
                         enabled: false,
                         decoration:
                             const InputDecoration(labelText: 'Tipo Cedula'),
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        initialValue: account.cedulaNumero,
+                        initialValue: widget.account.cedulaNumero,
                         enabled: false,
                         decoration:
                             const InputDecoration(labelText: 'Numero Cedula'),
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        initialValue: account.idExtranjero,
+                        initialValue: widget.account.idExtranjero,
                         enabled: false,
                         decoration: const InputDecoration(
                             labelText: 'Identificacion extranjero'),
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        initialValue: account.nombre,
+                        initialValue: widget.account.nombre,
                         enabled: false,
                         decoration: const InputDecoration(labelText: 'Nombre'),
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        initialValue: account.nombreComercial,
+                        initialValue: widget.account.nombreComercial,
                         enabled: false,
                         decoration: const InputDecoration(
                             labelText: 'Nombre comercial'),
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        initialValue: account.tipo,
+                        initialValue: widget.account.tipo,
                         enabled: false,
                         decoration:
                             const InputDecoration(labelText: 'Tipo cuenta'),
@@ -91,7 +98,7 @@ class AccountForm extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16.0),
-                isEmisor
+                widget.isEmisor
                     ? Container(
                         padding: const EdgeInsets.all(8),
                         color: const Color.fromARGB(255, 255, 255, 255),
@@ -107,41 +114,72 @@ class AccountForm extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 8.0),
-                            account.actividades!.isNotEmpty
+                            widget.account.actividades!.isNotEmpty
                                 ? Column(
-                                    children: account.actividades!.map(
+                                    children: widget.account.actividades!.map(
                                       (act) {
                                         return SizedBox(
                                           width: double.infinity,
                                           child: Card(
+                                            color: act.selected
+                                                ? Colors.green[200]
+                                                : Colors.white,
                                             child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child: Text(
-                                                        act.codigoActividad,
-                                                        style: const TextStyle(
-                                                            fontSize: 15),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: Text(
+                                                          act.codigoActividad,
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 15),
+                                                        ),
                                                       ),
-                                                    ),
-                                                    const SizedBox(width: 16.0),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: ElevatedButton(
-                                                        onPressed: () {},
-                                                        child: const Text(
-                                                            "Seleccionar"),
+                                                      const SizedBox(
+                                                          width: 16.0),
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: ElevatedButton(
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              for (int i = 0;
+                                                                  i <
+                                                                      widget
+                                                                          .account
+                                                                          .actividades!
+                                                                          .length;
+                                                                  i++) {
+                                                                widget
+                                                                    .account
+                                                                    .actividades![
+                                                                        i]
+                                                                    .selected = false;
+                                                              }
+                                                              act.selected =
+                                                                  true;
+                                                            });
+                                                          },
+                                                          child: const Text(
+                                                              "Seleccionar"),
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ],
+                                                    ],
+                                                  ),
                                                 ),
-                                                Text(
-                                                  act.nombre,
-                                                  style: const TextStyle(
-                                                      fontSize: 13),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    act.nombre,
+                                                    style: const TextStyle(
+                                                        fontSize: 13),
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -161,7 +199,9 @@ class AccountForm extends StatelessWidget {
                         ),
                       )
                     : const SizedBox(),
-                isEmisor ? const SizedBox(height: 16.0) : const SizedBox(),
+                widget.isEmisor
+                    ? const SizedBox(height: 16.0)
+                    : const SizedBox(),
                 Container(
                   padding: const EdgeInsets.all(8),
                   color: const Color.fromARGB(255, 255, 255, 255),
@@ -179,7 +219,7 @@ class AccountForm extends StatelessWidget {
                         children: [
                           Expanded(
                             child: TextFormField(
-                              initialValue: account.telCodigoPais,
+                              initialValue: widget.account.telCodigoPais,
                               enabled: false,
                               decoration: const InputDecoration(
                                   labelText: 'Codigo de pais'),
@@ -189,7 +229,7 @@ class AccountForm extends StatelessWidget {
                           Expanded(
                             flex: 2,
                             child: TextFormField(
-                              initialValue: account.telNumero,
+                              initialValue: widget.account.telNumero,
                               enabled: false,
                               decoration:
                                   const InputDecoration(labelText: 'Numero'),
@@ -209,7 +249,7 @@ class AccountForm extends StatelessWidget {
                         children: [
                           Expanded(
                             child: TextFormField(
-                              initialValue: account.faxCodigoPais,
+                              initialValue: widget.account.faxCodigoPais,
                               enabled: false,
                               decoration: const InputDecoration(
                                   labelText: 'Codigo de pais'),
@@ -219,7 +259,7 @@ class AccountForm extends StatelessWidget {
                           Expanded(
                             flex: 2,
                             child: TextFormField(
-                              initialValue: account.faxNumero,
+                              initialValue: widget.account.faxNumero,
                               enabled: false,
                               decoration:
                                   const InputDecoration(labelText: 'Numero'),
@@ -236,7 +276,7 @@ class AccountForm extends StatelessWidget {
                         ),
                       ),
                       TextFormField(
-                        initialValue: account.correo,
+                        initialValue: widget.account.correo,
                         enabled: false,
                       ),
                       const SizedBox(height: 16.0),
@@ -259,40 +299,40 @@ class AccountForm extends StatelessWidget {
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        initialValue: account.nombreProvincia,
+                        initialValue: widget.account.nombreProvincia,
                         enabled: false,
                         decoration:
                             const InputDecoration(labelText: 'Provincia'),
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        initialValue: account.nombreCanton,
+                        initialValue: widget.account.nombreCanton,
                         enabled: false,
                         decoration: const InputDecoration(labelText: 'Canton'),
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        initialValue: account.nombreDistrito,
+                        initialValue: widget.account.nombreDistrito,
                         enabled: false,
                         decoration:
                             const InputDecoration(labelText: 'Distrito'),
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        initialValue: account.nombreBarrio,
+                        initialValue: widget.account.nombreBarrio,
                         enabled: false,
                         decoration: const InputDecoration(labelText: 'Barrio'),
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        initialValue: account.ubicacionSenas,
+                        initialValue: widget.account.ubicacionSenas,
                         enabled: false,
                         decoration:
                             const InputDecoration(labelText: 'Otras señas'),
                       ),
                       const SizedBox(height: 16.0),
                       TextFormField(
-                        initialValue: account.ubicacionSenasExtranjero,
+                        initialValue: widget.account.ubicacionSenasExtranjero,
                         enabled: false,
                         decoration: const InputDecoration(
                             labelText: 'Otras señas extranjero'),

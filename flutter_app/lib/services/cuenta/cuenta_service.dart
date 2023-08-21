@@ -10,7 +10,7 @@ import 'package:flutter_app/models/ubicacion.dart';
 
 import 'package:flutter_app/utils/config.dart';
 
-const String selectedHost = "host_adrian_sanvito";
+const String selectedHost = "host_adrian";
 
 Future<http.Response> postCreateAccount(Object? cuenta) async {
   final prefs = await SharedPreferences.getInstance();

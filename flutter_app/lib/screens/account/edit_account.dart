@@ -267,13 +267,11 @@ class _EditAccountState extends State<EditAccount> {
                                         }
                                         return null;
                                       },
-                                      keyboardType: TextInputType.number,
                                     ),
                                     TextFormField(
                                       controller: _idExtranjeroController,
                                       decoration: const InputDecoration(
                                           labelText: 'ID extranjero'),
-                                      keyboardType: TextInputType.number,
                                     ),
                                     TextFormField(
                                       controller: _nombreController,
@@ -352,8 +350,6 @@ class _EditAccountState extends State<EditAccount> {
                                                   }
                                                   return null;
                                                 },
-                                                keyboardType:
-                                                    TextInputType.number,
                                               ),
                                             ),
                                             const SizedBox(width: 16.0),
@@ -372,8 +368,6 @@ class _EditAccountState extends State<EditAccount> {
                                                   }
                                                   return null;
                                                 },
-                                                keyboardType:
-                                                    TextInputType.number,
                                               ),
                                             )
                                           ],
@@ -396,8 +390,6 @@ class _EditAccountState extends State<EditAccount> {
                                                     const InputDecoration(
                                                         labelText:
                                                             'Código de país'),
-                                                keyboardType:
-                                                    TextInputType.number,
                                               ),
                                             ),
                                             const SizedBox(width: 16.0),
@@ -410,8 +402,6 @@ class _EditAccountState extends State<EditAccount> {
                                                     const InputDecoration(
                                                         labelText:
                                                             'Número de fax'),
-                                                keyboardType:
-                                                    TextInputType.number,
                                               ),
                                             )
                                           ],
@@ -620,12 +610,6 @@ class _EditAccountState extends State<EditAccount> {
                                                     child: TextFormField(
                                                       controller:
                                                           _codigoActividadController,
-                                                      keyboardType:
-                                                          TextInputType.number,
-                                                      inputFormatters: [
-                                                        FilteringTextInputFormatter
-                                                            .digitsOnly
-                                                      ],
                                                       decoration:
                                                           const InputDecoration(
                                                         labelText:

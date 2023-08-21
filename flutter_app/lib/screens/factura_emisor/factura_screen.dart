@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
+import '../../models/actividad.dart';
 import '../../models/factura.dart';
 import '../../services/factura/factura_service.dart';
 import '../../utils/utils.dart';
@@ -11,8 +12,12 @@ class FacturaScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Factura factura =
-        ModalRoute.of(context)?.settings.arguments as Factura;
+    final List<dynamic> args =
+        ModalRoute.of(context)?.settings.arguments as List<dynamic>;
+
+    final Factura factura = args[0];
+
+    final Actividad actividadEmisor = args[1];
 
     String facturaJson = jsonEncode(factura);
     return Scaffold(
@@ -32,7 +37,7 @@ class FacturaScreen extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
-                  sendFacturaHacienda(context, factura);
+                  sendFacturaHacienda(context, factura, actividadEmisor);
                 },
                 child: const SizedBox(
                     width: 200,
@@ -50,12 +55,13 @@ class FacturaScreen extends StatelessWidget {
     );
   }
 
-  void sendFacturaHacienda(BuildContext context, Factura factura) async {
+  void sendFacturaHacienda(
+      BuildContext context, Factura factura, Actividad actividadEmisor) async {
     final facturaObj = {
       "cuentaEmisorId": factura.emisor.id,
       "cuentaReceptorId": factura.receptor.id,
       "descripcion": factura.descripcion,
-      "codigoActividadEmisor": "string",
+      "codigoActividadEmisor": actividadEmisor.codigoActividad,
       "codigoMonedaId": factura.idMoneda,
       "condicionVenta": factura.condicionVenta,
       "medioPago": factura.medioPago,
@@ -74,8 +80,8 @@ class FacturaScreen extends StatelessWidget {
 
     if (context.mounted) {
       if (response.statusCode == 200) {
-        showAlertDialog(context, 'Factura enviada',
-            'La factura se envió exitosamente.', 'Aceptar');
+        showAlertDialogWithRoute(context, 'Factura enviada',
+            'La factura se envió exitosamente.', 'Aceptar', '/home_logged');
       } else {
         showAlertDialog(context, 'Error al enviar factura',
             'Ocurrió un error al enviar la factura.', 'Aceptar');

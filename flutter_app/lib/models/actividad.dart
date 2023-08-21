@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 class Actividad {
   final String codigoActividad;
   final String nombre;
+  bool selected = false;
 
   static Actividad nullActivity =
       Actividad(codigoActividad: '0', nombre: 'Null');

@@ -279,9 +279,6 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                         }
                                         return null;
                                       },
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                              signed: true, decimal: false),
                                     ),
                                     TextFormField(
                                       focusNode: _idExtranjeroFocusNode,
@@ -294,9 +291,6 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                       },
                                       decoration: const InputDecoration(
                                           labelText: 'ID extranjero'),
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                              signed: true, decimal: false),
                                     ),
                                     TextFormField(
                                       focusNode: _nombreFocusNode,
@@ -402,11 +396,6 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                                   }
                                                   return null;
                                                 },
-                                                keyboardType:
-                                                    const TextInputType
-                                                            .numberWithOptions(
-                                                        signed: true,
-                                                        decimal: false),
                                               ),
                                             ),
                                             const SizedBox(width: 16.0),
@@ -432,11 +421,6 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                                   }
                                                   return null;
                                                 },
-                                                keyboardType:
-                                                    const TextInputType
-                                                            .numberWithOptions(
-                                                        signed: true,
-                                                        decimal: false),
                                               ),
                                             )
                                           ],
@@ -467,11 +451,6 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                                     const InputDecoration(
                                                         labelText:
                                                             'Código de país'),
-                                                keyboardType:
-                                                    const TextInputType
-                                                            .numberWithOptions(
-                                                        signed: true,
-                                                        decimal: false),
                                               ),
                                             ),
                                             const SizedBox(width: 16.0),
@@ -491,11 +470,6 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                                     const InputDecoration(
                                                         labelText:
                                                             'Número de fax'),
-                                                keyboardType:
-                                                    const TextInputType
-                                                            .numberWithOptions(
-                                                        signed: true,
-                                                        decimal: false),
                                               ),
                                             )
                                           ],
@@ -734,12 +708,6 @@ class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
                                                     child: TextFormField(
                                                       controller:
                                                           _codigoActividadController,
-                                                      keyboardType:
-                                                          TextInputType.number,
-                                                      inputFormatters: [
-                                                        FilteringTextInputFormatter
-                                                            .digitsOnly
-                                                      ],
                                                       decoration:
                                                           const InputDecoration(
                                                         labelText:

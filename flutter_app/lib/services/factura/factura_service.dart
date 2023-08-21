@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter_app/utils/config.dart';
 
-const String selectedHost = "host_adrian_sanvito";
+const String selectedHost = "host_adrian";
 
 Future<http.Response> postAddComprobante(Object? factura) async {
   final prefs = await SharedPreferences.getInstance();

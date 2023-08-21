@@ -275,7 +275,6 @@ class _ProductosFormState extends State<ProductosForm> {
                           }
                           return null;
                         },
-                        keyboardType: TextInputType.number,
                       ),
                       TextFormField(
                         controller: _descuentoController,
@@ -287,7 +286,6 @@ class _ProductosFormState extends State<ProductosForm> {
                           }
                           return null;
                         },
-                        keyboardType: TextInputType.number,
                       ),
                     ],
                   ),
