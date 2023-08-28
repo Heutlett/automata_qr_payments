@@ -23,7 +23,7 @@ class HomeLoggedPage extends StatelessWidget {
           children: [
             const MyText(
               text: '¡Bienvenido a QR Payments!',
-              fontSize: 28.0,
+              fontSize: 25.0,
               fontWeight: FontWeight.bold,
             ),
             const SizedBox(height: 40.0),

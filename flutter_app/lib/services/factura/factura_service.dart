@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter_app/utils/config.dart';
 
-const String selectedHost = "host_adrian";
+const String selectedHost = "facturas_api";
 
 Future<http.Response> postAddComprobante(Object? factura) async {
   final prefs = await SharedPreferences.getInstance();
@@ -31,7 +31,7 @@ Future<ServerResponse<List<ComprobanteSummary>>> getComprobanteSummary(
   String? token = prefs.getString('accessToken');
   String host = await Config.load(selectedHost);
 
-  var url = "http://$host/api/Comprobante/comprobantes/summary/$id";
+  var url = "https://$host/api/Comprobante/comprobantes/summary/$id";
 
   var headers = {"Authorization": "bearer $token"};
 

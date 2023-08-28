@@ -10,7 +10,7 @@ import 'package:flutter_app/models/ubicacion.dart';
 
 import 'package:flutter_app/utils/config.dart';
 
-const String selectedHost = "host_adrian";
+const String selectedHost = "facturas_api";
 
 Future<http.Response> postCreateAccount(Object? cuenta) async {
   final prefs = await SharedPreferences.getInstance();
@@ -163,7 +163,7 @@ Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
     "codigo": codigoQr,
   };
 
-  var url = "http://$host/api/Cuenta/billing/cuentabyqr";
+  var url = "https://$host/api/Cuenta/billing/cuentabyqr";
 
   var headers = {
     "Content-Type": "application/json",
@@ -259,7 +259,7 @@ Future<ServerResponse<Account?>> shareAccountByQr(String codigoQr) async {
     "codigo": codigoQr,
   };
 
-  var url = "http://$host/api/Cuenta/share";
+  var url = "https://$host/api/Cuenta/share";
 
   var headers = {
     "Content-Type": "application/json",
@@ -349,7 +349,7 @@ Future<String> getAccountBillingQr(int id) async {
   String? token = prefs.getString('accessToken');
   String host = await Config.load(selectedHost);
 
-  var url = "http://$host/api/Cuenta/$id/billing/qr";
+  var url = "https://$host/api/Cuenta/$id/billing/qr";
 
   var headers = {"Authorization": "bearer $token"};
 
@@ -366,7 +366,7 @@ Future<String> getAccountShareQr(int id) async {
   String? token = prefs.getString('accessToken');
   String host = await Config.load(selectedHost);
 
-  var url = "http://$host/api/Cuenta/$id/share/qr";
+  var url = "https://$host/api/Cuenta/$id/share/qr";
 
   var headers = {"Authorization": "bearer $token"};
 
@@ -383,7 +383,7 @@ Future<http.Response> _getCuentas() async {
   String? token = prefs.getString('accessToken');
   String host = await Config.load(selectedHost);
 
-  var url = "http://$host/api/Cuenta/GetAll";
+  var url = "https://$host/api/Cuenta/GetAll";
 
   var headers = {"Authorization": "bearer $token"};
 
