@@ -22,7 +22,6 @@ class _LoginPageState extends State<LoginPage> {
   bool _builded = false;
   String? lastUsername;
   @override
-  @override
   Widget build(BuildContext context) {
     final String? lastUsername =
         ModalRoute.of(context)?.settings.arguments as String?;

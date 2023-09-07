@@ -1,0 +1,45 @@
+version: '3.4'
+
+networks:
+  dev:
+    driver: bridge
+
+services:
+  api-docker:
+    image: docker.io/library/api-docker
+    depends_on:
+      - "api_db"
+    container_name: api-docker-services
+    ports:
+      - "8088:80"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=server=localhost;port=3306;database=qr_payments-docker;user=root;password=admin;
+      - ASPNETCORE_URLS=http://+:80
+    networks:
+      - dev
+
+api_db:
+  image: mysql:8.0.29
+  container_name: api_db
+  environment:
+    - MYSQL_ROOT_PASSWORD=admin
+    - MYSQL_DATABASE=qr_payments-docker
+    - MYSQL_USER=user
+    - MYSQL_PASSWORD=pass
+    - MYSQL_CHARSET=utf8mb4
+    - MYSQL_COLLATION=utf8mb4_unicode_ci
+    - CREATION_FILE="createTables. v1.3 - table_codigosactividad and removed table_actividades.sql"
+  
+  ports:
+    - "3306:3306"
+  restart: always
+  volumes:
+    - app_data:/var/lib/mysql/data
+  networks:
+    - dev
+
+volumes:
+  app_data:
