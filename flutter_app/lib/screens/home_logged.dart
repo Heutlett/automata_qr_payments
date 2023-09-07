@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/utils/utils.dart';
 
 import '../models/comprobante_summary.dart';
 import '../models/server_response.dart';
@@ -18,42 +19,58 @@ class HomeLoggedPage extends StatelessWidget {
         automaticallyImplyLeading: false,
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const MyText(
-              text: '¡Bienvenido a QR Payments!',
-              fontSize: 25.0,
-              fontWeight: FontWeight.bold,
-            ),
-            const SizedBox(height: 40.0),
-            MyButton(
-              text: 'Administrar cuentas',
-              function: () => _showAccountManagementPage(context),
-              size: const Size(250, 60),
-            ),
-            const SizedBox(height: 20.0),
-            MyButton(
-              text: 'Facturar',
-              function: () => _showFacturarPage(context),
-              size: const Size(250, 60),
-            ),
-            const SizedBox(height: 20.0),
-            MyButton(
-              text: 'Historial de pagos',
-              function: () => _showRecordsPage(context),
-              size: const Size(250, 60),
-            ),
-            const SizedBox(height: 20.0),
-            MyButton(
-              text: 'Cerrar sesión',
-              function: () => _showHomePage(context),
-              size: const Size(250, 60),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const MyText(
+                text: '¡Bienvenido a QR Payments!',
+                fontSize: 25.0,
+                fontWeight: FontWeight.bold,
+              ),
+              const SizedBox(height: 40.0),
+              MyButton(
+                text: 'Administrar cuentas',
+                function: () => _showAccountManagementPage(context),
+                size: const Size(250, 60),
+              ),
+              const SizedBox(height: 20.0),
+              MyButton(
+                text: 'Facturar',
+                function: () => _showFacturarPage(context),
+                size: const Size(250, 60),
+              ),
+              const SizedBox(height: 20.0),
+              MyButton(
+                text: 'Historial de pagos',
+                function: () => _showRecordsPage(context),
+                size: const Size(250, 60),
+              ),
+              const SizedBox(height: 20.0),
+              MyButton(
+                text: 'Cerrar sesión',
+                function: () => _showHomePage(context),
+                size: const Size(250, 60),
+              ),
+              const SizedBox(height: 20.0),
+              MyButton(
+                text: 'Pruebas',
+                function: () async {
+                  await _prueba(context);
+                },
+                size: const Size(250, 60),
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Future<void> _prueba(BuildContext context) async {
+    var location = await getLocation();
+
+    print(location);
   }
 
   void _showHomePage(BuildContext context) {

@@ -16,8 +16,10 @@ class FacturaScreen extends StatelessWidget {
         ModalRoute.of(context)?.settings.arguments as List<dynamic>;
 
     final Factura factura = args[0];
-
     final Actividad actividadEmisor = args[1];
+    final String receptorModelName = args[2];
+    final List<double> receptorLocation = args[3];
+    final String receptorTimeStamp = args[4];
 
     String facturaJson = jsonEncode(factura);
     return Scaffold(
@@ -37,16 +39,26 @@ class FacturaScreen extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
-                  sendFacturaHacienda(context, factura, actividadEmisor);
+                  sendFacturaHacienda(
+                    context,
+                    factura,
+                    actividadEmisor,
+                    receptorModelName,
+                    receptorLocation,
+                    receptorTimeStamp,
+                  );
                 },
                 child: const SizedBox(
-                    width: 200,
-                    height: 50,
-                    child: Center(
-                        child: MyText(
-                            text: "Enviar a hacienda",
-                            fontSize: 20,
-                            color: Colors.white))),
+                  width: 200,
+                  height: 50,
+                  child: Center(
+                    child: MyText(
+                      text: "Enviar a hacienda",
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               )
             ],
           ),
@@ -56,7 +68,16 @@ class FacturaScreen extends StatelessWidget {
   }
 
   void sendFacturaHacienda(
-      BuildContext context, Factura factura, Actividad actividadEmisor) async {
+    BuildContext context,
+    Factura factura,
+    Actividad actividadEmisor,
+    String receptorModelName,
+    List<double> receptorLocation,
+    String receptorTimeStamp,
+  ) async {
+    var location = await getLocation();
+    var emisorModelName = await getDeviceModel();
+
     final facturaObj = {
       "cuentaEmisorId": factura.emisor.id,
       "cuentaReceptorId": factura.receptor.id,
@@ -65,14 +86,14 @@ class FacturaScreen extends StatelessWidget {
       "codigoMonedaId": factura.idMoneda,
       "condicionVenta": factura.condicionVenta,
       "medioPago": factura.medioPago,
-      "dispositivoLector": "1",
-      "dispositivoGenerador": "1",
-      "latitudLector": 0,
-      "longitudLector": 0,
-      "timestampLector": "2023-08-17T15:13:04.157Z",
-      "latitudGenerador": 0,
-      "longitudGenerador": 0,
-      "timestampGenerador": "2023-08-17T15:13:04.157Z",
+      "dispositivoLector": emisorModelName,
+      "dispositivoGenerador": receptorModelName,
+      "latitudLector": location[0],
+      "longitudLector": location[1],
+      "timestampLector": DateTime.now().toIso8601String(),
+      "latitudGenerador": receptorLocation[0],
+      "longitudGenerador": receptorLocation[1],
+      "timestampGenerador": receptorTimeStamp,
       "lineasDetalle": factura.productos
     };
 

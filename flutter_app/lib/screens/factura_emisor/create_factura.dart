@@ -60,10 +60,13 @@ class _CreateFacturaState extends State<CreateFactura> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Account> account =
-        ModalRoute.of(context)?.settings.arguments as List<Account>;
-    final Account accountEmisor = account[0];
-    final Account accountReceptor = account[1];
+    final List<dynamic> data =
+        ModalRoute.of(context)?.settings.arguments as List<dynamic>;
+    final Account accountEmisor = data[0];
+    final Account accountReceptor = data[1];
+    final String receptorModelName = data[2];
+    final List<double> receptorLocation = data[3];
+    final String receptorTimeStamp = data[4];
 
     return Scaffold(
       appBar: AppBar(
@@ -207,6 +210,9 @@ class _CreateFacturaState extends State<CreateFactura> {
                       accountReceptor,
                       productos,
                       _descripcionController.text,
+                      receptorModelName,
+                      receptorLocation,
+                      receptorTimeStamp,
                     );
                   },
                   child: const Text(
@@ -221,8 +227,16 @@ class _CreateFacturaState extends State<CreateFactura> {
     );
   }
 
-  void _showFacturaScreen(BuildContext context, Account accountEmisor,
-      Account accountReceptor, List<Producto> productos, String descripcion) {
+  void _showFacturaScreen(
+    BuildContext context,
+    Account accountEmisor,
+    Account accountReceptor,
+    List<Producto> productos,
+    String descripcion,
+    String receptorModelName,
+    List<double> receptorLocation,
+    String receptorTimeStamp,
+  ) {
     Actividad? actividad;
 
     if (accountEmisor.actividades != null) {
@@ -243,8 +257,16 @@ class _CreateFacturaState extends State<CreateFactura> {
           condicionVenta: _selectedCondicionVenta!,
         );
 
-        Navigator.of(context)
-            .pushNamed("/show_factura_json", arguments: [factura, actividad]);
+        Navigator.of(context).pushNamed(
+          "/show_factura_json",
+          arguments: [
+            factura,
+            actividad,
+            receptorModelName,
+            receptorLocation,
+            receptorTimeStamp,
+          ],
+        );
       } else {
         showAlertDialog(
             context,

@@ -49,5 +49,7 @@
 	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to take photos and videos.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Necesitamos tu ubicación para proporcionarte información relevante sobre lugares cercanos.</string>
 </dict>
 </plist>

@@ -72,7 +72,17 @@ class _SelectAccountReceptorScreenState
 
   void showSelectAccountManagement(
       BuildContext context, String codigoQr) async {
-    ServerResponse<Account?> getCuenta = await getCuentaByQr(codigoQr);
+    List<String> codigoQrParts = codigoQr.split(" ");
+    var accountEncryptedCode = codigoQrParts[0];
+    var receptorModelName = codigoQrParts[1];
+    List<double> receptorLocation = [
+      double.parse(codigoQrParts[2]),
+      double.parse(codigoQrParts[3]),
+    ];
+    String receptorTimeStamp = codigoQrParts[4];
+
+    ServerResponse<Account?> getCuenta =
+        await getCuentaByQr(accountEncryptedCode);
 
     Account? accountReceptor = getCuenta.data;
 
@@ -83,10 +93,20 @@ class _SelectAccountReceptorScreenState
         final Account accountEmisor =
             ModalRoute.of(context)?.settings.arguments as Account;
 
-        List<Account> cuentas = [accountEmisor, accountReceptor];
+        List<Account> cuentas = [
+          accountEmisor,
+          accountReceptor,
+        ];
 
-        Navigator.of(context)
-            .pushNamed("/select_account_management", arguments: cuentas);
+        Navigator.of(context).pushNamed(
+          "/select_account_management",
+          arguments: [
+            cuentas,
+            receptorModelName,
+            receptorLocation,
+            receptorTimeStamp,
+          ],
+        );
       }
     }
   }

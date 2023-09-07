@@ -17,11 +17,16 @@ class _SelectAccountManagementScreenState
     extends State<SelectAccountManagementScreen> {
   @override
   Widget build(BuildContext context) {
-    final List<Account> accounts =
-        ModalRoute.of(context)?.settings.arguments as List<Account>;
+    final List<dynamic> data =
+        ModalRoute.of(context)?.settings.arguments as List<dynamic>;
 
-    final accountEmisor = accounts[0];
-    final accountReceptor = accounts[1];
+    final List<Account> cuentas = data[0];
+
+    final Account accountEmisor = cuentas[0];
+    final Account accountReceptor = cuentas[1];
+    final String receptorModelName = data[1];
+    final List<double> receptorLocation = data[2];
+    String receptorTimeStamp = data[3];
 
     return Scaffold(
       appBar: AppBar(
@@ -76,6 +81,9 @@ class _SelectAccountManagementScreenState
                 context,
                 accountEmisor,
                 accountReceptor,
+                receptorModelName,
+                receptorLocation,
+                receptorTimeStamp,
               ),
               size: const Size(170, 60),
             ),
@@ -90,8 +98,20 @@ class _SelectAccountManagementScreenState
     BuildContext context,
     Account accountEmisor,
     Account accountReceptor,
+    String receptorModelName,
+    List<double> receptorLocation,
+    String receptorTimeStamp,
   ) {
-    Navigator.pushNamed(context, '/create_factura',
-        arguments: [accountEmisor, accountReceptor]);
+    Navigator.pushNamed(
+      context,
+      '/create_factura',
+      arguments: [
+        accountEmisor,
+        accountReceptor,
+        receptorModelName,
+        receptorLocation,
+        receptorTimeStamp,
+      ],
+    );
   }
 }

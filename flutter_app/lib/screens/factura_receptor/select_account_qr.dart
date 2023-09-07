@@ -4,6 +4,7 @@ import 'package:flutter_app/screens/widgets/general/my_button.dart';
 import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 
 import 'package:flutter_app/screens/widgets/account/account_info_card.dart';
+import 'package:flutter_app/utils/utils.dart';
 
 class SelectAccountQrPage extends StatelessWidget {
   const SelectAccountQrPage({super.key});
@@ -56,12 +57,20 @@ class SelectAccountQrPage extends StatelessWidget {
   }
 
   void _showGenerateQr(BuildContext context, Account account) async {
-    var codigoQR = await getAccountBillingQr(int.parse(account.id));
+    var accountEncryptedCode = await getAccountBillingQr(int.parse(account.id));
+
+    var receptorModelName = await getDeviceModel();
+    var receptorLocation = await getLocation();
+    var receptorTimeStamp = DateTime.now().toIso8601String();
+
+    String codigoQr =
+        '$accountEncryptedCode $receptorModelName ${receptorLocation[0]} ${receptorLocation[1]} $receptorTimeStamp';
+
     var args = [
       account.cedulaTipo,
       account.cedulaNumero,
       account.nombre,
-      codigoQR
+      codigoQr,
     ];
 
     if (context.mounted) {

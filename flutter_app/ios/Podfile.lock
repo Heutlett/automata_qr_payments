@@ -2,8 +2,12 @@ PODS:
   - connectivity (0.0.1):
     - Flutter
     - Reachability
+  - device_information (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
   - flutter_barcode_scanner (2.0.0):
+    - Flutter
+  - location (0.0.1):
     - Flutter
   - permission_handler_apple (9.1.1):
     - Flutter
@@ -14,8 +18,10 @@ PODS:
 
 DEPENDENCIES:
   - connectivity (from `.symlinks/plugins/connectivity/ios`)
+  - device_information (from `.symlinks/plugins/device_information/ios`)
   - Flutter (from `Flutter`)
   - flutter_barcode_scanner (from `.symlinks/plugins/flutter_barcode_scanner/ios`)
+  - location (from `.symlinks/plugins/location/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
 
@@ -26,10 +32,14 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   connectivity:
     :path: ".symlinks/plugins/connectivity/ios"
+  device_information:
+    :path: ".symlinks/plugins/device_information/ios"
   Flutter:
     :path: Flutter
   flutter_barcode_scanner:
     :path: ".symlinks/plugins/flutter_barcode_scanner/ios"
+  location:
+    :path: ".symlinks/plugins/location/ios"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   shared_preferences_foundation:
@@ -37,8 +47,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
+  device_information: d652f6dcea86bdc5300ffd495486de1d5047bf4f
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_barcode_scanner: 7a1144744c28dc0c57a8de7218ffe5ec59a9e4bf
+  location: d5cf8598915965547c3f36761ae9cc4f4e87d22e
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   shared_preferences_foundation: 986fc17f3d3251412d18b0265f9c64113a8c2472
