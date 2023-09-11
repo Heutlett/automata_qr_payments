@@ -17,7 +17,7 @@ Future<http.Response> postAddComprobante(Object? factura) async {
   print(jsonEncode(factura));
 
   var responseAddComprobante = await http.post(
-    Uri.parse('http://$host/api/Comprobante/comprobantes/add'),
+    Uri.parse('https://$host/api/Comprobante/comprobantes/add'),
     body: jsonEncode(factura),
     headers: {
       'Content-Type': 'application/json',
