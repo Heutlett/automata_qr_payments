@@ -7,14 +7,14 @@ import '../../models/server_response.dart';
 import '../../services/factura/factura_service.dart';
 import '../widgets/general/my_text.dart';
 
-class RecordsPage extends StatefulWidget {
-  const RecordsPage({Key? key}) : super(key: key);
+class SimpleRecordsPage extends StatefulWidget {
+  const SimpleRecordsPage({Key? key}) : super(key: key);
 
   @override
-  State<RecordsPage> createState() => _RecordsPageState();
+  State<SimpleRecordsPage> createState() => _SimpleRecordsPageState();
 }
 
-class _RecordsPageState extends State<RecordsPage> {
+class _SimpleRecordsPageState extends State<SimpleRecordsPage> {
   int? _selectedAccount;
 
   List<ComprobanteSummary>? data = [];
@@ -96,6 +96,7 @@ class _RecordsPageState extends State<RecordsPage> {
                                 ComprobanteSummary comprobante = data![index];
 
                                 return RecordCard(
+                                  id: comprobante.id,
                                   estado: comprobante.estado,
                                   descripcion: comprobante.descripcion,
                                   fechaEmision: comprobante.fechaEmision,

@@ -315,6 +315,17 @@ class _ProductosFormState extends State<ProductosForm> {
                             ),
                           );
                           numeroLineaDetalle++;
+                          _selectedOptionCabysId = null;
+                          _selectedOptionTipoCodigoComercial = null;
+                          _selectedOptionUnidadMedida = null;
+                          _codigoComercialController.clear();
+                          _cantidad = 1;
+                          _cantidadController.text = '1';
+                          _unidadMedidaComercialController.clear();
+                          _selectedOptionUnidadMedida = null;
+                          _detalleController.clear();
+                          _precioUnitarioController.clear();
+                          _descuentoController.clear();
                         }
                       });
                     },

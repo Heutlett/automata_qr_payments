@@ -43,6 +43,7 @@ dependencies:
   connectivity: ^3.0.6        # Para verificar la conectividad de internet
   device_information: ^0.0.4
   location: ^5.0.0
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
