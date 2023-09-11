@@ -43,75 +43,75 @@ class _SimpleRecordsPageState extends State<SimpleRecordsPage> {
     }
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Historial de pagos'),
-        ),
-        body: Container(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Seleccione la cuenta:",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      DropdownButtonFormField<int>(
-                        value: _selectedAccount,
-                        items: accountsIds.entries.map((entry) {
-                          return DropdownMenuItem<int>(
-                            value: entry.key,
-                            child: Text(entry.value,
-                                style: const TextStyle(fontSize: 15)),
-                          );
-                        }).toList(),
-                        onChanged: (int? newValue) {
-                          setState(() {
-                            _selectedAccount = newValue;
-                            data = null;
-                            updateRecordsAccount(context, _selectedAccount!);
-                          });
-                        },
-                      )
-                    ]),
-              ),
-              data == null
-                  ? const CircularProgressIndicator() // Indicador de carga
-                  : Expanded(
-                      child: data!.isEmpty
-                          ? const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: MyText(
-                                text: "El historial está vacio",
-                                color: Colors.red,
-                              ),
-                            )
-                          : ListView.builder(
-                              itemCount: data!.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                ComprobanteSummary comprobante = data![index];
-
-                                return RecordCard(
-                                  id: comprobante.id,
-                                  estado: comprobante.estado,
-                                  descripcion: comprobante.descripcion,
-                                  fechaEmision: comprobante.fechaEmision,
-                                  codigoMonedaId: comprobante.codigoMonedaId,
-                                  numeroConsecutivo:
-                                      comprobante.numeroConsecutivo,
-                                  totalComprobante:
-                                      comprobante.totalComprobante,
-                                );
-                              },
-                            ),
+      appBar: AppBar(
+        title: const Text('Historial de pagos'),
+      ),
+      body: Container(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Seleccione la cuenta:",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-            ],
-          ),
-        ));
+                    DropdownButtonFormField<int>(
+                      value: _selectedAccount,
+                      items: accountsIds.entries.map((entry) {
+                        return DropdownMenuItem<int>(
+                          value: entry.key,
+                          child: Text(entry.value,
+                              style: const TextStyle(fontSize: 15)),
+                        );
+                      }).toList(),
+                      onChanged: (int? newValue) {
+                        setState(() {
+                          _selectedAccount = newValue;
+                          data = null;
+                          updateRecordsAccount(context, _selectedAccount!);
+                        });
+                      },
+                    )
+                  ]),
+            ),
+            data == null
+                ? const CircularProgressIndicator() // Indicador de carga
+                : Expanded(
+                    child: data!.isEmpty
+                        ? const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: MyText(
+                              text: "El historial está vacio",
+                              color: Colors.red,
+                            ),
+                          )
+                        : ListView.builder(
+                            itemCount: data!.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              ComprobanteSummary comprobante = data![index];
+
+                              return RecordCard(
+                                id: comprobante.id,
+                                estado: comprobante.estado,
+                                descripcion: comprobante.descripcion,
+                                fechaEmision: comprobante.fechaEmision,
+                                codigoMonedaId: comprobante.codigoMonedaId,
+                                numeroConsecutivo:
+                                    comprobante.numeroConsecutivo,
+                                totalComprobante: comprobante.totalComprobante,
+                              );
+                            },
+                          ),
+                  ),
+          ],
+        ),
+      ),
+    );
   }
 
   void updateRecordsAccount(BuildContext context, int accountId) async {

@@ -2,7 +2,7 @@
     "host_adrian": "192.168.18.187",
     "host_adrian_sanvito": "192.168.1.49",
     "host_shakime": "192.168.18.68",
-    "facturas_api": "facturas-lanx4oofmq-uc.a.run.app",
+    "facturas_api": "app-lanx4oofmq-uc.a.run.app",
     "auth_api": "authentication-lanx4oofmq-uc.a.run.app"
   }
   

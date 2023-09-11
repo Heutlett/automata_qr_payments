@@ -152,7 +152,7 @@ Future<ServerResponse<String>> unshareUserAccount(
   return serverResponse;
 }
 
-Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
+Future<ServerResponse<Account?>> getCuentaByQr(String codigoQr) async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
   String host = await Config.load(selectedHost);
@@ -163,15 +163,18 @@ Future<ServerResponse<Account?>> _getCuentaByQr(String codigoQr) async {
     "codigo": codigoQr,
   };
 
-  var url = "https://$host/api/Cuenta/billing/cuentabyqr";
+  var url = "https://$host/api/Cuenta/billing/cuenta_receptor";
 
   var headers = {
     "Content-Type": "application/json",
     "Authorization": "bearer $token"
   };
 
-  var response = await http.post(Uri.parse(url),
-      headers: headers, body: json.encode(body));
+  var response = await http.post(
+    Uri.parse(url),
+    headers: headers,
+    body: json.encode(body),
+  );
 
   ServerResponse<Account?> serverResponse;
 
@@ -451,10 +454,4 @@ Future<List<Account>> getCuentasList() async {
         usuariosCompartidos: usuariosCompartidos));
   }
   return accounts;
-}
-
-Future<ServerResponse<Account?>> getCuentaByQr(String codigoQr) async {
-  var response = await _getCuentaByQr(codigoQr);
-
-  return response;
 }

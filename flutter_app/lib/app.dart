@@ -9,7 +9,7 @@ import 'package:flutter_app/screens/account/create_account.dart';
 import 'package:flutter_app/screens/facturar.dart';
 import 'package:flutter_app/screens/factura_receptor/generate_qr.dart';
 import 'package:flutter_app/screens/factura_emisor/select_account_emisor.dart';
-import 'package:flutter_app/screens/factura_emisor/scan_qr_receptor.dart';
+import 'package:flutter_app/screens/factura_emisor/select_account_receptor.dart';
 import 'package:flutter_app/screens/factura_emisor/select_accounts_management.dart';
 import 'package:flutter_app/screens/factura_emisor/create_factura.dart';
 import 'package:flutter_app/screens/factura_receptor/select_account_qr.dart';
