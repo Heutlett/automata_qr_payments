@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/utils/utils.dart';
-
 import '../models/comprobante_summary.dart';
 import '../models/server_response.dart';
 import '../services/cuenta/cuenta_service.dart';
@@ -52,25 +50,11 @@ class HomeLoggedPage extends StatelessWidget {
                 function: () => _showHomePage(context),
                 size: const Size(250, 60),
               ),
-              const SizedBox(height: 20.0),
-              MyButton(
-                text: 'Pruebas',
-                function: () async {
-                  await _prueba(context);
-                },
-                size: const Size(250, 60),
-              ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  Future<void> _prueba(BuildContext context) async {
-    var location = await getLocation();
-
-    print(location);
   }
 
   void _showHomePage(BuildContext context) {

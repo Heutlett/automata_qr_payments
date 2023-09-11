@@ -157,7 +157,7 @@ class _RecordModalState extends State<RecordModal> {
     return Container(
         padding: const EdgeInsets.all(8),
         child: comprobante == null
-            ? const Center(child: const CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : Padding(
                 padding: const EdgeInsets.all(8),
                 child: Column(
