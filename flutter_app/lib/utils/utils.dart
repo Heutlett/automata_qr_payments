@@ -144,6 +144,8 @@ Future<String> getDeviceModel() async {
   try {
     String modelName = await DeviceInformation.deviceModel;
 
+    modelName = modelName.replaceAll(' ', '_');
+
     return modelName;
   } on PlatformException {
     return 'Failed to get platform version.';

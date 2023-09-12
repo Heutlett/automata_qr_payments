@@ -67,7 +67,11 @@ class RecordCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(descripcion),
+                        Expanded(
+                          child: Wrap(children: [
+                            Text(descripcion),
+                          ]),
+                        ),
                         Text(
                           " ${codigosMoneda[codigoMonedaId]} ${totalComprobante.toString()}",
                           style: TextStyle(

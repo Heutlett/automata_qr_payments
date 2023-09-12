@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/widgets/general/my_text.dart';
+import 'package:flutter_app/utils/utils.dart';
 
 import '../../models/producto.dart';
 
@@ -22,10 +23,10 @@ class _ProductosFormState extends State<ProductosForm> {
   late List<Producto> products;
 
   final Map<int, String> _cabysOptions = {
-    0: 'Productos de la agricultura, silvicultura y pesca',
-    1: 'Minerales; electricidad, gas y agua',
-    2: 'Productos alimenticios, bebidas y tabaco',
-    3: 'Bienes transportables.'
+    1: 'Productos de la agricultura, silvicultura y pesca',
+    2: 'Minerales; electricidad, gas y agua',
+    3: 'Productos alimenticios, bebidas y tabaco',
+    4: 'Bienes transportables.'
   };
 
   final List<String> _unidadesMedida = [
@@ -89,6 +90,15 @@ class _ProductosFormState extends State<ProductosForm> {
     products = widget.products;
   }
 
+  void updateProductsIndex() {
+    setState(() {
+      for (int i = 0; i < products.length;) {
+        products[i].numeroLinea = i + 1;
+      }
+      numeroLineaDetalle = products.length + 1;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -128,7 +138,7 @@ class _ProductosFormState extends State<ProductosForm> {
                           return DropdownMenuItem<int>(
                             value: entry.key,
                             child: Text(entry.value,
-                                style: const TextStyle(fontSize: 15)),
+                                style: const TextStyle(fontSize: 14)),
                           );
                         }).toList(),
                         onChanged: (int? newValue) {
@@ -326,6 +336,12 @@ class _ProductosFormState extends State<ProductosForm> {
                           _detalleController.clear();
                           _precioUnitarioController.clear();
                           _descuentoController.clear();
+                        } else {
+                          showAlertDialog(
+                              context,
+                              "Error",
+                              "No ha completado todos los campos requeridos para agregar un producto o servicio",
+                              "Aceptar");
                         }
                       });
                     },
@@ -359,14 +375,35 @@ class _ProductosFormState extends State<ProductosForm> {
                                             children: [
                                               Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.end,
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
-                                                    MyText(
-                                                      text:
-                                                          "#${prod.numeroLinea}",
-                                                      fontSize: 22,
-                                                      color: Colors.red,
+                                                    Card(
+                                                      color: Color.fromARGB(
+                                                          255, 119, 246, 143),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: MyText(
+                                                          text:
+                                                              "#${prod.numeroLinea}",
+                                                          fontSize: 16,
+                                                        ),
+                                                      ),
                                                     ),
+                                                    IconButton(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          products.remove(prod);
+                                                          updateProductsIndex();
+                                                        });
+                                                      },
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                        color: Colors.red,
+                                                      ),
+                                                    )
                                                   ]),
                                               const SizedBox(height: 5),
                                               MyText(

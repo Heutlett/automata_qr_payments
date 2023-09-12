@@ -1,5 +1,5 @@
 class Producto {
-  final int numeroLinea;
+  int numeroLinea;
   final int cabysId;
   final String tipoCodigoComercial;
   final String codigoComercial;

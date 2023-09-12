@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
-import '../../models/actividad.dart';
 import '../../models/factura.dart';
 import '../../services/factura/factura_service.dart';
 import '../../utils/utils.dart';
@@ -16,37 +15,49 @@ class FacturaScreen extends StatelessWidget {
         ModalRoute.of(context)?.settings.arguments as List<dynamic>;
 
     final Factura factura = args[0];
-    final Actividad actividadEmisor = args[1];
-    final String receptorModelName = args[2];
-    final List<double> receptorLocation = args[3];
-    final String receptorTimeStamp = args[4];
 
     String facturaJson = jsonEncode(factura);
+
+    Map<String, dynamic> jsonDataFactura = json.decode(facturaJson);
+
+    String formattedFacturaJson =
+        const JsonEncoder.withIndent('  ').convert(jsonDataFactura);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Factura'),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              Padding(
+      body: Center(
+        child: Column(
+          children: [
+            Expanded(
+              child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  facturaJson,
-                  style: const TextStyle(fontSize: 14),
+                child: Card(
+                  elevation: 3,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.blue, // Color del borde
+                        width: 2.0, // Ancho del borde
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(16.0),
+                    child: SingleChildScrollView(
+                      child: Text(
+                        formattedFacturaJson,
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  ),
                 ),
               ),
-              ElevatedButton(
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
                 onPressed: () {
-                  sendFacturaHacienda(
-                    context,
-                    factura,
-                    actividadEmisor,
-                    receptorModelName,
-                    receptorLocation,
-                    receptorTimeStamp,
-                  );
+                  sendFacturaHacienda(context, factura);
                 },
                 child: const SizedBox(
                   width: 200,
@@ -59,9 +70,10 @@ class FacturaScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-              )
-            ],
-          ),
+              ),
+            ),
+            const SizedBox(height: 16)
+          ],
         ),
       ),
     );
@@ -70,34 +82,8 @@ class FacturaScreen extends StatelessWidget {
   void sendFacturaHacienda(
     BuildContext context,
     Factura factura,
-    Actividad actividadEmisor,
-    String receptorModelName,
-    List<double> receptorLocation,
-    String receptorTimeStamp,
   ) async {
-    var location = await getLocation();
-    var emisorModelName = await getDeviceModel();
-
-    final facturaObj = {
-      "cuentaEmisorId": factura.emisor.id,
-      "cuentaReceptorId": factura.receptor.id,
-      "descripcion": factura.descripcion,
-      "codigoActividadEmisor": actividadEmisor.codigoActividad,
-      "codigoMonedaId": factura.idMoneda,
-      "condicionVenta": factura.condicionVenta,
-      "medioPago": factura.medioPago,
-      "dispositivoLector": emisorModelName,
-      "dispositivoGenerador": receptorModelName,
-      "latitudLector": location[0],
-      "longitudLector": location[1],
-      "timestampLector": DateTime.now().toIso8601String(),
-      "latitudGenerador": receptorLocation[0],
-      "longitudGenerador": receptorLocation[1],
-      "timestampGenerador": receptorTimeStamp,
-      "lineasDetalle": factura.productos
-    };
-
-    var response = await postAddComprobante(facturaObj);
+    var response = await postAddComprobante(factura);
 
     if (context.mounted) {
       if (response.statusCode == 200) {

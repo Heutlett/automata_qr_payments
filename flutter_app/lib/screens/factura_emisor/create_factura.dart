@@ -236,8 +236,12 @@ class _CreateFacturaState extends State<CreateFactura> {
     String receptorModelName,
     List<double> receptorLocation,
     String receptorTimeStamp,
-  ) {
+  ) async {
     Actividad? actividad;
+
+    var emisorLocation = await getLocation();
+    var emisorModelName = await getDeviceModel();
+    var emisorTimeStamp = DateTime.now().toIso8601String();
 
     if (accountEmisor.actividades != null) {
       for (int i = 0; i < accountEmisor.actividades!.length; i++) {
@@ -248,10 +252,19 @@ class _CreateFacturaState extends State<CreateFactura> {
 
       if (actividad != null) {
         Factura factura = Factura(
-          emisor: accountEmisor,
-          receptor: accountReceptor,
-          productos: productos,
-          idMoneda: _selectedIdMoneda!,
+          codigoActividadEmisor: actividad.codigoActividad,
+          dispositivoGenerador: receptorModelName,
+          latitudGenerador: receptorLocation[0],
+          longitudGenerador: receptorLocation[1],
+          timestampGenerador: receptorTimeStamp,
+          latitudLector: emisorLocation[0],
+          longitudLector: emisorLocation[1],
+          dispositivoLector: emisorModelName,
+          timestampLector: emisorTimeStamp,
+          cuentaEmisorId: accountEmisor.id,
+          cuentaReceptorId: accountReceptor.id,
+          lineasDetalle: productos,
+          codigoMonedaId: _selectedIdMoneda!,
           descripcion: descripcion,
           medioPago: _selectedMedioPago!,
           condicionVenta: _selectedCondicionVenta!,
@@ -261,10 +274,6 @@ class _CreateFacturaState extends State<CreateFactura> {
           "/show_factura_json",
           arguments: [
             factura,
-            actividad,
-            receptorModelName,
-            receptorLocation,
-            receptorTimeStamp,
           ],
         );
       } else {
