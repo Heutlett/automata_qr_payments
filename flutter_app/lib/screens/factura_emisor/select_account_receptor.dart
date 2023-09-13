@@ -4,7 +4,7 @@ import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/screens/widgets/account/account_info_card.dart';
 import 'package:flutter_app/screens/widgets/general/my_button.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:flutter_app/services/cuenta/cuenta_service.dart';
+import 'package:flutter_app/services/account/account_service.dart';
 
 import 'package:flutter_app/models/server_response.dart';
 import 'package:flutter_app/utils/utils.dart';
@@ -70,6 +70,10 @@ class _SelectAccountReceptorScreenState
     );
   }
 
+  bool validateAccounts(Account emisorAccount, Account receptorAccount) {
+    return emisorAccount.id == receptorAccount.id ? false : true;
+  }
+
   void showSelectAccountManagement(
       BuildContext context, String codigoQr) async {
     List<String> codigoQrParts = codigoQr.split(" ");
@@ -84,36 +88,43 @@ class _SelectAccountReceptorScreenState
     ServerResponse<Account?> getCuenta =
         await getCuentaByQr(accountEncryptedCode);
 
-    Account? accountReceptor = getCuenta.data;
+    Account? receptorAccount = getCuenta.data;
+    final Account emisorAccount =
+        ModalRoute.of(context)?.settings.arguments as Account;
 
     if (context.mounted) {
-      if (accountReceptor == null || !getCuenta.success) {
+      if (receptorAccount == null || !getCuenta.success) {
         showAlertDialog(context, 'Error', getCuenta.message, 'Ok');
       } else {
-        final Account accountEmisor =
-            ModalRoute.of(context)?.settings.arguments as Account;
-
         List<Account> cuentas = [
-          accountEmisor,
-          accountReceptor,
+          emisorAccount,
+          receptorAccount,
         ];
 
-        Navigator.of(context).pushNamed(
-          "/select_account_management",
-          arguments: [
-            cuentas,
-            receptorModelName,
-            receptorLocation,
-            receptorTimeStamp,
-          ],
-        );
+        if (validateAccounts(emisorAccount, receptorAccount)) {
+          Navigator.of(context).pushNamed(
+            "/select_account_management",
+            arguments: [
+              cuentas,
+              receptorModelName,
+              receptorLocation,
+              receptorTimeStamp,
+            ],
+          );
+        } else {
+          showAlertDialog(
+            context,
+            'Error',
+            'La cuenta escaneada es la misma cuenta seleccionada como emisor, esto no es posible',
+            'Aceptar',
+          );
+        }
       }
     }
   }
 
   Future<void> scanQR(BuildContext context) async {
     String barcodeScanRes;
-
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancelar', true, ScanMode.QR);

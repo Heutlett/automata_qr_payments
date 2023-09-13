@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/constants.dart';
 import 'package:flutter_app/constants/route_names.dart';
 import 'dart:convert';
-import 'package:flutter_app/services/usuario/usuario_service.dart';
+import 'package:flutter_app/services/user/user_service.dart';
 
 import 'package:flutter_app/utils/utils.dart';
 
@@ -128,27 +128,33 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  Future<void> _submitRegisterForm(BuildContext context) async {
-    final String username = _usernameController.text;
-    final String name = _nameController.text;
-    final String password = _passwordController.text;
-    final String email = _emailController.text;
-
+  void setLoadingTrue() {
     setState(() {
       isLoading = true;
     });
+  }
 
-    var response = await postRegister(username, name, password, email);
-    var data = jsonDecode(response.body);
-
+  void setLoadingFalse() {
     setState(() {
       isLoading = false;
     });
+  }
+
+  Future<void> _submitRegisterForm(BuildContext context) async {
+    setLoadingTrue();
+    var response = await postRegister(
+      _usernameController.text,
+      _nameController.text,
+      _passwordController.text,
+      _emailController.text,
+    );
+    var data = jsonDecode(response.body);
+    setLoadingFalse();
 
     if (context.mounted) {
       if (response.statusCode == 200) {
-        showAlertDialogWithRoute(
-            context, 'Resultado registro', data['message'], 'Ok', "/");
+        showAlertDialogWithRoute(context, 'Resultado registro', data['message'],
+            'Ok', homeRouteName);
       } else {
         showAlertDialog(context, 'Resultado registro', data['message'], 'Ok');
       }

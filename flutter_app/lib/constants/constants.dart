@@ -11,6 +11,9 @@ final RegExp emailRegExp = RegExp(
 );
 const String registerTitle = 'Registro de usuario';
 
+// login.dart
+const String loginTitle = 'Inicio de sesión';
+
 Map<int, String> days = {
   1: 'Lunes',
   2: 'Martes',

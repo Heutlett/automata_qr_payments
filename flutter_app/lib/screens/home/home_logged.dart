@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/route_names.dart';
 import '../../models/comprobante_summary.dart';
 import '../../models/server_response.dart';
-import '../../services/cuenta/cuenta_service.dart';
+import '../../services/account/account_service.dart';
 import '../../services/factura/factura_service.dart';
 import '../widgets/general/my_button.dart';
 import '../widgets/general/my_text.dart';
@@ -15,10 +15,6 @@ class HomeLoggedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('QR Payments'),
-        automaticallyImplyLeading: false,
-      ),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
@@ -69,7 +65,7 @@ class HomeLoggedScreen extends StatelessWidget {
   }
 
   void _showRecordsPage(BuildContext context) async {
-    var loadedAccounts = await getCuentasList();
+    var loadedAccounts = await getAccountList();
 
     Map<int, String> accountsIds = {};
 

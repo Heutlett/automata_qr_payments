@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/screens/widgets/general/my_text.dart';
 import 'package:flutter_app/utils/utils.dart';
-import 'package:flutter_app/services/cuenta/cuenta_service.dart';
+import 'package:flutter_app/services/account/account_service.dart';
 
 class AccountInfoCardSharedAcc extends StatefulWidget {
   const AccountInfoCardSharedAcc({

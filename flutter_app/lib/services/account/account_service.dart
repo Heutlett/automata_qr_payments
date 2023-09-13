@@ -381,7 +381,7 @@ Future<String> getAccountShareQr(int id) async {
   return data;
 }
 
-Future<http.Response> _getCuentas() async {
+Future<http.Response> _getAccounts() async {
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('accessToken');
   String host = await Config.load(selectedHost);
@@ -395,8 +395,8 @@ Future<http.Response> _getCuentas() async {
   return response;
 }
 
-Future<List<Account>> getCuentasList() async {
-  var response = await _getCuentas();
+Future<List<Account>> getAccountList() async {
+  var response = await _getAccounts();
   var data = jsonDecode(response.body);
   data = data['data'];
   List<Account> accounts = [];

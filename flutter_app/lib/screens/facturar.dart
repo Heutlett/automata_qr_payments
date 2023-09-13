@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
-import 'package:flutter_app/services/cuenta/cuenta_service.dart';
+import 'package:flutter_app/services/account/account_service.dart';
 
 import 'package:flutter_app/screens/widgets/general/my_button.dart';
 import 'package:flutter_app/screens/widgets/general/my_text.dart';
@@ -42,7 +42,7 @@ class FacturarPage extends StatelessWidget {
   }
 
   void _showSelectAccountsQr(BuildContext context) async {
-    var accounts = await getCuentasList();
+    var accounts = await getAccountList();
 
     if (context.mounted) {
       Navigator.of(context)
@@ -51,7 +51,7 @@ class FacturarPage extends StatelessWidget {
   }
 
   void _showSelectAccount(BuildContext context) async {
-    List<Account> accounts = await getCuentasList();
+    List<Account> accounts = await getAccountList();
 
     if (context.mounted) {
       Navigator.of(context)

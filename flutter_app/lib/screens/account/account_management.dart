@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/managers/provider_manager.dart';
 import 'package:flutter_app/models/account.dart';
-import 'package:flutter_app/services/cuenta/cuenta_service.dart';
 import 'package:flutter_app/screens/widgets/account/account_info_card.dart';
+import 'package:provider/provider.dart';
 
 class AccountManagementScreen extends StatefulWidget {
   const AccountManagementScreen({Key? key}) : super(key: key);
@@ -11,23 +12,18 @@ class AccountManagementScreen extends StatefulWidget {
 }
 
 class _AccountManagementScreenState extends State<AccountManagementScreen> {
-  List<Account>? accounts;
+  late List<Account> accounts;
 
-  @override
-  void initState() {
-    super.initState();
-    loadAccounts();
-  }
-
-  void loadAccounts() async {
-    var loadedAccounts = await getCuentasList();
+  Future<void> loadAccounts(BuildContext context) async {
+    final providerManager = Provider.of<ProviderManager>(context);
     setState(() {
-      accounts = loadedAccounts;
+      accounts = providerManager.myAccounts;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    loadAccounts(context);
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -65,25 +61,23 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
       body: Center(
         child: SingleChildScrollView(
           child: Column(
-            children: accounts == null
-                ? const [CircularProgressIndicator()] // Indicador de carga
-                : accounts!.map((acc) {
-                    return Card(
-                      margin: const EdgeInsets.all(8),
-                      elevation: 5,
-                      color: acc.cedulaTipo == 'Juridica'
-                          ? const Color.fromARGB(255, 180, 193, 255)
-                          : const Color.fromARGB(255, 180, 234, 255),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            AccountInfoCard(account: acc, addButtons: 2),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
+            children: accounts.map((acc) {
+              return Card(
+                margin: const EdgeInsets.all(8),
+                elevation: 5,
+                color: acc.cedulaTipo == 'Juridica'
+                    ? const Color.fromARGB(255, 180, 193, 255)
+                    : const Color.fromARGB(255, 180, 234, 255),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      AccountInfoCard(account: acc, addButtons: 2),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
           ),
         ),
       ),

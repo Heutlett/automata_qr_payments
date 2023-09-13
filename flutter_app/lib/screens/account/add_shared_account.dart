@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/screens/widgets/general/my_button.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:flutter_app/services/cuenta/cuenta_service.dart';
+import 'package:flutter_app/services/account/account_service.dart';
 
 import 'package:flutter_app/models/server_response.dart';
 import 'package:flutter_app/utils/utils.dart';

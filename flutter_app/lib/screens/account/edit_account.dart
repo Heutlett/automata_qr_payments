@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/services/cuenta/cuenta_service.dart';
+import 'package:flutter_app/services/account/account_service.dart';
 import 'package:flutter_app/models/actividad.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/utils/utils.dart';

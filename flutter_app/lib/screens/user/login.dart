@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/constants.dart';
 import 'package:flutter_app/constants/route_names.dart';
+import 'package:flutter_app/managers/provider_manager.dart';
 import 'package:flutter_app/managers/shared_local_store.dart';
+import 'package:flutter_app/services/account/account_service.dart';
 import 'dart:convert';
-import 'package:flutter_app/services/usuario/usuario_service.dart';
+import 'package:flutter_app/services/user/user_service.dart';
 
 import 'package:flutter_app/utils/utils.dart';
 import 'package:flutter_app/screens/widgets/general/my_text.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = loginRouteName;
@@ -22,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   bool _rememberUsername = false;
   late String _lastUsername;
+  late ProviderManager providerManager;
 
   bool isLoading = false;
 
@@ -47,9 +52,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    providerManager = Provider.of<ProviderManager>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inicio de sesión'),
+        title: const Text(loginTitle),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -71,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       const SizedBox(height: 20.0),
                       const MyText(
-                        text: 'Bienvenido a QR Payments!',
+                        text: homeWelcomeTitle,
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
                       ),
@@ -123,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              _submitLoginForm(context);
+                              _submitLoginForm(context, providerManager);
                             }
                           },
                           child: const Text('Iniciar sesión',
@@ -138,36 +144,63 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<void> _submitLoginForm(BuildContext context) async {
-    final String username = _usernameController.text;
-    final String password = _passwordController.text;
-
+  void setLoadingTrue() {
     setState(() {
       isLoading = true;
     });
+  }
 
-    var response = await postLogin(username, password);
-    var data = jsonDecode(response.body);
-
+  void setLoadingFalse() {
     setState(() {
       isLoading = false;
     });
+  }
+
+  Future<void> loadAccounts() async {
+    var loadedAccounts = await getAccountList();
+    setState(() {
+      providerManager.setMyAccounts(loadedAccounts);
+    });
+  }
+
+  Future<void> _submitLoginForm(
+    BuildContext context,
+    ProviderManager providerManager,
+  ) async {
+    final String username = _usernameController.text;
+    final String password = _passwordController.text;
+
+    setLoadingTrue();
+    var response = await postLogin(username, password);
+    var data = jsonDecode(response.body);
+    setLoadingFalse();
 
     if (response.statusCode == 200) {
       var accessToken = data['data'];
 
+      setLoadingTrue();
+      // Se guarda el accessToken en el local storage
       await SharedLocalStore.setAccessToken(accessToken);
 
       if (_rememberUsername) {
+        // Se guarda el username en el local storage
         await SharedLocalStore.setUserLastUsername(username);
       } else {
+        // Se resetea el username del local storage
         await SharedLocalStore.resetLastUsername();
       }
       if (context.mounted) {
-        Navigator.of(context)
-            .pushNamed(homeLoggedRouteName, arguments: username);
+        // Se cargan las cuentas al providerManager
+        await loadAccounts();
+      }
+      setLoadingFalse();
+
+      // Se carga la pantalla de homeLogged
+      if (context.mounted) {
+        Navigator.of(context).pushNamed(homeLoggedRouteName);
       }
     } else {
+      // Limpia la contraseña del form
       _passwordController.clear();
       if (context.mounted) {
         showAlertDialog(

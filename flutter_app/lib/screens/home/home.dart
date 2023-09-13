@@ -24,7 +24,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 40.0),
             MyButton(
               text: homeRegisterButtonTitle,
-              function: () => _showRegistrationPage(context),
+              function: () => _showRegistrationScreen(context),
               fontSize: 18,
               size: const Size(200, 60),
               backgroundColor: Colors.blue,
@@ -33,7 +33,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 20.0),
             MyButton(
               text: homeLoginButtonTitle,
-              function: () => _showLoginPage(context),
+              function: () => _showLoginScreen(context),
               fontSize: 18,
               size: const Size(200, 60),
               backgroundColor: Colors.blue,
@@ -45,11 +45,11 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  void _showRegistrationPage(BuildContext context) {
+  void _showRegistrationScreen(BuildContext context) {
     Navigator.of(context).pushNamed(registerRouteName);
   }
 
-  void _showLoginPage(BuildContext context) {
+  void _showLoginScreen(BuildContext context) {
     Navigator.of(context).pushNamed(loginRouteName);
   }
 }
