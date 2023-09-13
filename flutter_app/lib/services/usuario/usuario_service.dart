@@ -26,7 +26,7 @@ Future<http.Response> postLogin(String username, String password) async {
 Future<http.Response> postRegister(
     String username, String name, String password, String email) async {
   String host = await Config.load(selectedHost);
-  var url = "http:s//$host/api/auth/register";
+  var url = "https://$host/api/auth/register";
 
   final Map<String, dynamic> data = {
     "nombreCompleto": name,

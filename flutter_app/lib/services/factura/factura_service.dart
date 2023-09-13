@@ -16,8 +16,6 @@ Future<http.Response> postAddComprobante(Object? factura) async {
   String? token = prefs.getString('accessToken');
   String host = await Config.load(selectedHost);
 
-  print(jsonEncode(factura));
-
   var responseAddComprobante = await http.post(
     Uri.parse('https://$host/api/Comprobante/comprobantes/add'),
     body: jsonEncode(factura),

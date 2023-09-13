@@ -379,8 +379,13 @@ class _ProductosFormState extends State<ProductosForm> {
                                                           .spaceBetween,
                                                   children: [
                                                     Card(
-                                                      color: Color.fromARGB(
-                                                          255, 119, 246, 143),
+                                                      color:
+                                                          const Color.fromARGB(
+                                                        255,
+                                                        119,
+                                                        246,
+                                                        143,
+                                                      ),
                                                       child: Padding(
                                                         padding:
                                                             const EdgeInsets
@@ -399,7 +404,7 @@ class _ProductosFormState extends State<ProductosForm> {
                                                           updateProductsIndex();
                                                         });
                                                       },
-                                                      icon: Icon(
+                                                      icon: const Icon(
                                                         Icons.delete,
                                                         color: Colors.red,
                                                       ),

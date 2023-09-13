@@ -269,23 +269,33 @@ class _CreateFacturaState extends State<CreateFactura> {
           medioPago: _selectedMedioPago!,
           condicionVenta: _selectedCondicionVenta!,
         );
-
-        Navigator.of(context).pushNamed(
-          "/show_factura_json",
-          arguments: [
-            factura,
-          ],
-        );
+        if (context.mounted) {
+          Navigator.of(context).pushNamed(
+            "/show_factura_json",
+            arguments: [
+              factura,
+            ],
+          );
+        }
       } else {
-        showAlertDialog(
+        if (context.mounted) {
+          showAlertDialog(
             context,
             "Error",
             "No se ha seleccionado la actividad economica del emisor",
-            "Aceptar");
+            "Aceptar",
+          );
+        }
       }
     } else {
-      showAlertDialog(context, "Error",
-          "El emisor no cuenta con actividades economicas", "Aceptar");
+      if (context.mounted) {
+        showAlertDialog(
+          context,
+          "Error",
+          "El emisor no cuenta con actividades economicas",
+          "Aceptar",
+        );
+      }
     }
   }
 }

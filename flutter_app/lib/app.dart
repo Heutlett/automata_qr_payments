@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/factura_emisor/factura_screen.dart';
-import 'package:flutter_app/screens/home.dart';
-import 'package:flutter_app/screens/home_logged.dart';
+import 'package:flutter_app/screens/home/home.dart';
+import 'package:flutter_app/screens/home/home_logged.dart';
 import 'package:flutter_app/screens/user/register.dart';
 import 'package:flutter_app/screens/user/login.dart';
 import 'package:flutter_app/screens/account/account_management.dart';
@@ -26,12 +26,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Material App',
-      initialRoute: "/",
+      initialRoute: "/home",
       routes: {
-        "/": (BuildContext context) => const HomePage(),
-        "/home_logged": (BuildContext context) => const HomeLoggedPage(),
-        "/register": (BuildContext context) => const RegistrationPage(),
-        "/login": (BuildContext context) => const LoginPage(),
+        HomeScreen.routeName: (BuildContext context) => const HomeScreen(),
+        HomeLoggedScreen.routeName: (BuildContext context) =>
+            const HomeLoggedScreen(),
+        RegistrationScreen.routeName: (BuildContext context) =>
+            const RegistrationScreen(),
+        LoginScreen.routeName: (BuildContext context) => const LoginScreen(),
         "/account_management": (BuildContext context) =>
             const AccountManagementScreen(),
         "/create_account": (BuildContext context) => const AgregarCuentaForm(),

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import '../models/comprobante_summary.dart';
-import '../models/server_response.dart';
-import '../services/cuenta/cuenta_service.dart';
-import '../services/factura/factura_service.dart';
-import 'widgets/general/my_button.dart';
-import 'widgets/general/my_text.dart';
+import 'package:flutter_app/constants/route_names.dart';
+import '../../models/comprobante_summary.dart';
+import '../../models/server_response.dart';
+import '../../services/cuenta/cuenta_service.dart';
+import '../../services/factura/factura_service.dart';
+import '../widgets/general/my_button.dart';
+import '../widgets/general/my_text.dart';
 
-class HomeLoggedPage extends StatelessWidget {
-  const HomeLoggedPage({Key? key}) : super(key: key);
+class HomeLoggedScreen extends StatelessWidget {
+  static const routeName = homeLoggedRouteName;
+
+  const HomeLoggedScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +61,7 @@ class HomeLoggedPage extends StatelessWidget {
   }
 
   void _showHomePage(BuildContext context) {
-    Navigator.of(context).pushNamed("/");
+    Navigator.of(context).pushNamed(homeRouteName);
   }
 
   void _showFacturarPage(BuildContext context) {
