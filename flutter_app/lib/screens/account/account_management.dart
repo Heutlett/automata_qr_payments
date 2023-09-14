@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/managers/provider_manager.dart';
-import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/widgets/account/account_info_card.dart';
 import 'package:provider/provider.dart';
 
@@ -15,18 +14,12 @@ class AccountManagementScreen extends StatefulWidget {
 }
 
 class _AccountManagementScreenState extends State<AccountManagementScreen> {
-  late List<Account> accounts;
-
-  Future<void> loadAccounts(BuildContext context) async {
-    final providerManager = Provider.of<ProviderManager>(context);
-    setState(() {
-      accounts = providerManager.myAccounts;
-    });
-  }
+  late ProviderManager providerManager;
 
   @override
   Widget build(BuildContext context) {
-    loadAccounts(context);
+    final providerManager = Provider.of<ProviderManager>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -34,7 +27,7 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
           children: [
             ElevatedButton(
               onPressed: () {
-                _createAccount(context);
+                _showCreateAccountScreen(context);
               },
               style: const ButtonStyle(
                   backgroundColor: MaterialStatePropertyAll(Colors.green)),
@@ -64,7 +57,7 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
       body: Center(
         child: SingleChildScrollView(
           child: Column(
-            children: accounts.map((acc) {
+            children: providerManager.myAccounts.map((acc) {
               return Card(
                 margin: const EdgeInsets.all(8),
                 elevation: 5,
@@ -88,7 +81,7 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
     );
   }
 
-  void _createAccount(BuildContext context) async {
+  void _showCreateAccountScreen(BuildContext context) async {
     Navigator.of(context).pushNamed(createAccountRouteName);
   }
 

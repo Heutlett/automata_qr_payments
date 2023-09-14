@@ -1,23 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter_app/constants/endpoints.dart';
+import 'package:flutter_app/managers/shared_local_store.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/models/comprobante.dart';
 import 'package:flutter_app/models/comprobante_summary.dart';
 import 'package:flutter_app/models/server_response.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:flutter_app/utils/config.dart';
-
-const String selectedHost = "facturas_api";
 
 Future<http.Response> postAddComprobante(Object? factura) async {
-  final prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('accessToken');
-  String host = await Config.load(selectedHost);
+  String token = await SharedLocalStore.getAccessToken();
 
   var responseAddComprobante = await http.post(
-    Uri.parse('https://$host/api/Comprobante/comprobantes/add'),
+    Uri.parse(postComprobanteUrl),
     body: jsonEncode(factura),
     headers: {
       'Content-Type': 'application/json',
@@ -27,16 +22,12 @@ Future<http.Response> postAddComprobante(Object? factura) async {
   return responseAddComprobante;
 }
 
-Future<ServerResponse<List<ComprobanteSummary>>> getComprobanteSummary(
+Future<ServerResponse<List<ComprobanteSummary>>> getComprobantesSummary(
     int id) async {
-  final prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('accessToken');
-  String host = await Config.load(selectedHost);
+  String token = await SharedLocalStore.getAccessToken();
 
-  var url = "https://$host/api/Comprobante/comprobantes/summary/$id";
-
+  var url = "$getComprobantesSummaryUrl/$id";
   var headers = {"Authorization": "bearer $token"};
-
   var response = await http.get(Uri.parse(url), headers: headers);
 
   ServerResponse<List<ComprobanteSummary>> serverResponse;
@@ -80,14 +71,10 @@ Future<ServerResponse<List<ComprobanteSummary>>> getComprobanteSummary(
 }
 
 Future<ServerResponse<Comprobante>> getComprobante(int id) async {
-  final prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('accessToken');
-  String host = await Config.load(selectedHost);
+  String token = await SharedLocalStore.getAccessToken();
 
-  var url = "https://$host/api/Comprobante/comprobantes/$id";
-
+  var url = "$getComprobanteDetailsUrl/$id";
   var headers = {"Authorization": "bearer $token"};
-
   var response = await http.get(Uri.parse(url), headers: headers);
 
   ServerResponse<Comprobante> serverResponse;

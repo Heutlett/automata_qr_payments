@@ -3,7 +3,6 @@ import 'package:flutter_app/constants/constants.dart';
 import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/managers/provider_manager.dart';
 import 'package:flutter_app/managers/shared_local_store.dart';
-import 'package:flutter_app/services/account/account_service.dart';
 import 'dart:convert';
 import 'package:flutter_app/services/user/user_service.dart';
 
@@ -156,13 +155,6 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  Future<void> loadAccounts() async {
-    var loadedAccounts = await getAccountList();
-    setState(() {
-      providerManager.setMyAccounts(loadedAccounts);
-    });
-  }
-
   Future<void> _submitLoginForm(
     BuildContext context,
     ProviderManager providerManager,
@@ -188,10 +180,6 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         // Se resetea el username del local storage
         await SharedLocalStore.resetLastUsername();
-      }
-      if (context.mounted) {
-        // Se cargan las cuentas al providerManager
-        await loadAccounts();
       }
       setLoadingFalse();
 

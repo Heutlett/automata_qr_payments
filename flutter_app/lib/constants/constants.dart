@@ -14,8 +14,19 @@ const String registerTitle = 'Registro de usuario';
 // login.dart
 const String loginTitle = 'Inicio de sesión';
 
-// create_factura.dart
+// create_account.dart
+final List<String> cedulaTipos = [
+  'Fisica',
+  'Juridica',
+  'DIMEX',
+  'NITE',
+];
+final List<String> tiposCuenta = [
+  'Receptor',
+  'Emisor',
+];
 
+// create_factura.dart
 const int defaultMonedaId = 250;
 const int defaultMedioPago = 1;
 const int defaultCondicionVenta = 1;

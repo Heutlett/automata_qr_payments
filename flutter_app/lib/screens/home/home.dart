@@ -24,7 +24,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 40.0),
             MyButton(
               text: homeRegisterButtonTitle,
-              function: () => _showRegistrationScreen(context),
+              function: () => _showRegisterScreen(context),
               fontSize: 18,
               size: const Size(200, 60),
               backgroundColor: Colors.blue,
@@ -45,7 +45,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  void _showRegistrationScreen(BuildContext context) {
+  void _showRegisterScreen(BuildContext context) {
     Navigator.of(context).pushNamed(registerRouteName);
   }
 

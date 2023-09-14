@@ -23,4 +23,9 @@ class SharedLocalStore {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_keyAccessToken, accessToken);
   }
+
+  static Future<String> getAccessToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyAccessToken) ?? '';
+  }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/route_names.dart';
+import 'package:flutter_app/managers/provider_manager.dart';
 import 'package:flutter_app/models/comprobante_summary.dart';
 import 'package:flutter_app/widgets/history/history_card.dart';
 import 'package:flutter_app/utils/utils.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/server_response.dart';
 import '../../services/factura/factura_service.dart';
@@ -31,8 +33,21 @@ class _FacturasHistoryScreenState extends State<FacturasHistoryScreen> {
     super.initState();
   }
 
+  void setAccountIds(ProviderManager providerManager) {
+    for (int i = 0; i < providerManager.myAccounts.length; i++) {
+      accountsIds[int.parse(providerManager.myAccounts[i].id)] =
+          providerManager.myAccounts[i].nombre;
+    }
+  }
+
+  Future<void> setComprobantesSummary() async {}
+
   @override
   Widget build(BuildContext context) {
+    final providerManager = Provider.of<ProviderManager>(context);
+
+    setAccountIds(providerManager);
+
     if (!isInitialized) {
       List<dynamic> args =
           ModalRoute.of(context)?.settings.arguments as List<dynamic>;
@@ -119,7 +134,7 @@ class _FacturasHistoryScreenState extends State<FacturasHistoryScreen> {
 
   void updateRecordsAccount(BuildContext context, int accountId) async {
     ServerResponse<List<ComprobanteSummary>> response =
-        await getComprobanteSummary(accountId);
+        await getComprobantesSummary(accountId);
 
     if (context.mounted) {
       if (response.success) {

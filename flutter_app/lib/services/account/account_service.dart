@@ -1,24 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter_app/constants/endpoints.dart';
+import 'package:flutter_app/managers/shared_local_store.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_app/models/account.dart';
 
 import 'package:flutter_app/models/actividad.dart';
 import 'package:flutter_app/models/server_response.dart';
 import 'package:flutter_app/models/ubicacion.dart';
 
-import 'package:flutter_app/utils/config.dart';
-
-const String selectedHost = "facturas_api";
-
 Future<http.Response> postCreateAccount(Object? cuenta) async {
-  final prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('accessToken');
-  String host = await Config.load(selectedHost);
+  String token = await SharedLocalStore.getAccessToken();
 
   var responseCreateAcc = await http.post(
-    Uri.parse('http://$host/api/Cuenta'),
+    Uri.parse(accountManagementUrl),
     body: jsonEncode(cuenta),
     headers: {
       'Content-Type': 'application/json',
@@ -29,12 +24,10 @@ Future<http.Response> postCreateAccount(Object? cuenta) async {
 }
 
 Future<http.Response> putEditAccount(String id, Object? cuenta) async {
-  final prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('accessToken');
-  String host = await Config.load(selectedHost);
+  String token = await SharedLocalStore.getAccessToken();
 
   var responseCreateAcc = await http.put(
-    Uri.parse('http://$host/api/Cuenta'),
+    Uri.parse(accountManagementUrl),
     body: jsonEncode(cuenta),
     headers: {
       'Content-Type': 'application/json',
@@ -45,12 +38,10 @@ Future<http.Response> putEditAccount(String id, Object? cuenta) async {
 }
 
 Future<ServerResponse<String>> deleteOwnAccount(String id) async {
-  final prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('accessToken');
-  String host = await Config.load(selectedHost);
+  String token = await SharedLocalStore.getAccessToken();
 
   var responseDeleteAcc = await http.delete(
-    Uri.parse('http://$host/api/Cuenta/$id'),
+    Uri.parse('$accountManagementUrl/$id'),
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'bearer $token'
@@ -64,7 +55,6 @@ Future<ServerResponse<String>> deleteOwnAccount(String id) async {
 
     if (data['success']) {
       data = data['data'];
-
       serverResponse =
           ServerResponse(data: "Success", message: '', success: true);
     } else {
@@ -82,12 +72,10 @@ Future<ServerResponse<String>> deleteOwnAccount(String id) async {
 }
 
 Future<ServerResponse<String>> deleteSharedAccount(String id) async {
-  final prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('accessToken');
-  String host = await Config.load(selectedHost);
+  String token = await SharedLocalStore.getAccessToken();
 
   var responseDeleteAcc = await http.post(
-    Uri.parse('http://$host/api/Cuenta/$id/unshare'),
+    Uri.parse('$accountManagementUrl/$id/unshare'),
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'bearer $token'
@@ -101,7 +89,6 @@ Future<ServerResponse<String>> deleteSharedAccount(String id) async {
 
     if (data['success']) {
       data = data['data'];
-
       serverResponse =
           ServerResponse(data: "Success", message: '', success: true);
     } else {
@@ -118,12 +105,10 @@ Future<ServerResponse<String>> deleteSharedAccount(String id) async {
 
 Future<ServerResponse<String>> unshareUserAccount(
     String accountId, String username) async {
-  final prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('accessToken');
-  String host = await Config.load(selectedHost);
+  String token = await SharedLocalStore.getAccessToken();
 
   var responseDeleteAcc = await http.post(
-    Uri.parse('http://$host/api/Cuenta/$accountId/unshare/$username'),
+    Uri.parse('$accountManagementUrl/$accountId/unshare/$username'),
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'bearer $token'
@@ -137,7 +122,6 @@ Future<ServerResponse<String>> unshareUserAccount(
 
     if (data['success']) {
       data = data['data'];
-
       serverResponse =
           ServerResponse(data: "Success", message: '', success: true);
     } else {
@@ -153,9 +137,7 @@ Future<ServerResponse<String>> unshareUserAccount(
 }
 
 Future<ServerResponse<Account?>> getCuentaByQr(String codigoQr) async {
-  final prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('accessToken');
-  String host = await Config.load(selectedHost);
+  String token = await SharedLocalStore.getAccessToken();
 
   UbicacionService ubicacionService = UbicacionService();
 
@@ -163,15 +145,13 @@ Future<ServerResponse<Account?>> getCuentaByQr(String codigoQr) async {
     "codigo": codigoQr,
   };
 
-  var url = "https://$host/api/Cuenta/billing/cuenta_receptor";
-
   var headers = {
     "Content-Type": "application/json",
     "Authorization": "bearer $token"
   };
 
   var response = await http.post(
-    Uri.parse(url),
+    Uri.parse(getAccountQrUrl),
     headers: headers,
     body: json.encode(body),
   );
@@ -252,9 +232,7 @@ Future<ServerResponse<Account?>> getCuentaByQr(String codigoQr) async {
 }
 
 Future<ServerResponse<Account?>> shareAccountByQr(String codigoQr) async {
-  final prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('accessToken');
-  String host = await Config.load(selectedHost);
+  String token = await SharedLocalStore.getAccessToken();
 
   UbicacionService ubicacionService = UbicacionService();
 
@@ -262,14 +240,12 @@ Future<ServerResponse<Account?>> shareAccountByQr(String codigoQr) async {
     "codigo": codigoQr,
   };
 
-  var url = "https://$host/api/Cuenta/share";
-
   var headers = {
     "Content-Type": "application/json",
     "Authorization": "bearer $token"
   };
 
-  var response = await http.post(Uri.parse(url),
+  var response = await http.post(Uri.parse(postShareAccountUrl),
       headers: headers, body: json.encode(body));
 
   ServerResponse<Account?> serverResponse;
@@ -348,14 +324,11 @@ Future<ServerResponse<Account?>> shareAccountByQr(String codigoQr) async {
 }
 
 Future<String> getAccountBillingQr(int id) async {
-  final prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('accessToken');
-  String host = await Config.load(selectedHost);
+  String token = await SharedLocalStore.getAccessToken();
 
-  var url = "https://$host/api/Cuenta/$id/billing/qr";
+  var url = "$accountManagementUrl/$id/billing/qr";
 
   var headers = {"Authorization": "bearer $token"};
-
   var response = await http.get(Uri.parse(url), headers: headers);
 
   var data = jsonDecode(response.body);
@@ -365,14 +338,10 @@ Future<String> getAccountBillingQr(int id) async {
 }
 
 Future<String> getAccountShareQr(int id) async {
-  final prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('accessToken');
-  String host = await Config.load(selectedHost);
+  String token = await SharedLocalStore.getAccessToken();
 
-  var url = "https://$host/api/Cuenta/$id/share/qr";
-
+  var url = "$accountManagementUrl/$id/share/qr";
   var headers = {"Authorization": "bearer $token"};
-
   var response = await http.get(Uri.parse(url), headers: headers);
 
   var data = jsonDecode(response.body);
@@ -382,21 +351,15 @@ Future<String> getAccountShareQr(int id) async {
 }
 
 Future<http.Response> _getAccounts() async {
-  final prefs = await SharedPreferences.getInstance();
-  String? token = prefs.getString('accessToken');
-  String host = await Config.load(selectedHost);
-
-  var url = "https://$host/api/Cuenta/GetAll";
+  String token = await SharedLocalStore.getAccessToken();
 
   var headers = {"Authorization": "bearer $token"};
-
-  var response = await http.get(Uri.parse(url), headers: headers);
+  var response = await http.get(Uri.parse(getAccountsUrl), headers: headers);
 
   return response;
 }
 
-Future<List<Account>> getAccountList() async {
-  var response = await _getAccounts();
+Future<List<Account>> mapAccountListResponse(var response) async {
   var data = jsonDecode(response.body);
   data = data['data'];
   List<Account> accounts = [];
@@ -454,4 +417,9 @@ Future<List<Account>> getAccountList() async {
         usuariosCompartidos: usuariosCompartidos));
   }
   return accounts;
+}
+
+Future<List<Account>> getAccountList() async {
+  var response = await _getAccounts();
+  return mapAccountListResponse(response);
 }

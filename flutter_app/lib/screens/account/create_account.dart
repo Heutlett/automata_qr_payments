@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/constants.dart';
 import 'package:flutter_app/constants/route_names.dart';
+import 'package:flutter_app/managers/provider_manager.dart';
+import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/widgets/general/my_button.dart';
 import 'package:flutter_app/widgets/general/my_text.dart';
 import 'package:flutter_app/services/account/account_service.dart';
 import 'package:flutter_app/models/actividad.dart';
 import 'package:flutter_app/models/ubicacion.dart';
 import 'package:flutter_app/utils/utils.dart';
+import 'package:provider/provider.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   static const String routeName = createAccountRouteName;
@@ -18,25 +22,14 @@ class CreateAccountScreen extends StatefulWidget {
 
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
+
   final List<Actividad> actividades = [];
   final List<Actividad> actividadesSearchName = [];
   List<Actividad> activityList = [];
 
   String? _cedulaTipo;
   String? _tipoCuenta;
-
-  String confirmButtonText = "Crear cuenta";
-
-  final List<String> _cedulaTipos = [
-    'Fisica',
-    'Juridica',
-    'DIMEX',
-    'NITE',
-  ];
-  final List<String> _tiposCuenta = [
-    'Receptor',
-    'Emisor',
-  ];
 
   UbicacionService ubicacionService = UbicacionService();
 
@@ -168,12 +161,14 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final providerManager = Provider.of<ProviderManager>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Agregar cuenta'),
       ),
-      body: provincias.isEmpty | activityList.isEmpty
-          ? const CircularProgressIndicator() // Indicador de carga
+      body: provincias.isEmpty | activityList.isEmpty | isLoading
+          ? const Center(
+              child: CircularProgressIndicator()) // Indicador de carga
           : SingleChildScrollView(
               child: Container(
                 padding: const EdgeInsets.all(8.0),
@@ -206,7 +201,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         );
                       },
                     );
-
                     return shouldExit;
                   },
                   child: Form(
@@ -241,7 +235,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                       decoration: const InputDecoration(
                                         labelText: 'Tipo de cédula',
                                       ),
-                                      items: _cedulaTipos
+                                      items: cedulaTipos
                                           .map((cedulaTipo) => DropdownMenuItem(
                                                 value: cedulaTipo,
                                                 child: Text(cedulaTipo),
@@ -268,15 +262,19 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                       controller: _cedulaNumeroController,
                                       onEditingComplete: () {
                                         _focusNextField(
-                                            context,
-                                            _cedulaNumeroFocusNode,
-                                            _nombreFocusNode);
+                                          context,
+                                          _cedulaNumeroFocusNode,
+                                          _nombreFocusNode,
+                                        );
                                       },
                                       decoration: const InputDecoration(
                                           labelText: 'Número de cédula'),
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
                                           return 'Este campo es obligatorio.';
+                                        }
+                                        if (!isNumeric(value)) {
+                                          return 'Este campo debe ser numerico.';
                                         }
                                         return null;
                                       },
@@ -331,7 +329,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                       decoration: const InputDecoration(
                                         labelText: 'Tipo de cuenta',
                                       ),
-                                      items: _tiposCuenta
+                                      items: tiposCuenta
                                           .map((tipoCuenta) => DropdownMenuItem(
                                                 value: tipoCuenta,
                                                 child: Text(tipoCuenta),
@@ -488,9 +486,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                           controller: _correoController,
                                           onEditingComplete: () {
                                             _focusNextField(
-                                                context,
-                                                _correoFocusNode,
-                                                _ubicacionProvinciaFocusNode);
+                                              context,
+                                              _correoFocusNode,
+                                              _ubicacionProvinciaFocusNode,
+                                            );
                                           },
                                           decoration: const InputDecoration(
                                             labelText: 'Correo electrónico',
@@ -501,12 +500,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                               return 'Este campo es obligatorio.';
                                             }
 
-                                            // Expresión regular para validar la estructura del correo electrónico
-                                            RegExp regex = RegExp(
-                                              r'^\s*(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()\[\]\.,;:\s@\"]+\.)+[^<>()\[\]\.,;:\s@\"]{0,})\s*$',
-                                            );
-
-                                            if (!regex.hasMatch(value)) {
+                                            if (!emailRegExp.hasMatch(value)) {
                                               return 'Ingrese un correo electrónico válido.';
                                             }
 
@@ -943,7 +937,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     if (_formKey.currentState!.validate()) {
-                                      _submitForm(context, '');
+                                      _submitForm(context, providerManager);
                                     } else {
                                       showAlertDialog(
                                           context,
@@ -952,7 +946,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                           "Corregir");
                                     }
                                   },
-                                  child: Text(confirmButtonText),
+                                  child: const Text("Crear cuenta"),
                                 ),
                               ),
                             ],
@@ -967,7 +961,20 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     );
   }
 
-  void _submitForm(BuildContext context, String accountId) async {
+  void setLoadingTrue() {
+    setState(() {
+      isLoading = true;
+    });
+  }
+
+  void setLoadingFalse() {
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void _submitForm(
+      BuildContext context, ProviderManager providerManager) async {
     final cedulaTipo = _cedulaTipo;
     final cedulaNumero = _cedulaNumeroController.text;
     final idExtranjero = _idExtranjeroController.text;
@@ -1017,25 +1024,47 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       "codigosActividad": actividades.map((act) => act.codigoActividad).toList()
     };
 
+    setLoadingTrue();
     var response = await postCreateAccount(cuenta);
+    setLoadingFalse();
 
-    if (context.mounted) {
-      if (response.statusCode == 200) {
-        showAlertDialogWithFunction(context, 'Cuenta agregada',
-            'La cuenta se agregó exitosamente.', 'Aceptar', () {
-          reloadAccounts(context);
-        });
-      } else {
-        showAlertDialog(context, 'Error al agregar cuenta',
-            'Ocurrió un error al agregar la cuenta.', 'Aceptar');
+    if (response.statusCode == 200) {
+      List<Account> accounts = await mapAccountListResponse(response);
+
+      if (context.mounted) {
+        showAlertDialogWithFunction(
+          context,
+          'Cuenta agregada',
+          'La cuenta se agregó exitosamente.',
+          'Aceptar',
+          () {
+            reloadAccounts(context, providerManager, accounts);
+          },
+        );
+      }
+    } else {
+      if (context.mounted) {
+        showAlertDialog(
+          context,
+          'Error al agregar cuenta',
+          'Ocurrió un error al agregar la cuenta.',
+          'Aceptar',
+        );
       }
     }
   }
 
-  void reloadAccounts(BuildContext context) async {
+  Future<void> _loadAccounts(
+      ProviderManager providerManager, List<Account> accounts) async {
+    providerManager.setMyAccounts(accounts);
+  }
+
+  void reloadAccounts(BuildContext context, ProviderManager providerManager,
+      List<Account> accounts) async {
+    _loadAccounts(providerManager, accounts);
     Navigator.of(context).pushNamedAndRemoveUntil(
-        "/home_logged", (Route<dynamic> route) => false);
-    Navigator.of(context).pushNamed('/account_management');
+        homeLoggedRouteName, (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamed(accountManagementRouteName);
   }
 
   void loadCantones(BuildContext context) async {

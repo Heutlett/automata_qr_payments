@@ -179,3 +179,12 @@ Future<List<double>> getLocation() async {
   LocationData locationData = await location.getLocation();
   return [locationData.longitude!, locationData.latitude!];
 }
+
+bool isNumeric(String str) {
+  try {
+    double.parse(str); // Intenta convertir el string a un número double
+    return true; // Si no hay excepción, el string es numérico
+  } catch (e) {
+    return false; // Si se lanza una excepción, el string no es numérico
+  }
+}
