@@ -14,8 +14,6 @@ class AccountManagementScreen extends StatefulWidget {
 }
 
 class _AccountManagementScreenState extends State<AccountManagementScreen> {
-  late ProviderManager providerManager;
-
   @override
   Widget build(BuildContext context) {
     final providerManager = Provider.of<ProviderManager>(context);
@@ -40,7 +38,7 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                _addSharedAccount(context);
+                _showAddSharedAccountScreen(context);
               },
               style: const ButtonStyle(
                   backgroundColor: MaterialStatePropertyAll(Colors.purple)),
@@ -69,7 +67,10 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                   child: Column(
                     children: [
                       AccountInfoCard(
-                          account: acc, addButtons: 2, showIsShared: true),
+                        account: acc,
+                        addButtons: 2,
+                        showIsShared: true,
+                      ),
                     ],
                   ),
                 ),
@@ -85,7 +86,7 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
     Navigator.of(context).pushNamed(createAccountRouteName);
   }
 
-  void _addSharedAccount(BuildContext context) async {
-    Navigator.of(context).pushNamed(shareAccountRouteName);
+  void _showAddSharedAccountScreen(BuildContext context) async {
+    Navigator.of(context).pushNamed(addSharedAccountRouteName);
   }
 }

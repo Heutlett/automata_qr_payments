@@ -33,7 +33,7 @@ class _ShowSelectedAccountsScreenState
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Selección de cuentas'),
+        title: const Text('Cuentas seleccionadas'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -76,7 +76,7 @@ class _ShowSelectedAccountsScreenState
                   child: AccountInfoCard(
                     account: accountReceptor,
                     addButtons: 1,
-                    showIsShared: true,
+                    showIsShared: false,
                   )),
             ),
             const SizedBox(height: 20),

@@ -57,3 +57,34 @@ final Map<int, String> condicionesVenta = {
   9: 'Pago servicio estado',
   99: 'Otros',
 };
+
+// productos_factura.dart
+
+final Map<int, String> cabysOptions = {
+  1: 'Minerales; electricidad, gas y agua',
+  2: 'Productos alimenticios, bebidas y tabaco...',
+  3: 'Bienes transportables, excepto productos...',
+  4: 'Productos metálicos, maquinaria y equipo',
+  5: 'Construcciones y servicios de construcción',
+  6: 'Servicios de venta, alojamiento, transporte...',
+  7: 'Servicios financieros y servicios conexos...',
+  8: 'Servicios prestados a las empresas y ...',
+  9: 'Servicios para la comunidad, sociales y ...'
+};
+
+final List<String> unidadesMedida = [
+  'Al',
+  'Alc',
+  'Cm',
+  'I',
+  'Os',
+  'Sp',
+];
+
+final Map<int, String> tiposCodigoComercial = {
+  1: 'Código del producto del vendedor',
+  2: 'Código del producto del comprador',
+  3: 'Código del producto asignado por la industria',
+  4: 'Código de uso interno',
+  99: 'Otros',
+};

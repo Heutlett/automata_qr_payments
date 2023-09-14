@@ -72,13 +72,13 @@ class _HomeLoggedScreenState extends State<HomeLoggedScreen> {
     );
   }
 
-  void setLoadingTrue() {
+  void _setLoadingTrue() {
     setState(() {
       isLoading = true;
     });
   }
 
-  void setLoadingFalse() {
+  void _setLoadingFalse() {
     setState(() {
       isLoading = false;
     });
@@ -91,9 +91,9 @@ class _HomeLoggedScreenState extends State<HomeLoggedScreen> {
 
   Future<void> _showAccountManagementScreen(
       BuildContext context, ProviderManager providerManager) async {
-    setLoadingTrue();
+    _setLoadingTrue();
     await _loadAccounts(providerManager);
-    setLoadingFalse();
+    _setLoadingFalse();
 
     if (context.mounted) {
       Navigator.of(context).pushNamed(accountManagementRouteName);

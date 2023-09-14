@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/constants.dart';
 import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/models/factura.dart';
-import 'package:flutter_app/screens/account/accounts_form.dart';
+import 'package:flutter_app/widgets/account/accounts_form.dart';
 import 'package:flutter_app/models/account.dart';
-import 'package:flutter_app/screens/facturar/facturar_emisor/productos_factura.dart';
+import 'package:flutter_app/widgets/factura/factura_products.dart';
 import 'package:flutter_app/utils/utils.dart';
 
 import '../../../models/actividad.dart';
@@ -62,7 +62,7 @@ class _CreateFacturaScreenState extends State<CreateFacturaScreen> {
               account: accountReceptor,
               isEmisor: false,
             ),
-            ProductosForm(products: productos),
+            FacturaProductsForm(products: productos),
             const SizedBox(height: 5),
             Padding(
               padding: const EdgeInsets.all(8.0),

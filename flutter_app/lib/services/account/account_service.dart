@@ -26,6 +26,8 @@ Future<http.Response> postCreateAccount(Object? cuenta) async {
 Future<http.Response> putEditAccount(String id, Object? cuenta) async {
   String token = await SharedLocalStore.getAccessToken();
 
+  print(jsonEncode(cuenta));
+
   var responseCreateAcc = await http.put(
     Uri.parse(accountManagementUrl),
     body: jsonEncode(cuenta),
@@ -37,44 +39,23 @@ Future<http.Response> putEditAccount(String id, Object? cuenta) async {
   return responseCreateAcc;
 }
 
-Future<ServerResponse<String>> deleteOwnAccount(String id) async {
+Future<http.Response> deleteOwnAccount(String id) async {
   String token = await SharedLocalStore.getAccessToken();
 
-  var responseDeleteAcc = await http.delete(
+  var response = await http.delete(
     Uri.parse('$accountManagementUrl/$id'),
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'bearer $token'
     },
   );
-
-  ServerResponse<String> serverResponse;
-
-  if (responseDeleteAcc.statusCode == 200) {
-    var data = jsonDecode(responseDeleteAcc.body);
-
-    if (data['success']) {
-      data = data['data'];
-      serverResponse =
-          ServerResponse(data: "Success", message: '', success: true);
-    } else {
-      serverResponse =
-          ServerResponse(data: null, message: data['message'], success: true);
-    }
-  } else {
-    serverResponse = ServerResponse(
-        data: null,
-        message: 'Ha ocurrido un error, probablemente el token ha expirado',
-        success: false);
-  }
-
-  return serverResponse;
+  return response;
 }
 
-Future<ServerResponse<String>> deleteSharedAccount(String id) async {
+Future<http.Response> deleteSharedAccount(String id) async {
   String token = await SharedLocalStore.getAccessToken();
 
-  var responseDeleteAcc = await http.post(
+  var response = await http.post(
     Uri.parse('$accountManagementUrl/$id/unshare'),
     headers: {
       'Content-Type': 'application/json',
@@ -82,25 +63,7 @@ Future<ServerResponse<String>> deleteSharedAccount(String id) async {
     },
   );
 
-  ServerResponse<String> serverResponse;
-
-  if (responseDeleteAcc.statusCode == 200) {
-    var data = jsonDecode(responseDeleteAcc.body);
-
-    if (data['success']) {
-      data = data['data'];
-      serverResponse =
-          ServerResponse(data: "Success", message: '', success: true);
-    } else {
-      serverResponse =
-          ServerResponse(data: null, message: data['message'], success: true);
-    }
-  } else {
-    serverResponse = ServerResponse(
-        data: null, message: 'Ha ocurrido un error.', success: false);
-  }
-
-  return serverResponse;
+  return response;
 }
 
 Future<ServerResponse<String>> unshareUserAccount(
@@ -244,6 +207,8 @@ Future<ServerResponse<Account?>> shareAccountByQr(String codigoQr) async {
     "Content-Type": "application/json",
     "Authorization": "bearer $token"
   };
+
+  print(json.encode(body));
 
   var response = await http.post(Uri.parse(postShareAccountUrl),
       headers: headers, body: json.encode(body));
@@ -421,5 +386,8 @@ Future<List<Account>> mapAccountListResponse(var response) async {
 
 Future<List<Account>> getAccountList() async {
   var response = await _getAccounts();
-  return mapAccountListResponse(response);
+  if (response.statusCode == 200) {
+    return mapAccountListResponse(response);
+  }
+  return [];
 }

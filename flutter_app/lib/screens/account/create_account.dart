@@ -937,7 +937,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     if (_formKey.currentState!.validate()) {
-                                      _submitForm(context, providerManager);
+                                      _submitCreateAccountForm(
+                                          context, providerManager);
                                     } else {
                                       showAlertDialog(
                                           context,
@@ -961,19 +962,19 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     );
   }
 
-  void setLoadingTrue() {
+  void _setLoadingTrue() {
     setState(() {
       isLoading = true;
     });
   }
 
-  void setLoadingFalse() {
+  void _setLoadingFalse() {
     setState(() {
       isLoading = false;
     });
   }
 
-  void _submitForm(
+  void _submitCreateAccountForm(
       BuildContext context, ProviderManager providerManager) async {
     final cedulaTipo = _cedulaTipo;
     final cedulaNumero = _cedulaNumeroController.text;
@@ -1024,9 +1025,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       "codigosActividad": actividades.map((act) => act.codigoActividad).toList()
     };
 
-    setLoadingTrue();
+    _setLoadingTrue();
     var response = await postCreateAccount(cuenta);
-    setLoadingFalse();
+    _setLoadingFalse();
 
     if (response.statusCode == 200) {
       List<Account> accounts = await mapAccountListResponse(response);
@@ -1038,7 +1039,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           'La cuenta se agregó exitosamente.',
           'Aceptar',
           () {
-            reloadAccounts(context, providerManager, accounts);
+            _reloadAccounts(context, providerManager, accounts);
           },
         );
       }
@@ -1059,7 +1060,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     providerManager.setMyAccounts(accounts);
   }
 
-  void reloadAccounts(BuildContext context, ProviderManager providerManager,
+  void _reloadAccounts(BuildContext context, ProviderManager providerManager,
       List<Account> accounts) async {
     _loadAccounts(providerManager, accounts);
     Navigator.of(context).pushNamedAndRemoveUntil(

@@ -40,7 +40,7 @@ class _AddSharedAccountScreenState extends State<AddSharedAccountScreen> {
               const SizedBox(height: 20),
               MyButton(
                 text: 'Escanear QR de la cuenta',
-                function: () => scanQR(context),
+                function: () => _scanQR(context),
                 icon: Icons.qr_code_scanner,
                 backgroundColor: Colors.green,
                 size: const Size(290, 50),
@@ -52,7 +52,7 @@ class _AddSharedAccountScreenState extends State<AddSharedAccountScreen> {
     );
   }
 
-  void showAddedAccount(BuildContext context, String codigoQr) async {
+  void _showAddedAccount(BuildContext context, String codigoQr) async {
     ServerResponse<Account?> getCuenta = await shareAccountByQr(codigoQr);
 
     Account? sharedAccount = getCuenta.data;
@@ -69,14 +69,14 @@ class _AddSharedAccountScreenState extends State<AddSharedAccountScreen> {
     }
   }
 
-  Future<void> scanQR(BuildContext context) async {
+  Future<void> _scanQR(BuildContext context) async {
     String barcodeScanRes;
 
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancelar', true, ScanMode.QR);
       if (context.mounted) {
-        showAddedAccount(context, barcodeScanRes);
+        _showAddedAccount(context, barcodeScanRes);
       }
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';

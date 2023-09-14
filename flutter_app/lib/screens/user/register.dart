@@ -128,20 +128,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  void setLoadingTrue() {
+  void _setLoadingTrue() {
     setState(() {
       isLoading = true;
     });
   }
 
-  void setLoadingFalse() {
+  void _setLoadingFalse() {
     setState(() {
       isLoading = false;
     });
   }
 
   Future<void> _submitRegisterForm(BuildContext context) async {
-    setLoadingTrue();
+    _setLoadingTrue();
     var response = await postRegister(
       _usernameController.text,
       _nameController.text,
@@ -149,7 +149,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _emailController.text,
     );
     var data = jsonDecode(response.body);
-    setLoadingFalse();
+    _setLoadingFalse();
 
     if (context.mounted) {
       if (response.statusCode == 200) {

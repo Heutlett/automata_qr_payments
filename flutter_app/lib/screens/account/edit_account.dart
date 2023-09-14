@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/constants.dart';
 import 'package:flutter_app/constants/route_names.dart';
+import 'package:flutter_app/managers/provider_manager.dart';
 import 'package:flutter_app/services/account/account_service.dart';
 import 'package:flutter_app/models/actividad.dart';
 import 'package:flutter_app/models/account.dart';
@@ -7,6 +9,7 @@ import 'package:flutter_app/utils/utils.dart';
 import 'package:flutter_app/models/ubicacion.dart';
 import 'package:flutter_app/widgets/general/my_button.dart';
 import 'package:flutter_app/widgets/general/my_text.dart';
+import 'package:provider/provider.dart';
 
 class EditAccountScreen extends StatefulWidget {
   static const String routeName = editAccountRouteName;
@@ -19,6 +22,7 @@ class EditAccountScreen extends StatefulWidget {
 
 class _EditAccountScreenState extends State<EditAccountScreen> {
   final _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   bool _isInitialized = false;
 
@@ -28,19 +32,6 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
 
   String? _cedulaTipo;
   String? _tipoCuenta;
-
-  String confirmButtonText = "Editar cuenta";
-
-  final List<String> _cedulaTipos = [
-    'Fisica',
-    'Juridica',
-    'DIMEX',
-    'NITE',
-  ];
-  final List<String> _tiposCuenta = [
-    'Receptor',
-    'Emisor',
-  ];
 
   final _cedulaNumeroController = TextEditingController();
   final _idExtranjeroController = TextEditingController();
@@ -59,9 +50,6 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
   UbicacionService ubicacionService = UbicacionService();
 
   List<Provincia> provincias = [];
-  List<Canton> cantones = [];
-  List<Distrito> distritos = [];
-  List<Barrio> barrios = [];
 
   Provincia? selectedProvincia;
   Canton? selectedCanton;
@@ -76,8 +64,8 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
       _isInitialized = false;
     });
 
-    loadPronvincias();
-    loadActivities();
+    _loadPronvincias();
+    _loadActivities();
   }
 
   @override
@@ -98,35 +86,34 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     super.dispose();
   }
 
-  void loadUbicacion(Account account) async {
-    var response = await ubicacionService.getUbicacion(account.ubicacionCodigo);
-
-    var ubicacion = response;
+  void _loadUbicacion(Account account, ProviderManager providerManager) async {
+    var ubicacion =
+        await ubicacionService.getUbicacion(account.ubicacionCodigo);
     if (ubicacion != null) {
       setState(() {
         selectedProvincia = provincias
             .firstWhere((provincia) => provincia.id == ubicacion.provincia.id);
 
-        selectedCanton =
-            cantones.firstWhere((canton) => canton.id == ubicacion.canton.id);
+        selectedCanton = providerManager.cantonesSelectedEditAccount!
+            .firstWhere((canton) => canton.id == ubicacion.canton.id);
 
-        selectedDistrito = distritos
+        selectedDistrito = providerManager.distritosSelectedEditAccount!
             .firstWhere((distrito) => distrito.id == ubicacion.distrito.id);
 
-        selectedBarrio =
-            barrios.firstWhere((barrio) => barrio.id == ubicacion.barrio.id);
+        selectedBarrio = providerManager.barriosSelectedEditAccount!
+            .firstWhere((barrio) => barrio.id == ubicacion.barrio.id);
       });
     }
   }
 
-  void loadPronvincias() async {
+  void _loadPronvincias() async {
     List<Provincia> fetchedProvincias = await ubicacionService.getProvincias();
     setState(() {
       provincias = fetchedProvincias;
     });
   }
 
-  void loadActivities() async {
+  void _loadActivities() async {
     List<Actividad> fetchedActivityList = await Actividad.cargarActividades();
     setState(() {
       activityList = fetchedActivityList;
@@ -135,16 +122,12 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<dynamic> args =
-        ModalRoute.of(context)?.settings.arguments as List<dynamic>;
-
-    Account account = args[0];
+    final providerManager = Provider.of<ProviderManager>(context);
 
     if (!_isInitialized) {
-      cantones = args[1];
-      distritos = args[2];
-      barrios = args[3];
-      loadUbicacion(account);
+      Account account = providerManager.selectedEditAccount!;
+
+      _loadUbicacion(account, providerManager);
 
       _cedulaTipo = account.cedulaTipo;
       _cedulaNumeroController.text = account.cedulaNumero;
@@ -162,7 +145,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
           account.ubicacionSenasExtranjero;
 
       for (int i = 0; i < account.actividades!.length; i++) {
-        initActivities(context, account.actividades![i].codigoActividad);
+        _initActivities(context, account.actividades![i].codigoActividad);
       }
 
       _isInitialized = true;
@@ -172,7 +155,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
       appBar: AppBar(
         title: const Text('Editar cuenta'),
       ),
-      body: provincias.isEmpty | activityList.isEmpty
+      body: provincias.isEmpty | activityList.isEmpty | isLoading
           ? const Center(
               child: CircularProgressIndicator()) // Indicador de carga
           : SingleChildScrollView(
@@ -241,7 +224,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                                       decoration: const InputDecoration(
                                         labelText: 'Tipo de cédula',
                                       ),
-                                      items: _cedulaTipos
+                                      items: cedulaTipos
                                           .map((cedulaTipo) => DropdownMenuItem(
                                                 value: cedulaTipo,
                                                 child: Text(cedulaTipo),
@@ -298,7 +281,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                                       decoration: const InputDecoration(
                                         labelText: 'Tipo de cuenta',
                                       ),
-                                      items: _tiposCuenta
+                                      items: tiposCuenta
                                           .map((tipoCuenta) => DropdownMenuItem(
                                                 value: tipoCuenta,
                                                 child: Text(tipoCuenta),
@@ -472,14 +455,15 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                                           selectedCanton = null;
                                           selectedDistrito = null;
                                           selectedBarrio = null;
-                                          cantones =
-                                              []; // Reinicia la lista de cantones
-                                          distritos =
-                                              []; // Reinicia la lista de distritos
-                                          barrios =
-                                              []; // Reinicia la lista de barrios
-                                          // Simula la carga de los cantones para la provincia seleccionada
-                                          loadCantones(context);
+                                          providerManager
+                                              .clearCantonesSelectedEditAccount();
+                                          providerManager
+                                              .clearDistritosSelectedEditAccount();
+                                          providerManager
+                                              .clearBarriosSelectedEditAccount();
+
+                                          _loadCantones(
+                                              context, providerManager);
                                         });
                                       },
                                       decoration: const InputDecoration(
@@ -488,7 +472,9 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                                     ),
                                     DropdownButtonFormField<Canton>(
                                       value: selectedCanton,
-                                      items: cantones.map((canton) {
+                                      items: providerManager
+                                          .cantonesSelectedEditAccount!
+                                          .map((canton) {
                                         return DropdownMenuItem<Canton>(
                                           value: canton,
                                           child: Text(canton.nombre),
@@ -499,12 +485,12 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                                           selectedCanton = canton;
                                           selectedDistrito = null;
                                           selectedBarrio = null;
-                                          distritos =
-                                              []; // Reinicia la lista de distritos
-                                          barrios =
-                                              []; // Reinicia la lista de barrios
-                                          // Simula la carga de los distritos para el cantón seleccionado
-                                          loadDistritos(context);
+                                          providerManager
+                                              .clearDistritosSelectedEditAccount();
+                                          providerManager
+                                              .clearBarriosSelectedEditAccount();
+                                          _loadDistritos(
+                                              context, providerManager);
                                         });
                                       },
                                       decoration: const InputDecoration(
@@ -513,7 +499,9 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                                     ),
                                     DropdownButtonFormField<Distrito>(
                                       value: selectedDistrito,
-                                      items: distritos.map((district) {
+                                      items: providerManager
+                                          .distritosSelectedEditAccount!
+                                          .map((district) {
                                         return DropdownMenuItem<Distrito>(
                                           value: district,
                                           child: Text(district.nombre),
@@ -523,10 +511,10 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                                         setState(() {
                                           selectedDistrito = district;
                                           selectedBarrio = null;
-                                          barrios =
-                                              []; // Reinicia la lista de barrios
-                                          // Simula la carga de los barrios para el distrito seleccionado
-                                          loadBarrios(context);
+                                          providerManager
+                                              .clearBarriosSelectedEditAccount();
+                                          _loadBarrios(
+                                              context, providerManager);
                                         });
                                       },
                                       decoration: const InputDecoration(
@@ -535,7 +523,9 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                                     ),
                                     DropdownButtonFormField<Barrio>(
                                       value: selectedBarrio,
-                                      items: barrios.map((neighborhood) {
+                                      items: providerManager
+                                          .barriosSelectedEditAccount!
+                                          .map((neighborhood) {
                                         return DropdownMenuItem<Barrio>(
                                           value: neighborhood,
                                           child: Text(neighborhood.nombre),
@@ -846,16 +836,20 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     if (_formKey.currentState!.validate()) {
-                                      _submitForm(context, account.id);
+                                      _submitEditAccountForm(
+                                          context,
+                                          providerManager
+                                              .selectedEditAccount!.id);
                                     } else {
                                       showAlertDialog(
-                                          context,
-                                          "Error",
-                                          "El formulario se encuentra incompleto o algún campo es incorrecto.",
-                                          "Corregir");
+                                        context,
+                                        'Error',
+                                        'El formulario se encuentra incompleto o algún campo es incorrecto.',
+                                        'Corregir',
+                                      );
                                     }
                                   },
-                                  child: Text(confirmButtonText),
+                                  child: const Text('Editar cuenta'),
                                 ),
                               ),
                             ],
@@ -870,7 +864,19 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     );
   }
 
-  void _submitForm(BuildContext context, String accountId) async {
+  void _setLoadingTrue() {
+    setState(() {
+      isLoading = true;
+    });
+  }
+
+  void _setLoadingFalse() {
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void _submitEditAccountForm(BuildContext context, String accountId) async {
     final cedulaTipo = _cedulaTipo;
     final cedulaNumero = _cedulaNumeroController.text;
     final idExtranjero = _idExtranjeroController.text;
@@ -921,28 +927,39 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
       "codigosActividad": actividades.map((act) => act.codigoActividad).toList()
     };
 
+    _setLoadingTrue();
     var response = await putEditAccount(accountId, cuenta);
+    _setLoadingFalse();
 
     if (context.mounted) {
       if (response.statusCode == 200) {
-        showAlertDialogWithFunction(context, 'Cuenta editada',
-            'La cuenta se editó exitosamente.', 'Aceptar', () {
-          reloadAccounts(context);
-        });
+        showAlertDialogWithFunction(
+          context,
+          'Cuenta editada',
+          'La cuenta se editó exitosamente.',
+          'Aceptar',
+          () {
+            reloadAccounts(context);
+          },
+        );
       } else {
-        showAlertDialog(context, 'Error al editar cuenta',
-            'Ocurrió un error al editar la cuenta.', 'Aceptar');
+        showAlertDialog(
+          context,
+          'Error al editar cuenta',
+          'Ocurrió un error al editar la cuenta.',
+          'Aceptar',
+        );
       }
     }
   }
 
   void reloadAccounts(BuildContext context) async {
     Navigator.of(context).pushNamedAndRemoveUntil(
-        "/home_logged", (Route<dynamic> route) => false);
-    Navigator.of(context).pushNamed('/account_management');
+        homeLoggedRouteName, (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamed(accountManagementRouteName);
   }
 
-  void initActivities(BuildContext context, String activity) async {
+  void _initActivities(BuildContext context, String activity) async {
     List<Actividad> listaActividades = await Actividad.cargarActividades();
 
     Actividad actividad = listaActividades.firstWhere(
@@ -999,52 +1016,43 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     }
   }
 
-  void loadCantones(BuildContext context) async {
-    if (selectedProvincia != null) {
-      var cantonesList =
-          await ubicacionService.getCantonesByProvincia(selectedProvincia!.id);
+  void _loadCantones(
+      BuildContext context, ProviderManager providerManager) async {
+    var cantonesList =
+        await ubicacionService.getCantonesByProvincia(selectedProvincia!.id);
 
-      setState(() {
-        cantones = cantonesList.map((data) {
-          return Canton(
-            id: data.id,
-            nombre: data.nombre.toUpperCase(),
-          );
-        }).toList();
-      });
-    }
+    providerManager.setCantonesSelectedEditAccount(cantonesList.map((data) {
+      return Canton(
+        id: data.id,
+        nombre: data.nombre.toUpperCase(),
+      );
+    }).toList());
   }
 
-  void loadDistritos(BuildContext context) async {
-    if (selectedCanton != null) {
-      var distritosList = await ubicacionService.getDistritosByCanton(
-          selectedProvincia!.id, selectedCanton!.id);
+  void _loadDistritos(
+      BuildContext context, ProviderManager providerManager) async {
+    var distritosList = await ubicacionService.getDistritosByCanton(
+        selectedProvincia!.id, selectedCanton!.id);
 
-      setState(() {
-        distritos = distritosList.map((data) {
-          return Distrito(
-            id: data.id,
-            nombre: data.nombre.toUpperCase(),
-          );
-        }).toList();
-      });
-    }
+    providerManager.setDistritosSelectedEditAccount(distritosList.map((data) {
+      return Distrito(
+        id: data.id,
+        nombre: data.nombre.toUpperCase(),
+      );
+    }).toList());
   }
 
-  void loadBarrios(BuildContext context) async {
-    if (selectedDistrito != null) {
-      var barriosList = await ubicacionService.getBarriosByDistrito(
-          selectedProvincia!.id, selectedCanton!.id, selectedDistrito!.id);
+  void _loadBarrios(
+      BuildContext context, ProviderManager providerManager) async {
+    var barriosList = await ubicacionService.getBarriosByDistrito(
+        selectedProvincia!.id, selectedCanton!.id, selectedDistrito!.id);
 
-      setState(() {
-        barrios = barriosList.map((data) {
-          return Barrio(
-            id: data.id,
-            nombre: data.nombre.toUpperCase(),
-          );
-        }).toList();
-      });
-    }
+    providerManager.setBarriosSelectedEditAccount(barriosList.map((data) {
+      return Barrio(
+        id: data.id,
+        nombre: data.nombre.toUpperCase(),
+      );
+    }).toList());
   }
 
   void searchActivityByName(BuildContext context) async {

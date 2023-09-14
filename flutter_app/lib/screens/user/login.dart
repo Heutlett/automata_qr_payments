@@ -143,13 +143,13 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void setLoadingTrue() {
+  void _setLoadingTrue() {
     setState(() {
       isLoading = true;
     });
   }
 
-  void setLoadingFalse() {
+  void _setLoadingFalse() {
     setState(() {
       isLoading = false;
     });
@@ -162,15 +162,15 @@ class _LoginScreenState extends State<LoginScreen> {
     final String username = _usernameController.text;
     final String password = _passwordController.text;
 
-    setLoadingTrue();
+    _setLoadingTrue();
     var response = await postLogin(username, password);
     var data = jsonDecode(response.body);
-    setLoadingFalse();
+    _setLoadingFalse();
 
     if (response.statusCode == 200) {
       var accessToken = data['data'];
 
-      setLoadingTrue();
+      _setLoadingTrue();
       // Se guarda el accessToken en el local storage
       await SharedLocalStore.setAccessToken(accessToken);
 
@@ -181,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // Se resetea el username del local storage
         await SharedLocalStore.resetLastUsername();
       }
-      setLoadingFalse();
+      _setLoadingFalse();
 
       // Se carga la pantalla de homeLogged
       if (context.mounted) {

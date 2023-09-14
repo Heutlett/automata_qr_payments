@@ -54,7 +54,7 @@ class _AccountInfoCardSharedAccState extends State<AccountInfoCardSharedAcc> {
                               children: [
                                 Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     MyText(
                                       text: user.nombreCompleto,

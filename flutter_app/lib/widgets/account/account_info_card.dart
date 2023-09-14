@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/route_names.dart';
+import 'package:flutter_app/managers/provider_manager.dart';
 import 'package:flutter_app/services/account/account_service.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/widgets/account/account_info_activities.dart';
@@ -9,6 +11,7 @@ import 'package:flutter_app/widgets/account/account_info_card_shared_acc.dart';
 import 'package:flutter_app/models/ubicacion.dart';
 import 'package:flutter_app/utils/utils.dart';
 import 'package:flutter_app/widgets/general/my_text.dart';
+import 'package:provider/provider.dart';
 
 class AccountInfoCard extends StatefulWidget {
   final Account account;
@@ -27,46 +30,25 @@ class AccountInfoCard extends StatefulWidget {
 }
 
 class _AccountInfoCardState extends State<AccountInfoCard> {
-  bool isExpand = false;
+  bool isExpanded = false;
 
   late Account account;
   late int addButtons;
 
-  UbicacionService ubicacionService = UbicacionService();
-
-  List<Provincia> provincias = [];
-  List<Canton>? _cantones;
-  List<Distrito>? _distritos;
-  List<Barrio>? _barrios;
-
-  Ubicacion? ubicacion;
-  Provincia? selectedProvincia;
-  Canton? selectedCanton;
-  Distrito? selectedDistrito;
-  Barrio? selectedBarrio;
-
-  final String errorUbicacionMessage =
-      'Ha ocurrido un error al obtener la ubicación de la cuenta.';
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     account = widget.account;
     addButtons = widget.addButtons;
-    loadPronvincias();
-  }
-
-  void loadPronvincias() async {
-    List<Provincia> fetchedProvincias = await ubicacionService.getProvincias();
-    setState(() {
-      provincias = fetchedProvincias;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return provincias.isEmpty
-        ? const CircularProgressIndicator() // Indicador de carga
+    final providerManager = Provider.of<ProviderManager>(context);
+    return isLoading
+        ? const Center(child: CircularProgressIndicator()) // Indicador de carga
         : Column(
             children: [
               AccountInfoCardHeader(
@@ -74,7 +56,7 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
                 cedulaNumero: account.cedulaNumero,
                 nombre: account.nombre,
               ),
-              isExpand == true
+              isExpanded == true
                   ? AccountInfoCardExpand(account: account)
                   : const SizedBox(),
               AccountInfoCardActivities(activities: widget.account.actividades),
@@ -111,14 +93,16 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
                   ? AccountInfoCardButtons(
                       expandInfo: expandInfo,
                       editAcc: () {
-                        editAcc(context);
+                        _showEditAccountScreen(context, providerManager);
                       },
                       deleteAcc: account.esCompartida
                           ? () {
-                              deleteSharedAcc(context, account.id);
+                              _deleteSharedAcc(
+                                  context, account.id, providerManager);
                             }
                           : () {
-                              deleteOwnAcc(context, account.id);
+                              _deleteOwnAcc(
+                                  context, account.id, providerManager);
                             },
                       shareAcc: () {
                         shareAcc(context);
@@ -133,78 +117,118 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
 
   void expandInfo() {
     setState(() {
-      if (isExpand) {
-        isExpand = false;
+      if (isExpanded) {
+        isExpanded = false;
       } else {
-        isExpand = true;
+        isExpanded = true;
       }
     });
   }
 
-  void editAcc(BuildContext context) async {
-    var response = await ubicacionService.getUbicacion(account.ubicacionCodigo);
+  void _setLoadingTrue() {
+    setState(() {
+      isLoading = true;
+    });
+  }
 
+  void _setLoadingFalse() {
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<String> _setUbicacionToProviderManager(
+      ProviderManager providerManager) async {
     try {
-      ubicacion = response;
+      UbicacionService ubicacionService = UbicacionService();
+
+      List<Provincia> provincias = [];
+
+      List<Provincia> fetchedProvincias =
+          await ubicacionService.getProvincias();
+      setState(() {
+        provincias = fetchedProvincias;
+      });
+
+      Ubicacion? ubicacion;
+      Provincia selectedProvincia;
+      Canton selectedCanton;
+      Distrito selectedDistrito;
+
+      ubicacion = await ubicacionService.getUbicacion(account.ubicacionCodigo);
+
       if (ubicacion != null) {
         selectedProvincia = provincias
             .firstWhere((provincia) => provincia.id == ubicacion!.provincia.id);
       } else {
-        throw Exception('Ubicación nula');
+        throw Exception('La ubicación de la cuenta es nula');
       }
 
-      if (selectedProvincia != null) {
-        var cantonesList = await ubicacionService
-            .getCantonesByProvincia(selectedProvincia!.id);
+      var cantonesList =
+          await ubicacionService.getCantonesByProvincia(selectedProvincia.id);
 
-        _cantones = cantonesList.map((data) {
-          return Canton(
-            id: data.id,
-            nombre: data.nombre.toUpperCase(),
-          );
-        }).toList();
-      }
+      providerManager.setCantonesSelectedEditAccount(cantonesList.map((data) {
+        return Canton(
+          id: data.id,
+          nombre: data.nombre.toUpperCase(),
+        );
+      }).toList());
 
-      selectedCanton =
-          _cantones!.firstWhere((canton) => canton.id == ubicacion!.canton.id);
+      selectedCanton = providerManager.cantonesSelectedEditAccount!
+          .firstWhere((canton) => canton.id == ubicacion!.canton.id);
 
-      if (selectedCanton != null) {
-        var distritosList = await ubicacionService.getDistritosByCanton(
-            selectedProvincia!.id, selectedCanton!.id);
+      var distritosList = await ubicacionService.getDistritosByCanton(
+          selectedProvincia.id, selectedCanton.id);
 
-        _distritos = distritosList.map((data) {
-          return Distrito(
-            id: data.id,
-            nombre: data.nombre.toUpperCase(),
-          );
-        }).toList();
-      }
+      providerManager.setDistritosSelectedEditAccount(distritosList.map((data) {
+        return Distrito(
+          id: data.id,
+          nombre: data.nombre.toUpperCase(),
+        );
+      }).toList());
 
-      selectedDistrito = _distritos!
+      selectedDistrito = providerManager.distritosSelectedEditAccount!
           .firstWhere((distrito) => distrito.id == ubicacion!.distrito.id);
 
-      if (selectedDistrito != null) {
-        var barriosList = await ubicacionService.getBarriosByDistrito(
-            selectedProvincia!.id, selectedCanton!.id, selectedDistrito!.id);
+      var barriosList = await ubicacionService.getBarriosByDistrito(
+          selectedProvincia.id, selectedCanton.id, selectedDistrito.id);
 
-        _barrios = barriosList.map((data) {
-          return Barrio(
-            id: data.id,
-            nombre: data.nombre.toUpperCase(),
-          );
-        }).toList();
-      }
+      providerManager.setBarriosSelectedEditAccount(barriosList.map((data) {
+        return Barrio(
+          id: data.id,
+          nombre: data.nombre.toUpperCase(),
+        );
+      }).toList());
+
+      return '';
     } catch (e) {
+      return e.toString();
+    }
+  }
+
+  void _showEditAccountScreen(
+      BuildContext context, ProviderManager providerManager) async {
+    _setLoadingTrue();
+    String result = await _setUbicacionToProviderManager(providerManager);
+    _setLoadingFalse();
+
+    if (result != '') {
       if (context.mounted) {
-        String exError = e.toString();
         showAlertDialog(
-            context, 'Error', "$errorUbicacionMessage: $exError", 'Aceptar');
+          context,
+          'Error',
+          'Ha ocurrido un error al obtener la ubicación de la cuenta: $result',
+          'Aceptar',
+        );
       }
     }
 
+    _setLoadingTrue();
+    providerManager.setSelectedEditAccount(account);
+    _setLoadingFalse();
+
     if (context.mounted) {
-      Navigator.of(context).pushNamed("/edit_account",
-          arguments: [account, _cantones, _distritos, _barrios]);
+      Navigator.of(context).pushNamed(editAccountRouteName);
     }
   }
 
@@ -212,64 +236,96 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
     var codigoQR = await getAccountShareQr(int.parse(account.id));
 
     if (context.mounted) {
-      Navigator.of(context)
-          .pushNamed("/share_account", arguments: [account, codigoQR]);
+      Navigator.of(context).pushNamed(
+        shareAccountRouteName,
+        arguments: [account, codigoQR],
+      );
     }
   }
 
-  void deleteOwnAcc(BuildContext context, String accountId) async {
+  Future<void> _loadAccounts(
+      ProviderManager providerManager, List<Account> accounts) async {
+    providerManager.setMyAccounts(accounts);
+  }
+
+  Future<void> _showAccountManagementScreen(BuildContext context,
+      ProviderManager providerManager, List<Account> accounts) async {
+    _setLoadingTrue();
+    await _loadAccounts(providerManager, accounts);
+    _setLoadingFalse();
+
+    if (context.mounted) {
+      Navigator.of(context).pushNamed(accountManagementRouteName);
+    }
+  }
+
+  void _deleteOwnAcc(BuildContext context, String accountId,
+      ProviderManager providerManager) async {
     showAlertDialog2Options(
         context,
         'Aviso',
         '¿Está seguro de que desea eliminar esta cuenta?',
         'Si, acepto',
         'No, cancelar', () {
-      deleteOwnAccConfirm(context, accountId);
+      _deleteOwnAccConfirm(context, accountId, providerManager);
     });
   }
 
-  void deleteOwnAccConfirm(BuildContext context, String accountId) async {
-    var deleteResponse = await deleteOwnAccount(accountId);
-    if (context.mounted) {
-      if (deleteResponse.success) {
-        showAlertDialog(context, 'Cuenta eliminada',
-            'La cuenta ha sido eliminada correctamente.', 'Aceptar');
-      } else {
-        showAlertDialog(context, 'Error', deleteResponse.message, 'Aceptar');
+  void _deleteOwnAccConfirm(BuildContext context, String accountId,
+      ProviderManager providerManager) async {
+    _setLoadingTrue();
+    var response = await deleteOwnAccount(accountId);
+    _setLoadingFalse();
+
+    if (response.statusCode == 200) {
+      _setLoadingTrue();
+      List<Account> accounts = await mapAccountListResponse(response);
+      _setLoadingFalse();
+
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        _showAccountManagementScreen(context, providerManager, accounts);
       }
-    }
-    if (context.mounted) {
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          "/home_logged", (Route<dynamic> route) => false);
-      Navigator.of(context).pushNamed('/account_management');
+    } else {
+      if (context.mounted) {
+        showAlertDialog(context, 'Error',
+            'Ha ocurrido un error al intentar eliminar la cuenta', 'Aceptar');
+      }
     }
   }
 
-  void deleteSharedAcc(BuildContext context, String accountId) async {
+  void _deleteSharedAcc(BuildContext context, String accountId,
+      ProviderManager providerManager) async {
     showAlertDialog2Options(
         context,
         'Aviso',
         '¿Está seguro de que desea eliminar esta cuenta?',
         'Si, acepto',
         'No, cancelar', () {
-      deleteSharedAccConfirm(context, accountId);
+      _deleteSharedAccConfirm(context, accountId, providerManager);
     });
   }
 
-  void deleteSharedAccConfirm(BuildContext context, String accountId) async {
-    var deleteResponse = await deleteSharedAccount(accountId);
-    if (context.mounted) {
-      if (deleteResponse.success) {
-        showAlertDialog(context, 'Cuenta eliminada',
-            'La cuenta ha sido eliminada correctamente.', 'Aceptar');
-      } else {
-        showAlertDialog(context, 'Error', deleteResponse.message, 'Aceptar');
+  void _deleteSharedAccConfirm(BuildContext context, String accountId,
+      ProviderManager providerManager) async {
+    _setLoadingTrue();
+    var response = await deleteSharedAccount(accountId);
+    _setLoadingFalse();
+
+    if (response.statusCode == 200) {
+      _setLoadingTrue();
+      List<Account> accounts = await mapAccountListResponse(response);
+      _setLoadingFalse();
+
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        _showAccountManagementScreen(context, providerManager, accounts);
       }
-    }
-    if (context.mounted) {
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          "/home_logged", (Route<dynamic> route) => false);
-      Navigator.of(context).pushNamed('/account_management');
+    } else {
+      if (context.mounted) {
+        showAlertDialog(context, 'Error',
+            'Ha ocurrido un error al intentar eliminar la cuenta', 'Aceptar');
+      }
     }
   }
 }

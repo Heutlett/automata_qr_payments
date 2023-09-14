@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/constants.dart';
 import 'package:flutter_app/widgets/general/my_text.dart';
 import 'package:flutter_app/utils/utils.dart';
 
-import '../../../models/producto.dart';
+import '../../models/producto.dart';
 
-class ProductosForm extends StatefulWidget {
+class FacturaProductsForm extends StatefulWidget {
   final List<Producto> products;
 
-  const ProductosForm({super.key, required this.products});
+  const FacturaProductsForm({super.key, required this.products});
 
   @override
-  State<ProductosForm> createState() => _ProductosFormState();
+  State<FacturaProductsForm> createState() => _FacturaProductsFormState();
 }
 
-class _ProductosFormState extends State<ProductosForm> {
+class _FacturaProductsFormState extends State<FacturaProductsForm> {
   String? _selectedOptionUnidadMedida;
   int? _selectedOptionTipoCodigoComercial;
   int? _selectedOptionCabysId;
@@ -21,30 +22,6 @@ class _ProductosFormState extends State<ProductosForm> {
   int numeroLineaDetalle = 1;
 
   late List<Producto> products;
-
-  final Map<int, String> _cabysOptions = {
-    1: 'Productos de la agricultura, silvicultura y pesca',
-    2: 'Minerales; electricidad, gas y agua',
-    3: 'Productos alimenticios, bebidas y tabaco',
-    4: 'Bienes transportables.'
-  };
-
-  final List<String> _unidadesMedida = [
-    'Al',
-    'Alc',
-    'Cm',
-    'I',
-    'Os',
-    'Sp',
-  ];
-
-  final Map<int, String> _tiposCodigoComercial = {
-    1: 'Código del producto del vendedor',
-    2: 'Código del producto del comprador',
-    3: 'Código del producto asignado por la industria',
-    4: 'Código de uso interno',
-    99: 'Otros',
-  };
 
   final _cantidadController = TextEditingController();
   final _detalleController = TextEditingController();
@@ -134,7 +111,7 @@ class _ProductosFormState extends State<ProductosForm> {
                       const SizedBox(height: 8.0),
                       DropdownButtonFormField<int>(
                         value: _selectedOptionCabysId,
-                        items: _cabysOptions.entries.map((entry) {
+                        items: cabysOptions.entries.map((entry) {
                           return DropdownMenuItem<int>(
                             value: entry.key,
                             child: Text(entry.value,
@@ -152,11 +129,13 @@ class _ProductosFormState extends State<ProductosForm> {
                       ),
                       DropdownButtonFormField<int>(
                         value: _selectedOptionTipoCodigoComercial,
-                        items: _tiposCodigoComercial.entries.map((entry) {
+                        items: tiposCodigoComercial.entries.map((entry) {
                           return DropdownMenuItem<int>(
                             value: entry.key,
-                            child: Text(entry.value,
-                                style: const TextStyle(fontSize: 15)),
+                            child: Text(
+                              entry.value,
+                              style: const TextStyle(fontSize: 15),
+                            ),
                           );
                         }).toList(),
                         onChanged: (int? newValue) {
@@ -238,7 +217,7 @@ class _ProductosFormState extends State<ProductosForm> {
                                   _selectedOptionUnidadMedida = newValue;
                                 });
                               },
-                              items: _unidadesMedida
+                              items: unidadesMedida
                                   .map<DropdownMenuItem<String>>(
                                       (String value) {
                                 return DropdownMenuItem<String>(
@@ -412,8 +391,8 @@ class _ProductosFormState extends State<ProductosForm> {
                                                   ]),
                                               const SizedBox(height: 5),
                                               MyText(
-                                                text: _cabysOptions[
-                                                    prod.cabysId]!,
+                                                text:
+                                                    cabysOptions[prod.cabysId]!,
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -444,7 +423,7 @@ class _ProductosFormState extends State<ProductosForm> {
                                                                         .bold,
                                                               ),
                                                               MyText(
-                                                                text: _tiposCodigoComercial[
+                                                                text: tiposCodigoComercial[
                                                                     int.parse(prod
                                                                         .tipoCodigoComercial)]!,
                                                                 fontSize: 16,
