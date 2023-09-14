@@ -10,7 +10,7 @@ const postRegisterUrl = 'https://$authApi/api/auth/register';
 const accountManagementUrl = 'https://$facturasApi/api/Cuenta';
 const getAccountQrUrl =
     'https://$facturasApi/api/Cuenta/billing/cuenta_receptor';
-const postShareAccountUrl = "https://$facturasApi/api/Cuenta/share";
+const postAddSharedAccountByQrUrl = "https://$facturasApi/api/Cuenta/share";
 const getAccountsUrl = 'https://$facturasApi/api/Cuenta/GetAll';
 
 // facturas management

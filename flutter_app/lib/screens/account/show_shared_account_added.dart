@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/managers/provider_manager.dart';
-import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/services/account/account_service.dart';
 import 'package:flutter_app/widgets/account/account_info_card.dart';
 import 'package:flutter_app/widgets/general/my_button.dart';
@@ -26,12 +25,9 @@ class _ShowSharedAccountAddedScreenState
   Widget build(BuildContext context) {
     final providerManager = Provider.of<ProviderManager>(context);
 
-    final Account sharedAccount =
-        ModalRoute.of(context)?.settings.arguments as Account;
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Selección de cuentas'),
+        title: const Text('Cuenta agregada'),
       ),
       body: isLoading
           ? const Center(
@@ -50,15 +46,16 @@ class _ShowSharedAccountAddedScreenState
                   Card(
                     elevation: 5,
                     margin: const EdgeInsets.all(8.0),
-                    color: sharedAccount.cedulaTipo == 'Juridica'
+                    color: providerManager.addedSharedAccount!.cedulaTipo ==
+                            'Juridica'
                         ? const Color.fromARGB(255, 180, 193, 255)
                         : const Color.fromARGB(255, 180, 234, 255),
                     child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: AccountInfoCard(
-                          account: sharedAccount,
+                          account: providerManager.addedSharedAccount!,
                           addButtons: 1,
-                          showIsShared: false,
+                          showIsShared: true,
                         )),
                   ),
                   const SizedBox(height: 20),

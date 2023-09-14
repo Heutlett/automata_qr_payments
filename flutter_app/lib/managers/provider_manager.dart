@@ -21,6 +21,10 @@ class ProviderManager extends ChangeNotifier {
   List<Barrio>? _barriosSelectedEditAccount;
   List<Barrio>? get barriosSelectedEditAccount => _barriosSelectedEditAccount;
 
+  // -- Add shared account
+  Account? _addedSharedAccount;
+  Account? get addedSharedAccount => _addedSharedAccount;
+
   // -- Accounts
   void setMyAccounts(List<Account> accounts) {
     _myAccounts.clear();
@@ -68,6 +72,12 @@ class ProviderManager extends ChangeNotifier {
 
   void clearBarriosSelectedEditAccount() {
     _barriosSelectedEditAccount!.clear();
+    notifyListeners();
+  }
+
+  // -- Add shared account
+  void setAddedSharedAccount(Account addedSharedAccount) {
+    _addedSharedAccount = addedSharedAccount;
     notifyListeners();
   }
 }

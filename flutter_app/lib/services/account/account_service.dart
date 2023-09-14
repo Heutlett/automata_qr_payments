@@ -194,7 +194,8 @@ Future<ServerResponse<Account?>> getCuentaByQr(String codigoQr) async {
   return serverResponse;
 }
 
-Future<ServerResponse<Account?>> shareAccountByQr(String codigoQr) async {
+Future<ServerResponse<Account?>> postAddSharedAccountByQr(
+    String codigoQr) async {
   String token = await SharedLocalStore.getAccessToken();
 
   UbicacionService ubicacionService = UbicacionService();
@@ -208,9 +209,7 @@ Future<ServerResponse<Account?>> shareAccountByQr(String codigoQr) async {
     "Authorization": "bearer $token"
   };
 
-  print(json.encode(body));
-
-  var response = await http.post(Uri.parse(postShareAccountUrl),
+  var response = await http.post(Uri.parse(postAddSharedAccountByQrUrl),
       headers: headers, body: json.encode(body));
 
   ServerResponse<Account?> serverResponse;
