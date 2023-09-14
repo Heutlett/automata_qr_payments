@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/actividad.dart';
-import 'package:flutter_app/screens/widgets/general/my_text.dart';
+import 'package:flutter_app/widgets/general/my_text.dart';
 
 class AccountInfoCardActivities extends StatelessWidget {
   final List<Actividad>? activities;

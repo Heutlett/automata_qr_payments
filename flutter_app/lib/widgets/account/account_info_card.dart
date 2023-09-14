@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/services/account/account_service.dart';
 import 'package:flutter_app/models/account.dart';
-import 'package:flutter_app/screens/widgets/account/account_info_activities.dart';
-import 'package:flutter_app/screens/widgets/account/account_info_card_buttons.dart';
-import 'package:flutter_app/screens/widgets/account/account_info_expand.dart';
-import 'package:flutter_app/screens/widgets/account/account_info_header.dart';
-import 'package:flutter_app/screens/widgets/account/account_info_card_shared_acc.dart';
+import 'package:flutter_app/widgets/account/account_info_activities.dart';
+import 'package:flutter_app/widgets/account/account_info_card_buttons.dart';
+import 'package:flutter_app/widgets/account/account_info_expand.dart';
+import 'package:flutter_app/widgets/account/account_info_header.dart';
+import 'package:flutter_app/widgets/account/account_info_card_shared_acc.dart';
 import 'package:flutter_app/models/ubicacion.dart';
 import 'package:flutter_app/utils/utils.dart';
-import 'package:flutter_app/screens/widgets/general/my_text.dart';
+import 'package:flutter_app/widgets/general/my_text.dart';
 
 class AccountInfoCard extends StatefulWidget {
   final Account account;
   final int addButtons;
+  final bool showIsShared;
 
-  const AccountInfoCard(
-      {super.key, required this.account, this.addButtons = 0});
+  const AccountInfoCard({
+    super.key,
+    required this.account,
+    this.addButtons = 0,
+    required this.showIsShared,
+  });
 
   @override
   State<AccountInfoCard> createState() => _AccountInfoCardState();
@@ -73,7 +78,7 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
                   ? AccountInfoCardExpand(account: account)
                   : const SizedBox(),
               AccountInfoCardActivities(activities: widget.account.actividades),
-              addButtons == 2
+              widget.showIsShared
                   ? account.esCompartida
                       ? Card(
                           color: Colors.amber[300],

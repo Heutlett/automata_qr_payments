@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/models/account.dart';
-import 'package:flutter_app/screens/widgets/general/my_button.dart';
+import 'package:flutter_app/widgets/general/my_button.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_app/services/account/account_service.dart';
 
 import 'package:flutter_app/models/server_response.dart';
 import 'package:flutter_app/utils/utils.dart';
-import 'package:flutter_app/screens/widgets/general/my_text.dart';
+import 'package:flutter_app/widgets/general/my_text.dart';
 
-class AddSharedAccount extends StatefulWidget {
-  const AddSharedAccount({Key? key}) : super(key: key);
+class AddSharedAccountScreen extends StatefulWidget {
+  static const String routeName = addSharedAccountRouteName;
+
+  const AddSharedAccountScreen({Key? key}) : super(key: key);
 
   @override
-  State<AddSharedAccount> createState() => _AddSharedAccountState();
+  State<AddSharedAccountScreen> createState() => _AddSharedAccountScreenState();
 }
 
-class _AddSharedAccountState extends State<AddSharedAccount> {
+class _AddSharedAccountScreenState extends State<AddSharedAccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +64,7 @@ class _AddSharedAccountState extends State<AddSharedAccount> {
         Account cuenta = sharedAccount;
 
         Navigator.of(context)
-            .pushNamed("/added_shared_account", arguments: cuenta);
+            .pushNamed(showSharedAccountAddedRouteName, arguments: cuenta);
       }
     }
   }

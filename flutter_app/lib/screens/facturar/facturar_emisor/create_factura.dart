@@ -1,52 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/constants.dart';
+import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/models/factura.dart';
 import 'package:flutter_app/screens/account/accounts_form.dart';
 import 'package:flutter_app/models/account.dart';
-import 'package:flutter_app/screens/factura_emisor/productos_factura.dart';
+import 'package:flutter_app/screens/facturar/facturar_emisor/productos_factura.dart';
 import 'package:flutter_app/utils/utils.dart';
 
-import '../../models/actividad.dart';
-import '../../models/producto.dart';
-import '../widgets/general/my_text.dart';
+import '../../../models/actividad.dart';
+import '../../../models/producto.dart';
+import '../../../widgets/general/my_text.dart';
 
-class CreateFactura extends StatefulWidget {
-  const CreateFactura({super.key});
+class CreateFacturaScreen extends StatefulWidget {
+  static const String routeName = createFacturaRouteName;
+
+  const CreateFacturaScreen({super.key});
 
   @override
-  State<CreateFactura> createState() => _CreateFacturaState();
+  State<CreateFacturaScreen> createState() => _CreateFacturaScreenState();
 }
 
-class _CreateFacturaState extends State<CreateFactura> {
-  int? _selectedIdMoneda = 250;
-  int? _selectedMedioPago = 1;
-  int? _selectedCondicionVenta = 1;
-
-  final Map<int, String> _tiposMoneda = {
-    250: 'Colones',
-    56: 'Dolares',
-  };
-
-  final Map<int, String> _mediosPago = {
-    1: 'Efectivo',
-    2: 'Tarjeta',
-    3: 'Cheque',
-    4: 'Transferencia deposito',
-    5: 'Recaudado terceros',
-    99: 'Otros',
-  };
-
-  final Map<int, String> _condicionesVenta = {
-    1: 'Contado',
-    2: 'Credito',
-    3: 'Consignación',
-    4: 'Apartado',
-    5: 'Arrendamiento opción compra',
-    6: 'Arrendamiento función financiera',
-    7: 'Cobro a favor tercero',
-    8: 'Servicios estado crédito',
-    9: 'Pago servicio estado',
-    99: 'Otros',
-  };
+class _CreateFacturaScreenState extends State<CreateFacturaScreen> {
+  int? _selectedIdMoneda = defaultMonedaId;
+  int? _selectedMedioPago = defaultMedioPago;
+  int? _selectedCondicionVenta = defaultCondicionVenta;
 
   final List<Producto> productos = [];
 
@@ -119,7 +96,7 @@ class _CreateFacturaState extends State<CreateFactura> {
                           ),
                           DropdownButtonFormField<int>(
                             value: _selectedIdMoneda,
-                            items: _tiposMoneda.entries.map((entry) {
+                            items: tiposMoneda.entries.map((entry) {
                               return DropdownMenuItem<int>(
                                 value: entry.key,
                                 child: Text(entry.value,
@@ -143,7 +120,7 @@ class _CreateFacturaState extends State<CreateFactura> {
                           ),
                           DropdownButtonFormField<int>(
                             value: _selectedMedioPago,
-                            items: _mediosPago.entries.map((entry) {
+                            items: mediosPago.entries.map((entry) {
                               return DropdownMenuItem<int>(
                                 value: entry.key,
                                 child: Text(entry.value,
@@ -167,7 +144,7 @@ class _CreateFacturaState extends State<CreateFactura> {
                           ),
                           DropdownButtonFormField<int>(
                             value: _selectedCondicionVenta,
-                            items: _condicionesVenta.entries.map((entry) {
+                            items: condicionesVenta.entries.map((entry) {
                               return DropdownMenuItem<int>(
                                 value: entry.key,
                                 child: Text(entry.value,
@@ -271,7 +248,7 @@ class _CreateFacturaState extends State<CreateFactura> {
         );
         if (context.mounted) {
           Navigator.of(context).pushNamed(
-            "/show_factura_json",
+            showFacturaRouteName,
             arguments: [
               factura,
             ],

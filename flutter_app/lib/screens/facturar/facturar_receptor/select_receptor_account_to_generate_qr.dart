@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/models/account.dart';
-import 'package:flutter_app/screens/widgets/general/my_button.dart';
+import 'package:flutter_app/widgets/general/my_button.dart';
 import 'package:flutter_app/services/account/account_service.dart';
 
-import 'package:flutter_app/screens/widgets/account/account_info_card.dart';
+import 'package:flutter_app/widgets/account/account_info_card.dart';
 import 'package:flutter_app/utils/utils.dart';
 
-class SelectAccountQrPage extends StatelessWidget {
-  const SelectAccountQrPage({super.key});
+class SelectReceptorAccountToGenerateQrScreen extends StatelessWidget {
+  static const String routeName = selectReceptorAccountToGenerateQrRouteName;
+
+  const SelectReceptorAccountToGenerateQrScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +39,11 @@ class SelectAccountQrPage extends StatelessWidget {
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: AccountInfoCard(account: acc, addButtons: 1),
+                            child: AccountInfoCard(
+                              account: acc,
+                              addButtons: 1,
+                              showIsShared: true,
+                            ),
                           ),
                           MyButton(
                             text: 'Seleccionar',
@@ -74,7 +81,7 @@ class SelectAccountQrPage extends StatelessWidget {
     ];
 
     if (context.mounted) {
-      Navigator.of(context).pushNamed("/generate_qr", arguments: args);
+      Navigator.of(context).pushNamed(showReceptorQrRouteName, arguments: args);
     }
   }
 }

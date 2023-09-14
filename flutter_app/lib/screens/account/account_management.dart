@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/managers/provider_manager.dart';
 import 'package:flutter_app/models/account.dart';
-import 'package:flutter_app/screens/widgets/account/account_info_card.dart';
+import 'package:flutter_app/widgets/account/account_info_card.dart';
 import 'package:provider/provider.dart';
 
 class AccountManagementScreen extends StatefulWidget {
+  static const String routeName = accountManagementRouteName;
+
   const AccountManagementScreen({Key? key}) : super(key: key);
   @override
   State<AccountManagementScreen> createState() =>
@@ -72,7 +75,8 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      AccountInfoCard(account: acc, addButtons: 2),
+                      AccountInfoCard(
+                          account: acc, addButtons: 2, showIsShared: true),
                     ],
                   ),
                 ),
@@ -85,10 +89,10 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
   }
 
   void _createAccount(BuildContext context) async {
-    Navigator.of(context).pushNamed("/create_account");
+    Navigator.of(context).pushNamed(createAccountRouteName);
   }
 
   void _addSharedAccount(BuildContext context) async {
-    Navigator.of(context).pushNamed("/add_shared_account");
+    Navigator.of(context).pushNamed(shareAccountRouteName);
   }
 }

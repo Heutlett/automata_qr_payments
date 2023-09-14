@@ -14,27 +14,35 @@ const String registerTitle = 'Registro de usuario';
 // login.dart
 const String loginTitle = 'Inicio de sesión';
 
-Map<int, String> days = {
-  1: 'Lunes',
-  2: 'Martes',
-  3: 'Miércoles',
-  4: 'Jueves',
-  5: 'Viernes',
-  6: 'Sábado',
-  7: 'Domingo',
+// create_factura.dart
+
+const int defaultMonedaId = 250;
+const int defaultMedioPago = 1;
+const int defaultCondicionVenta = 1;
+
+final Map<int, String> tiposMoneda = {
+  250: 'Colones',
+  56: 'Dolares',
 };
 
-Map<int, String> months = {
-  1: 'Enero',
-  2: 'Febrero',
-  3: 'Marzo',
-  4: 'Abril',
-  5: 'Mayo',
-  6: 'Junio',
-  7: 'Julio',
-  8: 'Agosto',
-  9: 'Septiembre',
-  10: 'Octubre',
-  11: 'Noviembre',
-  12: 'Diciembre',
+final Map<int, String> mediosPago = {
+  1: 'Efectivo',
+  2: 'Tarjeta',
+  3: 'Cheque',
+  4: 'Transferencia deposito',
+  5: 'Recaudado terceros',
+  99: 'Otros',
+};
+
+final Map<int, String> condicionesVenta = {
+  1: 'Contado',
+  2: 'Credito',
+  3: 'Consignación',
+  4: 'Apartado',
+  5: 'Arrendamiento opción compra',
+  6: 'Arrendamiento función financiera',
+  7: 'Cobro a favor tercero',
+  8: 'Servicios estado crédito',
+  9: 'Pago servicio estado',
+  99: 'Otros',
 };

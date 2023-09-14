@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/route_names.dart';
 import 'dart:convert';
 
-import '../../models/factura.dart';
-import '../../services/factura/factura_service.dart';
-import '../../utils/utils.dart';
-import '../widgets/general/my_text.dart';
+import 'package:flutter_app/models/factura.dart';
+import 'package:flutter_app/services/factura/factura_service.dart';
+import 'package:flutter_app/utils/utils.dart';
+import 'package:flutter_app/widgets/general/my_text.dart';
 
-class FacturaScreen extends StatelessWidget {
-  const FacturaScreen({super.key});
+class ShowFacturaScreen extends StatelessWidget {
+  static const String routeName = showFacturaRouteName;
+
+  const ShowFacturaScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -87,11 +90,20 @@ class FacturaScreen extends StatelessWidget {
 
     if (context.mounted) {
       if (response.statusCode == 200) {
-        showAlertDialogWithRoute(context, 'Factura enviada',
-            'La factura se envió exitosamente.', 'Aceptar', '/home_logged');
+        showAlertDialogWithRoute(
+          context,
+          'Factura enviada',
+          'La factura se envió exitosamente.',
+          'Aceptar',
+          homeLoggedRouteName,
+        );
       } else {
-        showAlertDialog(context, 'Error al enviar factura',
-            'Ocurrió un error al enviar la factura.', 'Aceptar');
+        showAlertDialog(
+          context,
+          'Error al enviar factura',
+          'Ocurrió un error al enviar la factura.',
+          'Aceptar',
+        );
       }
     }
   }

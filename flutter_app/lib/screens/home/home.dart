@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/constants.dart';
 import 'package:flutter_app/constants/route_names.dart';
-import 'package:flutter_app/screens/widgets/general/my_button.dart';
-import '../widgets/general/my_text.dart';
+import 'package:flutter_app/widgets/general/my_button.dart';
+import '../../widgets/general/my_text.dart';
 
 class HomeScreen extends StatelessWidget {
   static const routeName = homeRouteName;

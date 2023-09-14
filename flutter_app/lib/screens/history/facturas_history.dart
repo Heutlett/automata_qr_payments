@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/models/comprobante_summary.dart';
-import 'package:flutter_app/screens/widgets/records/record_card.dart';
+import 'package:flutter_app/widgets/history/history_card.dart';
 import 'package:flutter_app/utils/utils.dart';
 
 import '../../models/server_response.dart';
 import '../../services/factura/factura_service.dart';
-import '../widgets/general/my_text.dart';
+import '../../widgets/general/my_text.dart';
 
-class SimpleRecordsPage extends StatefulWidget {
-  const SimpleRecordsPage({Key? key}) : super(key: key);
+class FacturasHistoryScreen extends StatefulWidget {
+  static const String routeName = facturasHistoryRouteName;
+
+  const FacturasHistoryScreen({Key? key}) : super(key: key);
 
   @override
-  State<SimpleRecordsPage> createState() => _SimpleRecordsPageState();
+  State<FacturasHistoryScreen> createState() => _FacturasHistoryScreenState();
 }
 
-class _SimpleRecordsPageState extends State<SimpleRecordsPage> {
+class _FacturasHistoryScreenState extends State<FacturasHistoryScreen> {
   int? _selectedAccount;
 
   List<ComprobanteSummary>? data = [];
@@ -125,7 +128,11 @@ class _SimpleRecordsPageState extends State<SimpleRecordsPage> {
         });
       } else {
         showAlertDialog(
-            context, "Error", "No se ha encontrado la cuenta", "Aceptar");
+          context,
+          "Error",
+          "No se ha encontrado la cuenta",
+          "Aceptar",
+        );
       }
     }
   }

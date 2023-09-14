@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/screens/widgets/account/account_info_header.dart';
+import 'package:flutter_app/constants/route_names.dart';
+import 'package:flutter_app/widgets/account/account_info_header.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../models/account.dart';
-import '../widgets/general/my_button.dart';
-import '../widgets/general/my_text.dart';
+import '../../widgets/general/my_button.dart';
+import '../../widgets/general/my_text.dart';
 
 class ShareAccountScreen extends StatefulWidget {
+  static const String routeName = shareAccountRouteName;
+
   const ShareAccountScreen({super.key});
 
   @override
@@ -88,7 +91,7 @@ class _ShareAccountScreenState extends State<ShareAccountScreen> {
 
   void _showHome(BuildContext context) {
     Navigator.of(context).pushNamedAndRemoveUntil(
-        "/home_logged", (Route<dynamic> route) => false);
-    Navigator.of(context).pushNamed('/account_management');
+        homeLoggedRouteName, (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamed(accountManagementRouteName);
   }
 }

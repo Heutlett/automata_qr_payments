@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/models/account.dart';
-import 'package:flutter_app/screens/widgets/account/account_info_card.dart';
-import 'package:flutter_app/screens/widgets/general/my_button.dart';
+import 'package:flutter_app/widgets/account/account_info_card.dart';
+import 'package:flutter_app/widgets/general/my_button.dart';
 
-import 'package:flutter_app/screens/widgets/general/my_text.dart';
+import 'package:flutter_app/widgets/general/my_text.dart';
 
-class SelectAccountManagementScreen extends StatefulWidget {
-  const SelectAccountManagementScreen({Key? key}) : super(key: key);
+class ShowSelectedAccountsScreen extends StatefulWidget {
+  static const String routeName = showSelectedAccountsRouteName;
+
+  const ShowSelectedAccountsScreen({Key? key}) : super(key: key);
 
   @override
-  State<SelectAccountManagementScreen> createState() =>
-      _SelectAccountManagementScreenState();
+  State<ShowSelectedAccountsScreen> createState() =>
+      _ShowSelectedAccountsScreenState();
 }
 
-class _SelectAccountManagementScreenState
-    extends State<SelectAccountManagementScreen> {
+class _ShowSelectedAccountsScreenState
+    extends State<ShowSelectedAccountsScreen> {
   @override
   Widget build(BuildContext context) {
     final List<dynamic> data =
@@ -53,6 +56,7 @@ class _SelectAccountManagementScreenState
                   child: AccountInfoCard(
                     account: accountEmisor,
                     addButtons: 1,
+                    showIsShared: true,
                   )),
             ),
             const SizedBox(height: 20),
@@ -72,6 +76,7 @@ class _SelectAccountManagementScreenState
                   child: AccountInfoCard(
                     account: accountReceptor,
                     addButtons: 1,
+                    showIsShared: true,
                   )),
             ),
             const SizedBox(height: 20),
@@ -104,7 +109,7 @@ class _SelectAccountManagementScreenState
   ) {
     Navigator.pushNamed(
       context,
-      '/create_factura',
+      createFacturaRouteName,
       arguments: [
         accountEmisor,
         accountReceptor,

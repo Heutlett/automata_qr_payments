@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/models/account.dart';
-import 'package:flutter_app/screens/widgets/account/account_info_card.dart';
-import 'package:flutter_app/screens/widgets/general/my_button.dart';
+import 'package:flutter_app/widgets/account/account_info_card.dart';
+import 'package:flutter_app/widgets/general/my_button.dart';
 
-import 'package:flutter_app/screens/widgets/general/my_text.dart';
+import 'package:flutter_app/widgets/general/my_text.dart';
 
-class AddedSharedAccount extends StatefulWidget {
-  const AddedSharedAccount({Key? key}) : super(key: key);
+class ShowSharedAccountAddedScreen extends StatefulWidget {
+  static const String routeName = showSharedAccountAddedRouteName;
+
+  const ShowSharedAccountAddedScreen({Key? key}) : super(key: key);
 
   @override
-  State<AddedSharedAccount> createState() => _AddedSharedAccountState();
+  State<ShowSharedAccountAddedScreen> createState() =>
+      _ShowSharedAccountAddedScreenState();
 }
 
-class _AddedSharedAccountState extends State<AddedSharedAccount> {
+class _ShowSharedAccountAddedScreenState
+    extends State<ShowSharedAccountAddedScreen> {
   @override
   Widget build(BuildContext context) {
     final Account sharedAccount =
@@ -43,6 +48,7 @@ class _AddedSharedAccountState extends State<AddedSharedAccount> {
                   child: AccountInfoCard(
                     account: sharedAccount,
                     addButtons: 1,
+                    showIsShared: false,
                   )),
             ),
             const SizedBox(height: 20),
@@ -60,7 +66,7 @@ class _AddedSharedAccountState extends State<AddedSharedAccount> {
 
   void _goAccountManagement(BuildContext context) {
     Navigator.of(context).pushNamedAndRemoveUntil(
-        "/home_logged", (Route<dynamic> route) => false);
-    Navigator.of(context).pushNamed('/account_management');
+        homeLoggedRouteName, (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamed(accountManagementRouteName);
   }
 }

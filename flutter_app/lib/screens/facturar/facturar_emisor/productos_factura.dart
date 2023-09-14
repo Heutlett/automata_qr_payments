@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/screens/widgets/general/my_text.dart';
+import 'package:flutter_app/widgets/general/my_text.dart';
 import 'package:flutter_app/utils/utils.dart';
 
-import '../../models/producto.dart';
+import '../../../models/producto.dart';
 
 class ProductosForm extends StatefulWidget {
   final List<Producto> products;

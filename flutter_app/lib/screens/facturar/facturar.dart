@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/services/account/account_service.dart';
 
-import 'package:flutter_app/screens/widgets/general/my_button.dart';
-import 'package:flutter_app/screens/widgets/general/my_text.dart';
+import 'package:flutter_app/widgets/general/my_button.dart';
+import 'package:flutter_app/widgets/general/my_text.dart';
 
-class FacturarPage extends StatelessWidget {
-  const FacturarPage({Key? key}) : super(key: key);
+class FacturarScreen extends StatelessWidget {
+  static const String routeName = facturarRouteName;
+
+  const FacturarScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +35,7 @@ class FacturarPage extends StatelessWidget {
             const SizedBox(height: 20.0),
             MyButton(
               text: 'Generar QR receptor',
-              function: () => _showSelectAccountsQr(context),
+              function: () => _showSelectAccountReceptorForQr(context),
               fontSize: 16,
             ),
           ],
@@ -41,12 +44,13 @@ class FacturarPage extends StatelessWidget {
     );
   }
 
-  void _showSelectAccountsQr(BuildContext context) async {
+  void _showSelectAccountReceptorForQr(BuildContext context) async {
     var accounts = await getAccountList();
 
     if (context.mounted) {
-      Navigator.of(context)
-          .pushNamed("/select_account_qr", arguments: accounts);
+      Navigator.of(context).pushNamed(
+          selectReceptorAccountToGenerateQrRouteName,
+          arguments: accounts);
     }
   }
 
@@ -55,7 +59,7 @@ class FacturarPage extends StatelessWidget {
 
     if (context.mounted) {
       Navigator.of(context)
-          .pushNamed("/select_account_emisor", arguments: accounts);
+          .pushNamed(selectEmisorAccountRouteName, arguments: accounts);
     }
   }
 }

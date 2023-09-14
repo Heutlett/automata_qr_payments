@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/models/account.dart';
-import 'package:flutter_app/screens/widgets/general/my_button.dart';
+import 'package:flutter_app/widgets/general/my_button.dart';
 
-import 'package:flutter_app/screens/widgets/account/account_info_card.dart';
+import 'package:flutter_app/widgets/account/account_info_card.dart';
 
-class SelectAccountEmisorScreen extends StatelessWidget {
-  const SelectAccountEmisorScreen({Key? key}) : super(key: key);
+class SelectEmisorAccountScreen extends StatelessWidget {
+  static const String routeName = selectEmisorAccountRouteName;
+
+  const SelectEmisorAccountScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +32,11 @@ class SelectAccountEmisorScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    AccountInfoCard(account: account, addButtons: 1),
+                    AccountInfoCard(
+                      account: account,
+                      addButtons: 1,
+                      showIsShared: true,
+                    ),
                     MyButton(
                       text: 'Seleccionar',
                       function: () =>
@@ -48,6 +55,6 @@ class SelectAccountEmisorScreen extends StatelessWidget {
 
   void _showSelectReceptorAccount(BuildContext context, Account account) {
     Navigator.of(context)
-        .pushNamed("/select_account_receptor", arguments: account);
+        .pushNamed(scanQrReceptorAccountRouteName, arguments: account);
   }
 }

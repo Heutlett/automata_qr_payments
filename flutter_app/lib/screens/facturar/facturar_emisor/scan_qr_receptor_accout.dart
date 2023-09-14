@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/models/account.dart';
-import 'package:flutter_app/screens/widgets/account/account_info_card.dart';
-import 'package:flutter_app/screens/widgets/general/my_button.dart';
+import 'package:flutter_app/widgets/account/account_info_card.dart';
+import 'package:flutter_app/widgets/general/my_button.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_app/services/account/account_service.dart';
 
 import 'package:flutter_app/models/server_response.dart';
 import 'package:flutter_app/utils/utils.dart';
-import 'package:flutter_app/screens/widgets/general/my_text.dart';
+import 'package:flutter_app/widgets/general/my_text.dart';
 
-class SelectAccountReceptorScreen extends StatefulWidget {
-  const SelectAccountReceptorScreen({Key? key}) : super(key: key);
+class ScanQrReceptorAccountScreen extends StatefulWidget {
+  static const String routeName = scanQrReceptorAccountRouteName;
+
+  const ScanQrReceptorAccountScreen({Key? key}) : super(key: key);
 
   @override
-  State<SelectAccountReceptorScreen> createState() =>
-      _SelectAccountReceptorScreenState();
+  State<ScanQrReceptorAccountScreen> createState() =>
+      _ScanQrReceptorAccountScreenState();
 }
 
-class _SelectAccountReceptorScreenState
-    extends State<SelectAccountReceptorScreen> {
+class _ScanQrReceptorAccountScreenState
+    extends State<ScanQrReceptorAccountScreen> {
   @override
   Widget build(BuildContext context) {
     final Account accountEmisor =
@@ -47,7 +50,11 @@ class _SelectAccountReceptorScreenState
                   : const Color.fromARGB(255, 180, 234, 255),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: AccountInfoCard(account: accountEmisor, addButtons: 1),
+                child: AccountInfoCard(
+                  account: accountEmisor,
+                  addButtons: 1,
+                  showIsShared: true,
+                ),
               ),
             ),
             const SizedBox(height: 50),
@@ -89,6 +96,7 @@ class _SelectAccountReceptorScreenState
         await getCuentaByQr(accountEncryptedCode);
 
     Account? receptorAccount = getCuenta.data;
+
     final Account emisorAccount =
         ModalRoute.of(context)?.settings.arguments as Account;
 
@@ -103,7 +111,7 @@ class _SelectAccountReceptorScreenState
 
         if (validateAccounts(emisorAccount, receptorAccount)) {
           Navigator.of(context).pushNamed(
-            "/select_account_management",
+            showSelectedAccountsRouteName,
             arguments: [
               cuentas,
               receptorModelName,

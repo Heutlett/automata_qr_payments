@@ -8,7 +8,7 @@ import 'dart:convert';
 import 'package:flutter_app/services/user/user_service.dart';
 
 import 'package:flutter_app/utils/utils.dart';
-import 'package:flutter_app/screens/widgets/general/my_text.dart';
+import 'package:flutter_app/widgets/general/my_text.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {

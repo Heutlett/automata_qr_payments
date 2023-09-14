@@ -6,16 +6,16 @@ import 'package:flutter_app/services/user/user_service.dart';
 
 import 'package:flutter_app/utils/utils.dart';
 
-class RegistrationScreen extends StatefulWidget {
+class RegisterScreen extends StatefulWidget {
   static const routeName = registerRouteName;
 
-  const RegistrationScreen({Key? key}) : super(key: key);
+  const RegisterScreen({Key? key}) : super(key: key);
 
   @override
-  State<RegistrationScreen> createState() => _RegistrationScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegistrationScreenState extends State<RegistrationScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();

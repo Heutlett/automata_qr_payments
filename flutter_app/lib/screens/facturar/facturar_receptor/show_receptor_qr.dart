@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/screens/widgets/account/account_info_header.dart';
+import 'package:flutter_app/constants/route_names.dart';
+import 'package:flutter_app/widgets/account/account_info_header.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import 'package:flutter_app/screens/widgets/general/my_button.dart';
-import 'package:flutter_app/screens/widgets/general/my_text.dart';
+import 'package:flutter_app/widgets/general/my_button.dart';
+import 'package:flutter_app/widgets/general/my_text.dart';
 
-class QRScreen extends StatefulWidget {
-  const QRScreen({super.key});
+class ShowReceptorQrScreen extends StatefulWidget {
+  static const String routeName = showReceptorQrRouteName;
+
+  const ShowReceptorQrScreen({super.key});
 
   @override
-  State<QRScreen> createState() => _QRScreenState();
+  State<ShowReceptorQrScreen> createState() => _ShowReceptorQrScreenState();
 }
 
-class _QRScreenState extends State<QRScreen> {
+class _ShowReceptorQrScreenState extends State<ShowReceptorQrScreen> {
   final TextEditingController _textController = TextEditingController();
 
   @override

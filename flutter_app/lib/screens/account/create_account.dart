@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/screens/widgets/general/my_button.dart';
-import 'package:flutter_app/screens/widgets/general/my_text.dart';
+import 'package:flutter_app/constants/route_names.dart';
+import 'package:flutter_app/widgets/general/my_button.dart';
+import 'package:flutter_app/widgets/general/my_text.dart';
 import 'package:flutter_app/services/account/account_service.dart';
 import 'package:flutter_app/models/actividad.dart';
 import 'package:flutter_app/models/ubicacion.dart';
 import 'package:flutter_app/utils/utils.dart';
 
-class AgregarCuentaForm extends StatefulWidget {
-  const AgregarCuentaForm({super.key});
+class CreateAccountScreen extends StatefulWidget {
+  static const String routeName = createAccountRouteName;
+
+  const CreateAccountScreen({super.key});
 
   @override
-  State<AgregarCuentaForm> createState() => _AgregarCuentaFormState();
+  State<CreateAccountScreen> createState() => _CreateAccountScreenState();
 }
 
-class _AgregarCuentaFormState extends State<AgregarCuentaForm> {
+class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _formKey = GlobalKey<FormState>();
-
   final List<Actividad> actividades = [];
   final List<Actividad> actividadesSearchName = [];
   List<Actividad> activityList = [];

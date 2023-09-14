@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/constants.dart';
 import 'package:flutter_app/constants/route_names.dart';
 import '../../models/comprobante_summary.dart';
 import '../../models/server_response.dart';
 import '../../services/account/account_service.dart';
 import '../../services/factura/factura_service.dart';
-import '../widgets/general/my_button.dart';
-import '../widgets/general/my_text.dart';
+import '../../widgets/general/my_button.dart';
+import '../../widgets/general/my_text.dart';
 
 class HomeLoggedScreen extends StatelessWidget {
   static const routeName = homeLoggedRouteName;
@@ -21,32 +22,32 @@ class HomeLoggedScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const MyText(
-                text: '¡Bienvenido a QR Payments!',
+                text: homeWelcomeTitle,
                 fontSize: 25.0,
                 fontWeight: FontWeight.bold,
               ),
               const SizedBox(height: 40.0),
               MyButton(
                 text: 'Administrar cuentas',
-                function: () => _showAccountManagementPage(context),
+                function: () => _showAccountManagementScreen(context),
                 size: const Size(250, 60),
               ),
               const SizedBox(height: 20.0),
               MyButton(
                 text: 'Facturar',
-                function: () => _showFacturarPage(context),
+                function: () => _showFacturarScreen(context),
                 size: const Size(250, 60),
               ),
               const SizedBox(height: 20.0),
               MyButton(
                 text: 'Historial de pagos',
-                function: () => _showRecordsPage(context),
+                function: () => _showRecordsScreen(context),
                 size: const Size(250, 60),
               ),
               const SizedBox(height: 20.0),
               MyButton(
                 text: 'Cerrar sesión',
-                function: () => _showHomePage(context),
+                function: () => _showHomeScreen(context),
                 size: const Size(250, 60),
               ),
             ],
@@ -56,15 +57,15 @@ class HomeLoggedScreen extends StatelessWidget {
     );
   }
 
-  void _showHomePage(BuildContext context) {
+  void _showHomeScreen(BuildContext context) {
     Navigator.of(context).pushNamed(homeRouteName);
   }
 
-  void _showFacturarPage(BuildContext context) {
-    Navigator.of(context).pushNamed("/facturar");
+  void _showFacturarScreen(BuildContext context) {
+    Navigator.of(context).pushNamed(facturarRouteName);
   }
 
-  void _showRecordsPage(BuildContext context) async {
+  void _showRecordsScreen(BuildContext context) async {
     var loadedAccounts = await getAccountList();
 
     Map<int, String> accountsIds = {};
@@ -81,9 +82,9 @@ class HomeLoggedScreen extends StatelessWidget {
     }
   }
 
-  Future<void> _showAccountManagementPage(BuildContext context) async {
+  Future<void> _showAccountManagementScreen(BuildContext context) async {
     if (context.mounted) {
-      Navigator.of(context).pushNamed("/account_management");
+      Navigator.of(context).pushNamed(accountManagementRouteName);
     }
   }
 }

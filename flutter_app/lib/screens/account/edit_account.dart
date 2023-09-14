@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/services/account/account_service.dart';
 import 'package:flutter_app/models/actividad.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/utils/utils.dart';
 import 'package:flutter_app/models/ubicacion.dart';
-import 'package:flutter_app/screens/widgets/general/my_button.dart';
-import 'package:flutter_app/screens/widgets/general/my_text.dart';
+import 'package:flutter_app/widgets/general/my_button.dart';
+import 'package:flutter_app/widgets/general/my_text.dart';
 
-class EditAccount extends StatefulWidget {
-  const EditAccount({super.key});
+class EditAccountScreen extends StatefulWidget {
+  static const String routeName = editAccountRouteName;
+
+  const EditAccountScreen({super.key});
 
   @override
-  State<EditAccount> createState() => _EditAccountState();
+  State<EditAccountScreen> createState() => _EditAccountScreenState();
 }
 
-class _EditAccountState extends State<EditAccount> {
+class _EditAccountScreenState extends State<EditAccountScreen> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isInitialized = false;
