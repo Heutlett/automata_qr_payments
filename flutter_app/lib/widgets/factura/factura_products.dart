@@ -3,10 +3,10 @@ import 'package:flutter_app/constants/constants.dart';
 import 'package:flutter_app/widgets/general/my_text.dart';
 import 'package:flutter_app/utils/utils.dart';
 
-import '../../models/producto.dart';
+import '../../models/linea_detalle.dart';
 
 class FacturaProductsForm extends StatefulWidget {
-  final List<Producto> products;
+  final List<LineaDetalle> products;
 
   const FacturaProductsForm({super.key, required this.products});
 
@@ -21,7 +21,7 @@ class _FacturaProductsFormState extends State<FacturaProductsForm> {
 
   int numeroLineaDetalle = 1;
 
-  late List<Producto> products;
+  late List<LineaDetalle> products;
 
   final _cantidadController = TextEditingController();
   final _detalleController = TextEditingController();
@@ -287,7 +287,7 @@ class _FacturaProductsFormState extends State<FacturaProductsForm> {
                             _selectedOptionUnidadMedida != null &&
                             _detalleController.text != "") {
                           products.add(
-                            Producto(
+                            LineaDetalle(
                               numeroLinea: numeroLineaDetalle,
                               cabysId: _selectedOptionCabysId!, // Arreglar esto
                               tipoCodigoComercial:

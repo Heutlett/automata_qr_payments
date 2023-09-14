@@ -59,7 +59,6 @@ final Map<int, String> condicionesVenta = {
 };
 
 // productos_factura.dart
-
 final Map<int, String> cabysOptions = {
   1: 'Minerales; electricidad, gas y agua',
   2: 'Productos alimenticios, bebidas y tabaco...',
@@ -87,4 +86,10 @@ final Map<int, String> tiposCodigoComercial = {
   3: 'Código del producto asignado por la industria',
   4: 'Código de uso interno',
   99: 'Otros',
+};
+
+// history_card.dart
+final Map<int, String> codigosMoneda = {
+  56: "₡",
+  250: "\$",
 };

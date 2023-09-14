@@ -21,114 +21,114 @@ class FacturasHistoryScreen extends StatefulWidget {
 
 class _FacturasHistoryScreenState extends State<FacturasHistoryScreen> {
   int? _selectedAccount;
-
-  List<ComprobanteSummary>? data = [];
-
-  Map<int, String> accountsIds = {};
-
-  bool isInitialized = false;
+  List<ComprobanteSummary>? _listComprobantesSummary;
+  final Map<int, String> _accountsIds = {};
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    final providerManager = Provider.of<ProviderManager>(context);
+
+    setAccountIds(providerManager);
+    setComprobantesSummary();
+    _selectedAccount = _accountsIds.keys.first;
+
+    super.didChangeDependencies();
   }
 
   void setAccountIds(ProviderManager providerManager) {
     for (int i = 0; i < providerManager.myAccounts.length; i++) {
-      accountsIds[int.parse(providerManager.myAccounts[i].id)] =
+      _accountsIds[int.parse(providerManager.myAccounts[i].id)] =
           providerManager.myAccounts[i].nombre;
     }
   }
 
-  Future<void> setComprobantesSummary() async {}
+  Future<void> setComprobantesSummary() async {
+    ServerResponse<List<ComprobanteSummary>> response =
+        await getComprobantesSummary(_accountsIds.keys.first);
+
+    setState(() {
+      _listComprobantesSummary = response.data;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final providerManager = Provider.of<ProviderManager>(context);
-
-    setAccountIds(providerManager);
-
-    if (!isInitialized) {
-      List<dynamic> args =
-          ModalRoute.of(context)?.settings.arguments as List<dynamic>;
-
-      accountsIds = args[0];
-      data = args[1];
-
-      _selectedAccount = accountsIds.keys.first;
-
-      isInitialized = true;
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Historial de pagos'),
       ),
-      body: Container(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8.0),
+      body: _listComprobantesSummary == null
+          ? const Center(child: CircularProgressIndicator())
+          : Container(
+              padding: const EdgeInsets.all(20.0),
               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Seleccione la cuenta:",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    DropdownButtonFormField<int>(
-                      value: _selectedAccount,
-                      items: accountsIds.entries.map((entry) {
-                        return DropdownMenuItem<int>(
-                          value: entry.key,
-                          child: Text(entry.value,
-                              style: const TextStyle(fontSize: 15)),
-                        );
-                      }).toList(),
-                      onChanged: (int? newValue) {
-                        setState(() {
-                          _selectedAccount = newValue;
-                          data = null;
-                          updateRecordsAccount(context, _selectedAccount!);
-                        });
-                      },
-                    )
-                  ]),
-            ),
-            data == null
-                ? const CircularProgressIndicator() // Indicador de carga
-                : Expanded(
-                    child: data!.isEmpty
-                        ? const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: MyText(
-                              text: "El historial está vacio",
-                              color: Colors.red,
-                            ),
-                          )
-                        : ListView.builder(
-                            itemCount: data!.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              ComprobanteSummary comprobante = data![index];
-
-                              return RecordCard(
-                                id: comprobante.id,
-                                estado: comprobante.estado,
-                                descripcion: comprobante.descripcion,
-                                fechaEmision: comprobante.fechaEmision,
-                                codigoMonedaId: comprobante.codigoMonedaId,
-                                numeroConsecutivo:
-                                    comprobante.numeroConsecutivo,
-                                totalComprobante: comprobante.totalComprobante,
-                              );
-                            },
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Seleccione la cuenta:",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
                           ),
+                          DropdownButtonFormField<int>(
+                            value: _selectedAccount,
+                            items: _accountsIds.entries.map((entry) {
+                              return DropdownMenuItem<int>(
+                                value: entry.key,
+                                child: Text(entry.value,
+                                    style: const TextStyle(fontSize: 15)),
+                              );
+                            }).toList(),
+                            onChanged: (int? newValue) {
+                              setState(() {
+                                _selectedAccount = newValue;
+                                _listComprobantesSummary = null;
+                                updateRecordsAccount(
+                                    context, _selectedAccount!);
+                              });
+                            },
+                          )
+                        ]),
                   ),
-          ],
-        ),
-      ),
+                  _listComprobantesSummary == null
+                      ? const CircularProgressIndicator() // Indicador de carga
+                      : Expanded(
+                          child: _listComprobantesSummary!.isEmpty
+                              ? const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: MyText(
+                                    text: "El historial está vacio",
+                                    color: Colors.red,
+                                  ),
+                                )
+                              : ListView.builder(
+                                  itemCount: _listComprobantesSummary!.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    ComprobanteSummary comprobante =
+                                        _listComprobantesSummary![index];
+
+                                    return HistoryCard(
+                                      id: comprobante.id,
+                                      estado: comprobante.estado,
+                                      descripcion: comprobante.descripcion,
+                                      fechaEmision: comprobante.fechaEmision,
+                                      codigoMonedaId:
+                                          comprobante.codigoMonedaId,
+                                      numeroConsecutivo:
+                                          comprobante.numeroConsecutivo,
+                                      totalComprobante:
+                                          comprobante.totalComprobante,
+                                    );
+                                  },
+                                ),
+                        ),
+                ],
+              ),
+            ),
     );
   }
 
@@ -139,7 +139,7 @@ class _FacturasHistoryScreenState extends State<FacturasHistoryScreen> {
     if (context.mounted) {
       if (response.success) {
         setState(() {
-          data = response.data!;
+          _listComprobantesSummary = response.data!;
         });
       } else {
         showAlertDialog(

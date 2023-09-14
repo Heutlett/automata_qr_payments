@@ -1,37 +1,37 @@
-import 'package:flutter_app/models/producto.dart';
+import 'package:flutter_app/models/linea_detalle.dart';
 
 class Factura {
   final String descripcion;
 
   final String cuentaEmisorId;
-  final String dispositivoLector;
-  final double latitudLector;
-  final double longitudLector;
-  final String timestampLector;
+  final String dispositivoEmisor;
+  final double latitudEmisor;
+  final double longitudEmisor;
+  final String timestampEmisor;
 
   final String cuentaReceptorId;
-  final String dispositivoGenerador;
-  final double latitudGenerador;
-  final double longitudGenerador;
-  final String timestampGenerador;
+  final String dispositivoReceptor;
+  final double latitudReceptor;
+  final double longitudReceptor;
+  final String timestampReceptor;
 
   final String codigoActividadEmisor;
   final int codigoMonedaId;
   final int condicionVenta;
   final int medioPago;
 
-  final List<Producto> lineasDetalle;
+  final List<LineaDetalle> lineasDetalle;
 
   Factura({
     required this.codigoActividadEmisor,
-    required this.dispositivoGenerador,
-    required this.latitudGenerador,
-    required this.longitudGenerador,
-    required this.timestampGenerador,
-    required this.latitudLector,
-    required this.longitudLector,
-    required this.dispositivoLector,
-    required this.timestampLector,
+    required this.dispositivoReceptor,
+    required this.latitudReceptor,
+    required this.longitudReceptor,
+    required this.timestampReceptor,
+    required this.latitudEmisor,
+    required this.longitudEmisor,
+    required this.dispositivoEmisor,
+    required this.timestampEmisor,
     required this.cuentaEmisorId,
     required this.cuentaReceptorId,
     required this.lineasDetalle,
@@ -45,15 +45,15 @@ class Factura {
     return {
       'descripcion': descripcion,
       'cuentaEmisorId': cuentaEmisorId,
-      'dispositivoLector': dispositivoLector,
-      'latitudLector': latitudLector,
-      'longitudLector': longitudLector,
-      'timestampLector': timestampLector,
+      'dispositivoEmisor': dispositivoEmisor,
+      'latitudEmsior': latitudEmisor,
+      'longitudEmsior': longitudEmisor,
+      'timestampEmsior': timestampEmisor,
       'cuentaReceptorId': cuentaReceptorId,
-      'dispositivoGenerador': dispositivoGenerador,
-      'latitudGenerador': latitudGenerador,
-      'longitudGenerador': longitudGenerador,
-      'timestampGenerador': timestampGenerador,
+      'dispositivoReceptor': dispositivoReceptor,
+      'latitudReceptor': latitudReceptor,
+      'longitudReceptor': longitudReceptor,
+      'timestampReceptor': timestampReceptor,
       'codigoActividadEmisor': codigoActividadEmisor,
       'codigoMonedaId': codigoMonedaId,
       'condicionVenta': condicionVenta,

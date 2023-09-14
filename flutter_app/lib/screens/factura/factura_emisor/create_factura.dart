@@ -8,7 +8,7 @@ import 'package:flutter_app/widgets/factura/factura_products.dart';
 import 'package:flutter_app/utils/utils.dart';
 
 import '../../../models/actividad.dart';
-import '../../../models/producto.dart';
+import '../../../models/linea_detalle.dart';
 import '../../../widgets/general/my_text.dart';
 
 class CreateFacturaScreen extends StatefulWidget {
@@ -25,7 +25,7 @@ class _CreateFacturaScreenState extends State<CreateFacturaScreen> {
   int? _selectedMedioPago = defaultMedioPago;
   int? _selectedCondicionVenta = defaultCondicionVenta;
 
-  final List<Producto> productos = [];
+  final List<LineaDetalle> productos = [];
 
   final _descripcionController = TextEditingController();
 
@@ -208,7 +208,7 @@ class _CreateFacturaScreenState extends State<CreateFacturaScreen> {
     BuildContext context,
     Account accountEmisor,
     Account accountReceptor,
-    List<Producto> productos,
+    List<LineaDetalle> productos,
     String descripcion,
     String receptorModelName,
     List<double> receptorLocation,
@@ -230,14 +230,14 @@ class _CreateFacturaScreenState extends State<CreateFacturaScreen> {
       if (actividad != null) {
         Factura factura = Factura(
           codigoActividadEmisor: actividad.codigoActividad,
-          dispositivoGenerador: receptorModelName,
-          latitudGenerador: receptorLocation[0],
-          longitudGenerador: receptorLocation[1],
-          timestampGenerador: receptorTimeStamp,
-          latitudLector: emisorLocation[0],
-          longitudLector: emisorLocation[1],
-          dispositivoLector: emisorModelName,
-          timestampLector: emisorTimeStamp,
+          dispositivoReceptor: receptorModelName,
+          latitudReceptor: receptorLocation[0],
+          longitudReceptor: receptorLocation[1],
+          timestampReceptor: receptorTimeStamp,
+          latitudEmisor: emisorLocation[0],
+          longitudEmisor: emisorLocation[1],
+          dispositivoEmisor: emisorModelName,
+          timestampEmisor: emisorTimeStamp,
           cuentaEmisorId: accountEmisor.id,
           cuentaReceptorId: accountReceptor.id,
           lineasDetalle: productos,

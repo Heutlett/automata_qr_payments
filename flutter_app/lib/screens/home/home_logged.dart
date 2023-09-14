@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/constants.dart';
 import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/managers/provider_manager.dart';
-import 'package:flutter_app/models/comprobante_summary.dart';
-import 'package:flutter_app/models/server_response.dart';
 import 'package:flutter_app/services/account/account_service.dart';
-import 'package:flutter_app/services/factura/factura_service.dart';
 import 'package:flutter_app/widgets/general/my_button.dart';
 import 'package:flutter_app/widgets/general/my_text.dart';
 import 'package:provider/provider.dart';
@@ -56,7 +53,8 @@ class _HomeLoggedScreenState extends State<HomeLoggedScreen> {
                     const SizedBox(height: 20.0),
                     MyButton(
                       text: 'Historial de pagos',
-                      function: () => _showFacturasHistoryScreen(context),
+                      function: () =>
+                          _showFacturasHistoryScreen(context, providerManager),
                       size: const Size(250, 60),
                     ),
                     const SizedBox(height: 20.0),
@@ -108,22 +106,14 @@ class _HomeLoggedScreenState extends State<HomeLoggedScreen> {
     Navigator.of(context).pushNamed(facturarRouteName);
   }
 
-  void _showFacturasHistoryScreen(BuildContext context) async {
-    var loadedAccounts = await getAccountList();
-
-    Map<int, String> accountsIds = {};
-
-    for (int i = 0; i < loadedAccounts.length; i++) {
-      accountsIds[int.parse(loadedAccounts[i].id)] = loadedAccounts[i].nombre;
-    }
-    ServerResponse<List<ComprobanteSummary>> response =
-        await getComprobantesSummary(accountsIds.keys.first);
+  void _showFacturasHistoryScreen(
+      BuildContext context, ProviderManager providerManager) async {
+    _setLoadingTrue();
+    await _loadAccounts(providerManager);
+    _setLoadingFalse();
 
     if (context.mounted) {
-      Navigator.of(context).pushNamed(
-        facturasHistoryRouteName,
-        arguments: [accountsIds, response.data],
-      );
+      Navigator.of(context).pushNamed(facturasHistoryRouteName);
     }
   }
 }

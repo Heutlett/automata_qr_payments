@@ -1,4 +1,4 @@
-class Producto {
+class LineaDetalle {
   int numeroLinea;
   final int cabysId;
   final String tipoCodigoComercial;
@@ -10,7 +10,7 @@ class Producto {
   final int precioUnitario;
   final int descuento;
 
-  Producto({
+  LineaDetalle({
     required this.numeroLinea,
     required this.cabysId,
     required this.tipoCodigoComercial,

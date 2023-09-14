@@ -5,6 +5,7 @@ import 'package:flutter_app/managers/shared_local_store.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/models/comprobante.dart';
 import 'package:flutter_app/models/comprobante_summary.dart';
+import 'package:flutter_app/models/detalle_comprobante.dart';
 import 'package:flutter_app/models/server_response.dart';
 import 'package:http/http.dart' as http;
 
@@ -85,6 +86,9 @@ Future<ServerResponse<Comprobante>> getComprobante(int id) async {
     if (data['success']) {
       data = data['data'];
 
+      print(data);
+      print("");
+
       Account accountEmisor = Account(
         id: data['cuentaEmisor']['id'].toString(),
         cedulaTipo: data['cuentaEmisor']['cedulaTipo'],
@@ -129,23 +133,55 @@ Future<ServerResponse<Comprobante>> getComprobante(int id) async {
         usuariosCompartidos: [],
       );
 
+      DetalleComprobante detalleComprobante = DetalleComprobante(
+          id: data['detalleComprobante']['id'],
+          dispositivoEmisor: data['detalleComprobante']['dispositivoEmisor'],
+          latitudEmisor: data['detalleComprobante']['latitudEmisor'],
+          longitudEmisor: data['detalleComprobante']['longitudEmisor'],
+          timestampEmisor:
+              DateTime.parse(data['detalleComprobante']['timestampEmisor']),
+          dispositivoReceptor: data['detalleComprobante']
+              ['dispositivoReceptor'],
+          latitudReceptor: data['detalleComprobante']['latitudReceptor'],
+          longitudReceptor: data['detalleComprobante']['longitudReceptor'],
+          timestampReceptor:
+              DateTime.parse(data['detalleComprobante']['timestampReceptor']));
+
       var comprobante = Comprobante(
         id: data['id'],
-        estado: data['estado'],
-        descripcion: data['descripcion'],
-        numeroConsecutivo: data['numeroConsecutivo'],
-        fechaEmision: DateTime.parse(data['fechaEmision']),
-        codigoMoneda: data['codigoMoneda'],
-        totalComprobante: data['totalComprobante'],
-        clave: data['clave'],
-        codigoActividad: data['codigoActividad'],
-        condicionVenta: data['condicionVenta'],
-        medioPago: data['medioPago'],
-        totalDescuentos: data['totalDescuentos'],
-        totalImpuesto: data['totalImpuesto'],
-        totalVenta: data['totalVenta'],
         cuentaEmisor: accountEmisor,
         cuentaReceptor: accountReceptor,
+
+        detalleComprobante: detalleComprobante,
+
+        /// lineas detalle
+        tipoDoc: data['tipoDoc'],
+        estado: data['estado'],
+        descripcion: data['descripcion'],
+        clave: data['clave'],
+        codigoActividad: data['codigoActividad'],
+        numeroConsecutivo: data['numeroConsecutivo'],
+        fechaEmision: DateTime.parse(data['fechaEmision']),
+        condicionVenta: data['condicionVenta'],
+        medioPago: data['medioPago'],
+        codigoMoneda: data['codigoMoneda'],
+
+        totalServGravados: data['totalServGravados'],
+        totalServExentos: data['totalServExentos'],
+        totalServExonerado: data['totalServExonerado'],
+        totalMercanciasGravadas: data['totalMercanciasGravadas'],
+        totalMercExonerada: data['totalMercExonerada'],
+        totalGravado: data['totalGravado'],
+        totalExonerado: data['totalExonerado'],
+        totalVenta: data['totalVenta'],
+        totalDescuentos: data['totalDescuentos'],
+
+        totalVentaNeta: data['totalVentaNeta'],
+        totalImpuesto: data['totalImpuesto'],
+
+        totalIVADevuelto: data['totalIVADevuelto'],
+        totalOtrosCargos: data['totalOtrosCargos'],
+        totalComprobante: data['totalComprobante'],
       );
 
       serverResponse =
