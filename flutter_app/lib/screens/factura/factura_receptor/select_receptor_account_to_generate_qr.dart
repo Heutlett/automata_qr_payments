@@ -1,64 +1,85 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/route_names.dart';
+import 'package:flutter_app/managers/provider_manager.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/widgets/general/my_button.dart';
 import 'package:flutter_app/services/account/account_service.dart';
 
 import 'package:flutter_app/widgets/account/account_info_card.dart';
 import 'package:flutter_app/utils/utils.dart';
+import 'package:provider/provider.dart';
 
-class SelectReceptorAccountToGenerateQrScreen extends StatelessWidget {
+class SelectReceptorAccountToGenerateQrScreen extends StatefulWidget {
   static const String routeName = selectReceptorAccountToGenerateQrRouteName;
 
   const SelectReceptorAccountToGenerateQrScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<Account> accounts =
-        ModalRoute.of(context)?.settings.arguments as List<Account>;
+  State<SelectReceptorAccountToGenerateQrScreen> createState() =>
+      _SelectReceptorAccountToGenerateQrScreenState();
+}
 
+class _SelectReceptorAccountToGenerateQrScreenState
+    extends State<SelectReceptorAccountToGenerateQrScreen> {
+  List<Account>? accounts;
+
+  @override
+  void didChangeDependencies() {
+    final providerManager = Provider.of<ProviderManager>(context);
+    accounts = providerManager.myAccounts;
+
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Seleccione su cuenta receptor'),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              children: accounts.map((acc) {
-                return Column(
+        child: accounts == null
+            ? const Center(child: CircularProgressIndicator())
+            : Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Card(
-                      margin: const EdgeInsets.all(8.0),
-                      elevation: 5,
-                      color: acc.cedulaTipo == 'Juridica'
-                          ? const Color.fromARGB(255, 180, 193, 255)
-                          : const Color.fromARGB(255, 180, 234, 255),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: AccountInfoCard(
-                              account: acc,
-                              addButtons: 1,
-                              showIsShared: true,
+                    Column(
+                      children: accounts!.map((acc) {
+                        return Column(
+                          children: [
+                            Card(
+                              margin: const EdgeInsets.all(8.0),
+                              elevation: 5,
+                              color: acc.cedulaTipo == 'Juridica'
+                                  ? const Color.fromARGB(255, 180, 193, 255)
+                                  : const Color.fromARGB(255, 180, 234, 255),
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: AccountInfoCard(
+                                      account: acc,
+                                      addButtons: 1,
+                                      showIsShared: true,
+                                    ),
+                                  ),
+                                  MyButton(
+                                    text: 'Seleccionar',
+                                    function: () =>
+                                        _showGenerateQr(context, acc),
+                                  ),
+                                  const SizedBox(height: 20),
+                                ],
+                              ),
                             ),
-                          ),
-                          MyButton(
-                            text: 'Seleccionar',
-                            function: () => _showGenerateQr(context, acc),
-                          ),
-                          const SizedBox(height: 20),
-                        ],
-                      ),
+                          ],
+                        );
+                      }).toList(),
                     ),
                   ],
-                );
-              }).toList(),
-            ),
-          ],
-        ),
+                ),
+              ),
       ),
     );
   }

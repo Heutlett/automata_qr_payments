@@ -24,29 +24,30 @@ class Account {
   final bool esCompartida;
   final List<UsuarioCompartido> usuariosCompartidos;
 
-  Account(
-      {required this.id,
-      required this.cedulaTipo,
-      required this.cedulaNumero,
-      required this.idExtranjero,
-      required this.nombre,
-      required this.nombreComercial,
-      required this.telCodigoPais,
-      required this.telNumero,
-      required this.faxCodigoPais,
-      required this.faxNumero,
-      required this.correo,
-      required this.ubicacionCodigo,
-      required this.ubicacionSenas,
-      required this.ubicacionSenasExtranjero,
-      required this.tipo,
-      required this.actividades,
-      this.nombreProvincia,
-      this.nombreCanton,
-      this.nombreDistrito,
-      this.nombreBarrio,
-      required this.esCompartida,
-      required this.usuariosCompartidos});
+  Account({
+    required this.id,
+    required this.cedulaTipo,
+    required this.cedulaNumero,
+    required this.idExtranjero,
+    required this.nombre,
+    required this.nombreComercial,
+    required this.telCodigoPais,
+    required this.telNumero,
+    required this.faxCodigoPais,
+    required this.faxNumero,
+    required this.correo,
+    required this.ubicacionCodigo,
+    required this.ubicacionSenas,
+    required this.ubicacionSenasExtranjero,
+    required this.tipo,
+    required this.actividades,
+    this.nombreProvincia,
+    this.nombreCanton,
+    this.nombreDistrito,
+    this.nombreBarrio,
+    required this.esCompartida,
+    required this.usuariosCompartidos,
+  });
 
   Map<String, dynamic> toJson() {
     return {

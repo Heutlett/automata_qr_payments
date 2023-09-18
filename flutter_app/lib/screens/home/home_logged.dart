@@ -39,22 +39,30 @@ class _HomeLoggedScreenState extends State<HomeLoggedScreen> {
                     ),
                     const SizedBox(height: 40.0),
                     MyButton(
+                      text: 'Mostrar QR para factura',
+                      function: () =>
+                          _showSelectReceptorAccountToGenerateQrScreen(
+                              context, providerManager),
+                      size: const Size(250, 60),
+                    ),
+                    const SizedBox(height: 20.0),
+                    MyButton(
+                      text: 'Escanear QR',
+                      function: () => _showSelectReceptorAccount(context),
+                      size: const Size(250, 60),
+                    ),
+                    const SizedBox(height: 20.0),
+                    // MyButton(
+                    //   text: 'Historial de pagos',
+                    //   function: () =>
+                    //       _showFacturasHistoryScreen(context, providerManager),
+                    //   size: const Size(250, 60),
+                    // ),
+                    // const SizedBox(height: 20.0),
+                    MyButton(
                       text: 'Administrar cuentas',
                       function: () => _showAccountManagementScreen(
                           context, providerManager),
-                      size: const Size(250, 60),
-                    ),
-                    const SizedBox(height: 20.0),
-                    MyButton(
-                      text: 'Facturar',
-                      function: () => _showFacturarScreen(context),
-                      size: const Size(250, 60),
-                    ),
-                    const SizedBox(height: 20.0),
-                    MyButton(
-                      text: 'Historial de pagos',
-                      function: () =>
-                          _showFacturasHistoryScreen(context, providerManager),
                       size: const Size(250, 60),
                     ),
                     const SizedBox(height: 20.0),
@@ -106,14 +114,30 @@ class _HomeLoggedScreenState extends State<HomeLoggedScreen> {
     Navigator.of(context).pushNamed(facturarRouteName);
   }
 
-  void _showFacturasHistoryScreen(
+  void _showSelectReceptorAccountToGenerateQrScreen(
       BuildContext context, ProviderManager providerManager) async {
     _setLoadingTrue();
     await _loadAccounts(providerManager);
     _setLoadingFalse();
 
     if (context.mounted) {
-      Navigator.of(context).pushNamed(facturasHistoryRouteName);
+      Navigator.of(context)
+          .pushNamed(selectReceptorAccountToGenerateQrRouteName);
     }
   }
+
+  void _showSelectReceptorAccount(BuildContext context) {
+    Navigator.of(context).pushNamed(scanQrReceptorAccountRouteName);
+  }
+
+  // void _showFacturasHistoryScreen(
+  //     BuildContext context, ProviderManager providerManager) async {
+  //   _setLoadingTrue();
+  //   await _loadAccounts(providerManager);
+  //   _setLoadingFalse();
+
+  //   if (context.mounted) {
+  //     Navigator.of(context).pushNamed(facturasHistoryRouteName);
+  //   }
+  // }
 }
