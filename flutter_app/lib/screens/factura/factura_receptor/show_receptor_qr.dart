@@ -80,15 +80,15 @@ class _ShowReceptorQrScreenState extends State<ShowReceptorQrScreen> {
             ),
             const SizedBox(height: 76),
             MyButton(
-                function: () => _showHome(context), text: 'Volver al inicio')
+                function: () => _showHomeLoggedScreen(context),
+                text: 'Volver al inicio')
           ],
         ),
       ),
     );
   }
 
-  void _showHome(BuildContext context) {
-    Navigator.of(context).pop();
+  void _showHomeLoggedScreen(BuildContext context) {
     Navigator.of(context).pop();
     Navigator.of(context).pop();
   }

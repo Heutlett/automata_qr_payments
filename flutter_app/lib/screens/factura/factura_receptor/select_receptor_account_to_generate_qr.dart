@@ -23,6 +23,8 @@ class _SelectReceptorAccountToGenerateQrScreenState
     extends State<SelectReceptorAccountToGenerateQrScreen> {
   List<Account>? accounts;
 
+  bool isLoading = false;
+
   @override
   void didChangeDependencies() {
     final providerManager = Provider.of<ProviderManager>(context);
@@ -37,10 +39,10 @@ class _SelectReceptorAccountToGenerateQrScreenState
       appBar: AppBar(
         title: const Text('Seleccione su cuenta receptor'),
       ),
-      body: SingleChildScrollView(
-        child: accounts == null
-            ? const Center(child: CircularProgressIndicator())
-            : Center(
+      body: accounts == null || isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Center(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -67,7 +69,7 @@ class _SelectReceptorAccountToGenerateQrScreenState
                                   MyButton(
                                     text: 'Seleccionar',
                                     function: () =>
-                                        _showGenerateQr(context, acc),
+                                        _showGenerateQrScreen(context, acc),
                                   ),
                                   const SizedBox(height: 20),
                                 ],
@@ -80,15 +82,28 @@ class _SelectReceptorAccountToGenerateQrScreenState
                   ],
                 ),
               ),
-      ),
+            ),
     );
   }
 
-  void _showGenerateQr(BuildContext context, Account account) async {
-    var accountEncryptedCode = await getAccountBillingQr(int.parse(account.id));
+  void _setLoadingTrue() {
+    setState(() {
+      isLoading = true;
+    });
+  }
 
+  void _setLoadingFalse() {
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void _showGenerateQrScreen(BuildContext context, Account account) async {
+    _setLoadingTrue();
+    var accountEncryptedCode = await getAccountBillingQr(int.parse(account.id));
     var receptorModelName = await getDeviceModel();
     var receptorLocation = await getLocation();
+    _setLoadingFalse();
     var receptorTimeStamp = DateTime.now().toIso8601String();
 
     String codigoQr =

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/widgets/account/account_info_card.dart';
+import 'package:flutter_app/widgets/general/my_button.dart';
 import 'package:flutter_app/widgets/general/my_text.dart';
 
 class ShowSelectedAccountsScreen extends StatefulWidget {
@@ -23,7 +24,7 @@ class _ShowSelectedAccountsScreenState
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cuentas seleccionadas'),
+        title: const Text('Cuentas escaneada'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -50,9 +51,17 @@ class _ShowSelectedAccountsScreenState
                   )),
             ),
             const SizedBox(height: 20),
+            MyButton(
+                function: () => _showHomeLoggedScreen(context),
+                text: 'Volver al inicio')
           ],
         ),
       ),
     );
+  }
+
+  void _showHomeLoggedScreen(BuildContext context) {
+    Navigator.of(context).pop();
+    Navigator.of(context).pop();
   }
 }
