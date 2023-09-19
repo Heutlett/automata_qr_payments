@@ -24,11 +24,17 @@ class _SelectReceptorAccountToGenerateQrScreenState
   List<Account>? accounts;
 
   bool isLoading = false;
-
+  bool redirected = false; // Bandera para controlar la redirección
   @override
   void didChangeDependencies() {
     final providerManager = Provider.of<ProviderManager>(context);
     accounts = providerManager.myAccounts;
+
+    // verifica si accounts tiene solo un dato
+    if (accounts!=null && accounts!.length == 1  && !redirected) {
+     redirected = true; // Marcar como redirigido para evitar repeticiones
+     _showGenerateQrScreen(context, accounts![0]);
+    }
 
     super.didChangeDependencies();
   }
@@ -46,39 +52,39 @@ class _SelectReceptorAccountToGenerateQrScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      children: accounts!.map((acc) {
-                        return Column(
-                          children: [
-                            Card(
-                              margin: const EdgeInsets.all(8.0),
-                              elevation: 5,
-                              color: acc.cedulaTipo == 'Juridica'
-                                  ? const Color.fromARGB(255, 180, 193, 255)
-                                  : const Color.fromARGB(255, 180, 234, 255),
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: AccountInfoCard(
-                                      account: acc,
-                                      addButtons: 1,
-                                      showIsShared: true,
+                      Column(
+                        children: accounts!.map((acc) {
+                          return Column(
+                            children: [
+                              Card(
+                                margin: const EdgeInsets.all(8.0),
+                                elevation: 5,
+                                color: acc.cedulaTipo == 'Juridica'
+                                    ? const Color.fromARGB(255, 180, 193, 255)
+                                    : const Color.fromARGB(255, 180, 234, 255),
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: AccountInfoCard(
+                                        account: acc,
+                                        addButtons: 1,
+                                        showIsShared: true,
+                                      ),
                                     ),
-                                  ),
-                                  MyButton(
-                                    text: 'Seleccionar',
-                                    function: () =>
-                                        _showGenerateQrScreen(context, acc),
-                                  ),
-                                  const SizedBox(height: 20),
-                                ],
+                                    MyButton(
+                                      text: 'Seleccionar',
+                                      function: () =>
+                                          _showGenerateQrScreen(context, acc),
+                                    ),
+                                    const SizedBox(height: 20),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        );
-                      }).toList(),
-                    ),
+                            ],
+                          );
+                        }).toList(),
+                      ),
                   ],
                 ),
               ),

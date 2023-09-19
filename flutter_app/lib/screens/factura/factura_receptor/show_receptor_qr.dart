@@ -69,7 +69,7 @@ class _ShowReceptorQrScreenState extends State<ShowReceptorQrScreen> {
                 child: QrImage(
                   data: args[3],
                   version: QrVersions.auto,
-                  size: 200,
+                  size: 200, 
                 ),
               ),
             ],
