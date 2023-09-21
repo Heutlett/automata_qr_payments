@@ -186,7 +186,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
         // Se carga la pantalla de homeLogged
         if (context.mounted) {
-          Navigator.of(context).pushNamed(homeLoggedRouteName);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              homeLoggedRouteName, (Route<dynamic> route) => false);
         }
       } else {
         // Limpia la contraseña del form

@@ -29,6 +29,39 @@ class _HomeLoggedScreenState extends State<HomeLoggedScreen> {
                 child: CircularProgressIndicator(),
               )
             : SingleChildScrollView(
+                child: WillPopScope(
+                onWillPop: () async {
+                  // Mostrar AlertDialog cuando se intenta ir hacia atrás o salir de la aplicación
+                  bool shouldExit = await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('¿Estás seguro?'),
+                        content: const Text(
+                            'Si presionas Salir, se cerrará la sesión.'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('Cancelar'),
+                            onPressed: () {
+                              Navigator.of(context).pop(
+                                  false); // Permanecer en la pantalla actual
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Salir'),
+                            onPressed: () {
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                  homeRouteName,
+                                  (Route<dynamic> route) => false);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
+                  return shouldExit;
+                },
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -73,7 +106,7 @@ class _HomeLoggedScreenState extends State<HomeLoggedScreen> {
                     ),
                   ],
                 ),
-              ),
+              )),
       ),
     );
   }
