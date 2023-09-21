@@ -1,6 +1,6 @@
 // hosts
-const facturasApi = 'app-lanx4oofmq-uc.a.run.app';
-const authApi = 'authentication-lanx4oofmq-uc.a.run.app';
+const facturasApi = 'app-development-lanx4oofmq-uc.a.run.app';
+const authApi = 'auth-development-lanx4oofmq-uc.a.run.app';
 
 // authenticacion
 const postLoginUrl = 'https://$authApi/api/auth/login';

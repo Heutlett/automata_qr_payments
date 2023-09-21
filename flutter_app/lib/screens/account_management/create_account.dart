@@ -548,7 +548,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                           barrios =
                                               []; // Reinicia la lista de barrios
                                           // Simula la carga de los cantones para la provincia seleccionada
-                                          loadCantones(context);
+                                          _loadCantones(context);
                                         });
                                         _focusNextField(
                                             context,
@@ -578,7 +578,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                           barrios =
                                               []; // Reinicia la lista de barrios
                                           // Simula la carga de los distritos para el cantón seleccionado
-                                          loadDistritos(context);
+                                          _loadDistritos(context);
                                         });
                                         _focusNextField(
                                             context,
@@ -605,7 +605,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                           barrios =
                                               []; // Reinicia la lista de barrios
                                           // Simula la carga de los barrios para el distrito seleccionado
-                                          loadBarrios(context);
+                                          _loadBarrios(context);
                                         });
                                         _focusNextField(
                                             context,
@@ -715,7 +715,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                                     flex: 1,
                                                     child: ElevatedButton(
                                                       onPressed: () {
-                                                        addActivity(context);
+                                                        _addActivity(context);
                                                         _codigoActividadController
                                                             .clear(); // Limpiar el TextFormField
                                                         FocusScope.of(context)
@@ -769,7 +769,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                                           fontSize: 14,
                                                           text: 'Buscar',
                                                           function: () {
-                                                            searchActivityByName(
+                                                            _searchActivityByName(
                                                                 context);
                                                             _nombreActividadController
                                                                 .clear(); // Limpiar el TextFormField
@@ -1039,7 +1039,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           'La cuenta se agregó exitosamente.',
           'Aceptar',
           () {
-            _reloadAccounts(context, providerManager, accounts);
+            providerManager.reloadAccountsInAccountManagement(
+                context, accounts);
           },
         );
       }
@@ -1055,20 +1056,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     }
   }
 
-  Future<void> _loadAccounts(
-      ProviderManager providerManager, List<Account> accounts) async {
-    providerManager.setMyAccounts(accounts);
-  }
-
-  void _reloadAccounts(BuildContext context, ProviderManager providerManager,
-      List<Account> accounts) async {
-    _loadAccounts(providerManager, accounts);
-    Navigator.of(context).pushNamedAndRemoveUntil(
-        homeLoggedRouteName, (Route<dynamic> route) => false);
-    Navigator.of(context).pushNamed(accountManagementRouteName);
-  }
-
-  void loadCantones(BuildContext context) async {
+  void _loadCantones(BuildContext context) async {
     if (selectedProvincia != null) {
       var cantonesList =
           await ubicacionService.getCantonesByProvincia(selectedProvincia!.id);
@@ -1084,7 +1072,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     }
   }
 
-  void loadDistritos(BuildContext context) async {
+  void _loadDistritos(BuildContext context) async {
     if (selectedCanton != null) {
       var distritosList = await ubicacionService.getDistritosByCanton(
           selectedProvincia!.id, selectedCanton!.id);
@@ -1100,7 +1088,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     }
   }
 
-  void loadBarrios(BuildContext context) async {
+  void _loadBarrios(BuildContext context) async {
     if (selectedDistrito != null) {
       var barriosList = await ubicacionService.getBarriosByDistrito(
           selectedProvincia!.id, selectedCanton!.id, selectedDistrito!.id);
@@ -1116,7 +1104,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     }
   }
 
-  void addActivity(BuildContext context) async {
+  void _addActivity(BuildContext context) async {
     if (_codigoActividadController.text.isEmpty) {
       showAlertDialog(
           context,
@@ -1159,7 +1147,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     }
   }
 
-  void searchActivityByName(BuildContext context) async {
+  void _searchActivityByName(BuildContext context) async {
     if (_nombreActividadController.text.isEmpty) {
       showAlertDialog(
           context,

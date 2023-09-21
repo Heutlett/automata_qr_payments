@@ -162,38 +162,51 @@ class _LoginScreenState extends State<LoginScreen> {
     final String username = _usernameController.text;
     final String password = _passwordController.text;
 
-    _setLoadingTrue();
-    var response = await postLogin(username, password);
-    var data = jsonDecode(response.body);
-    _setLoadingFalse();
-
-    if (response.statusCode == 200) {
-      var accessToken = data['data'];
-
+    try {
       _setLoadingTrue();
-      // Se guarda el accessToken en el local storage
-      await SharedLocalStore.setAccessToken(accessToken);
-
-      if (_rememberUsername) {
-        // Se guarda el username en el local storage
-        await SharedLocalStore.setUserLastUsername(username);
-      } else {
-        // Se resetea el username del local storage
-        await SharedLocalStore.resetLastUsername();
-      }
+      var response = await postLogin(username, password);
       _setLoadingFalse();
 
-      // Se carga la pantalla de homeLogged
-      if (context.mounted) {
-        Navigator.of(context).pushNamed(homeLoggedRouteName);
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        var accessToken = data['data'];
+
+        _setLoadingTrue();
+        // Se guarda el accessToken en el local storage
+        await SharedLocalStore.setAccessToken(accessToken);
+
+        if (_rememberUsername) {
+          // Se guarda el username en el local storage
+          await SharedLocalStore.setUserLastUsername(username);
+        } else {
+          // Se resetea el username del local storage
+          await SharedLocalStore.resetLastUsername();
+        }
+        _setLoadingFalse();
+
+        // Se carga la pantalla de homeLogged
+        if (context.mounted) {
+          Navigator.of(context).pushNamed(homeLoggedRouteName);
+        }
+      } else {
+        // Limpia la contraseña del form
+        _passwordController.clear();
+
+        if (response.statusCode == 404) {
+          if (context.mounted) {
+            showAlertDialog(context, "Resultado de inicio sesion",
+                'Ha ocurrido un error con el servidor.', 'Ok');
+          }
+        } else if (context.mounted) {
+          var data = jsonDecode(response.body);
+          showAlertDialog(
+              context, "Resultado de inicio sesion", data['message'], 'Ok');
+        }
       }
-    } else {
-      // Limpia la contraseña del form
-      _passwordController.clear();
-      if (context.mounted) {
-        showAlertDialog(
-            context, "Resultado de inicio sesion", data['message'], 'Ok');
-      }
+    } catch (e) {
+      _setLoadingFalse();
+      showAlertDialog(
+          context, 'Resultado de inicio sesion', e.toString(), 'Ok');
     }
   }
 }

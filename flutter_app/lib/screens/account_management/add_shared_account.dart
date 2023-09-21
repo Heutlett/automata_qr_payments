@@ -76,12 +76,12 @@ class _AddSharedAccountScreenState extends State<AddSharedAccountScreen> {
   void _showSharedAccountAddedScreen(BuildContext context, String codigoQr,
       ProviderManager providerManager) async {
     _setLoadingTrue();
-    ServerResponse<Account?> serverResponse =
+    ServerResponse<Account?> response =
         await postAddSharedAccountByQr(codigoQr);
     _setLoadingFalse();
 
-    if (serverResponse.success) {
-      Account addedSharedAccount = serverResponse.data!;
+    if (response.success) {
+      Account addedSharedAccount = response.data!;
       providerManager.setAddedSharedAccount(addedSharedAccount);
 
       if (context.mounted) {
@@ -89,7 +89,7 @@ class _AddSharedAccountScreenState extends State<AddSharedAccountScreen> {
       }
     } else {
       if (context.mounted) {
-        showAlertDialog(context, 'Error', serverResponse.message, 'Ok');
+        showAlertDialog(context, 'Error', response.message, 'Ok');
       }
     }
   }

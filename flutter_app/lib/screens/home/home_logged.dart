@@ -110,9 +110,9 @@ class _HomeLoggedScreenState extends State<HomeLoggedScreen> {
     Navigator.of(context).pushNamed(homeRouteName);
   }
 
-  void _showFacturarScreen(BuildContext context) {
-    Navigator.of(context).pushNamed(facturarRouteName);
-  }
+  // void _showFacturarScreen(BuildContext context) {
+  //   Navigator.of(context).pushNamed(facturarRouteName);
+  // }
 
   void _showSelectReceptorAccountToGenerateQrScreen(
       BuildContext context, ProviderManager providerManager) async {

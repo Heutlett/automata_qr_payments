@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/managers/provider_manager.dart';
 import 'package:flutter_app/widgets/account/account_info_card.dart';
+import 'package:flutter_app/widgets/general/my_back_button.dart';
 import 'package:provider/provider.dart';
 
 class AccountManagementScreen extends StatefulWidget {
@@ -16,13 +17,13 @@ class AccountManagementScreen extends StatefulWidget {
 class _AccountManagementScreenState extends State<AccountManagementScreen> {
   @override
   Widget build(BuildContext context) {
-    final providerManager = Provider.of<ProviderManager>(context);
-
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            const MyBackButton(routeName: homeLoggedRouteName),
             ElevatedButton(
               onPressed: () {
                 _showCreateAccountScreen(context);
@@ -52,14 +53,18 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
           ],
         ),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            children: providerManager.myAccounts.map((acc) {
+      body: Consumer<ProviderManager>(
+        builder: (context, provider, child) {
+          final accounts = provider.myAccounts;
+
+          return ListView.builder(
+            itemCount: accounts.length,
+            itemBuilder: (context, index) {
+              final account = accounts[index];
               return Card(
                 margin: const EdgeInsets.all(8),
                 elevation: 5,
-                color: acc.cedulaTipo == 'Juridica'
+                color: account.cedulaTipo == 'Juridica'
                     ? const Color.fromARGB(255, 180, 193, 255)
                     : const Color.fromARGB(255, 180, 234, 255),
                 child: Padding(
@@ -67,7 +72,7 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                   child: Column(
                     children: [
                       AccountInfoCard(
-                        account: acc,
+                        account: account,
                         addButtons: 2,
                         showIsShared: true,
                       ),
@@ -75,9 +80,9 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                   ),
                 ),
               );
-            }).toList(),
-          ),
-        ),
+            },
+          );
+        },
       ),
     );
   }

@@ -91,7 +91,7 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
                   : const SizedBox(),
               addButtons != 0
                   ? AccountInfoCardButtons(
-                      expandInfo: expandInfo,
+                      expandInfo: _expandInfo,
                       editAcc: () {
                         _showEditAccountScreen(context, providerManager);
                       },
@@ -105,7 +105,7 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
                                   context, account.id, providerManager);
                             },
                       shareAcc: () {
-                        shareAcc(context);
+                        _shareAcc(context);
                       },
                       buttons: addButtons,
                       account: account,
@@ -115,7 +115,7 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
           );
   }
 
-  void expandInfo() {
+  void _expandInfo() {
     setState(() {
       if (isExpanded) {
         isExpanded = false;
@@ -232,30 +232,16 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
     }
   }
 
-  void shareAcc(BuildContext context) async {
+  void _shareAcc(BuildContext context) async {
+    _setLoadingTrue();
     var codigoQR = await getAccountShareQr(int.parse(account.id));
+    _setLoadingTrue();
 
     if (context.mounted) {
       Navigator.of(context).pushNamed(
         shareAccountRouteName,
         arguments: [account, codigoQR],
       );
-    }
-  }
-
-  Future<void> _loadAccounts(
-      ProviderManager providerManager, List<Account> accounts) async {
-    providerManager.setMyAccounts(accounts);
-  }
-
-  Future<void> _showAccountManagementScreen(BuildContext context,
-      ProviderManager providerManager, List<Account> accounts) async {
-    _setLoadingTrue();
-    await _loadAccounts(providerManager, accounts);
-    _setLoadingFalse();
-
-    if (context.mounted) {
-      Navigator.of(context).pushNamed(accountManagementRouteName);
     }
   }
 
@@ -283,8 +269,7 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
       _setLoadingFalse();
 
       if (context.mounted) {
-        Navigator.of(context).pop();
-        _showAccountManagementScreen(context, providerManager, accounts);
+        providerManager.reloadAccountsInAccountManagement(context, accounts);
       }
     } else {
       if (context.mounted) {
@@ -318,8 +303,7 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
       _setLoadingFalse();
 
       if (context.mounted) {
-        Navigator.of(context).pop();
-        _showAccountManagementScreen(context, providerManager, accounts);
+        providerManager.reloadAccountsInAccountManagement(context, accounts);
       }
     } else {
       if (context.mounted) {

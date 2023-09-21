@@ -21,6 +21,7 @@ class ShowSharedAccountAddedScreen extends StatefulWidget {
 class _ShowSharedAccountAddedScreenState
     extends State<ShowSharedAccountAddedScreen> {
   bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     final providerManager = Provider.of<ProviderManager>(context);
@@ -62,7 +63,7 @@ class _ShowSharedAccountAddedScreenState
                   MyButton(
                     text: 'Volver a cuentas',
                     function: () =>
-                        _goAccountManagement(context, providerManager),
+                        _showAccountManagementScreen(context, providerManager),
                     size: const Size(180, 60),
                   ),
                   const SizedBox(height: 20)
@@ -84,26 +85,16 @@ class _ShowSharedAccountAddedScreenState
     });
   }
 
-  Future<void> _loadAccounts(ProviderManager providerManager) async {
-    var loadedAccounts = await getAccountList();
-    providerManager.setMyAccounts(loadedAccounts);
-  }
-
   Future<void> _showAccountManagementScreen(
       BuildContext context, ProviderManager providerManager) async {
     _setLoadingTrue();
-    await _loadAccounts(providerManager);
+    var loadedAccounts = await getAccountList();
+    providerManager.setMyAccounts(loadedAccounts);
     _setLoadingFalse();
 
     if (context.mounted) {
-      Navigator.of(context).pushNamed(accountManagementRouteName);
+      providerManager.reloadAccountsInAccountManagement(
+          context, loadedAccounts);
     }
-  }
-
-  void _goAccountManagement(
-      BuildContext context, ProviderManager providerManager) {
-    Navigator.of(context).pushNamedAndRemoveUntil(
-        homeLoggedRouteName, (Route<dynamic> route) => false);
-    _showAccountManagementScreen(context, providerManager);
   }
 }
