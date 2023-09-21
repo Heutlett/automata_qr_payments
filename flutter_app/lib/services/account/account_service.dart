@@ -26,8 +26,6 @@ Future<http.Response> postCreateAccount(Object? cuenta) async {
 Future<http.Response> putEditAccount(String id, Object? cuenta) async {
   String token = await SharedLocalStore.getAccessToken();
 
-  print(jsonEncode(cuenta));
-
   var responseCreateAcc = await http.put(
     Uri.parse(accountManagementUrl),
     body: jsonEncode(cuenta),

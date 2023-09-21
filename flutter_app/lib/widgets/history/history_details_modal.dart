@@ -147,11 +147,11 @@ class _HistoryDetailsModalState extends State<HistoryDetailsModal> {
                                 .detalleComprobante.timestampReceptor
                                 .toIso8601String()),
                         const SizedBox(height: 20),
-                        Text("Lista productos o servicios:",
+                        const Text("Lista productos o servicios:",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                             )),
-                        Center(
+                        const Center(
                           child: Text(
                             "En desarrollo",
                             style: TextStyle(color: Colors.red),

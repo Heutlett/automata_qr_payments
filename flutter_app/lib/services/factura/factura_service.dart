@@ -86,9 +86,6 @@ Future<ServerResponse<Comprobante>> getComprobante(int id) async {
     if (data['success']) {
       data = data['data'];
 
-      print(data);
-      print("");
-
       Account accountEmisor = Account(
         id: data['cuentaEmisor']['id'].toString(),
         cedulaTipo: data['cuentaEmisor']['cedulaTipo'],
