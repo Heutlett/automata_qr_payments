@@ -72,7 +72,7 @@ class _HomeLoggedScreenState extends State<HomeLoggedScreen> {
                     ),
                     const SizedBox(height: 40.0),
                     MyButton(
-                      text: 'Mostrar QR para factura',
+                      text: 'QR datos de cliente',
                       function: () =>
                           _showSelectReceptorAccountToGenerateQrScreen(
                               context, providerManager),

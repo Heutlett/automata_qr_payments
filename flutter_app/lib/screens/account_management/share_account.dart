@@ -68,6 +68,7 @@ class _ShareAccountScreenState extends State<ShareAccountScreen> {
                           cedulaTipo: acc.cedulaTipo,
                           cedulaNumero: acc.cedulaNumero,
                           nombre: acc.nombre,
+                          alias: acc.alias,
                         ),
                       )),
                   const SizedBox(height: 20),

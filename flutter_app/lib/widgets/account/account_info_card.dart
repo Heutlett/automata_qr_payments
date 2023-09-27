@@ -55,6 +55,7 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
                 cedulaTipo: account.cedulaTipo,
                 cedulaNumero: account.cedulaNumero,
                 nombre: account.nombre,
+                alias: account.alias,
               ),
               isExpanded == true
                   ? AccountInfoCardExpand(account: account)

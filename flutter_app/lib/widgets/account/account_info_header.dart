@@ -5,12 +5,14 @@ class AccountInfoCardHeader extends StatelessWidget {
   final String cedulaTipo;
   final String cedulaNumero;
   final String nombre;
+  final String alias;
 
   const AccountInfoCardHeader({
     super.key,
     required this.cedulaTipo,
     required this.cedulaNumero,
     required this.nombre,
+    required this.alias,
   });
 
   @override
@@ -37,9 +39,23 @@ class AccountInfoCardHeader extends StatelessWidget {
               ],
             ),
             const Divider(thickness: 1),
-            MyText(
-              text: nombre,
-              fontSize: 15,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                MyText(
+                  text: alias,
+                  fontSize: 15,
+                ),
+                SizedBox(
+                  height: 25,
+                  width: 5,
+                  child: VerticalDivider(thickness: 1),
+                ),
+                MyText(
+                  text: nombre,
+                  fontSize: 15,
+                ),
+              ],
             ),
           ],
         ),

@@ -56,6 +56,7 @@ class _ShowReceptorQrScreenState extends State<ShowReceptorQrScreen> {
                     cedulaTipo: args[0],
                     cedulaNumero: args[1],
                     nombre: args[2],
+                    alias: args[3],
                   ),
                 )),
             const SizedBox(height: 20),
