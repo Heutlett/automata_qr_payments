@@ -8,13 +8,12 @@ import 'package:flutter_app/screens/user/login.dart';
 import 'package:flutter_app/screens/account_management/account_management.dart';
 import 'package:flutter_app/screens/account_management/create_account.dart';
 import 'package:flutter_app/screens/factura/facturar.dart';
-import 'package:flutter_app/screens/factura/factura_receptor/show_receptor_qr.dart';
 import 'package:flutter_app/screens/factura/factura_emisor/select_emisor_account.dart';
 //import 'package:flutter_app/screens/factura/factura_emisor/scan_qr_receptor_account_fase2.dart';
 import 'package:flutter_app/screens/factura/factura_emisor/scan_qr_receptor_account.dart';
 import 'package:flutter_app/screens/factura/factura_emisor/show_selected_accounts.dart';
 //import 'package:flutter_app/screens/factura/factura_emisor/create_factura.dart';
-import 'package:flutter_app/screens/factura/factura_receptor/select_receptor_account_to_generate_qr.dart';
+import 'package:flutter_app/screens/factura/factura_receptor/generate_qr.dart';
 import 'package:flutter_app/screens/account_management/edit_account.dart';
 //import 'package:flutter_app/screens/history/facturas_history.dart';
 import 'package:flutter_app/screens/account_management/share_account.dart';
@@ -52,11 +51,8 @@ class MyApp extends StatelessWidget {
               const ShowSharedAccountAddedScreen(),
           FacturarScreen.routeName: (BuildContext context) =>
               const FacturarScreen(),
-          SelectReceptorAccountToGenerateQrScreen.routeName:
-              (BuildContext context) =>
-                  const SelectReceptorAccountToGenerateQrScreen(),
-          ShowReceptorQrScreen.routeName: (BuildContext context) =>
-              const ShowReceptorQrScreen(),
+          GenerateQrScreen.routeName: (BuildContext context) =>
+              const GenerateQrScreen(),
           SelectEmisorAccountScreen.routeName: (BuildContext context) =>
               const SelectEmisorAccountScreen(),
           ScanQrReceptorAccountScreen.routeName: (BuildContext context) =>

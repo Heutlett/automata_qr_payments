@@ -35,10 +35,17 @@ class _AccountSummaryCardState extends State<AccountSummaryCard> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             SizedBox(
-                width: 70,
+                width: 100,
                 child: Text(
-                  account.alias,
-                  style: const TextStyle(fontSize: 12),
+                  account.alias.isNotEmpty ? account.alias : 'Sin alias',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: account.alias.isNotEmpty
+                        ? Colors.black
+                        : const Color.fromARGB(255, 231, 19, 3),
+                    fontWeight: FontWeight.bold,
+                  ),
+                  softWrap: true,
                 )),
             const SizedBox(
               height: 25,
@@ -49,11 +56,12 @@ class _AccountSummaryCardState extends State<AccountSummaryCard> {
             Row(
               children: [
                 SizedBox(
-                    width: 100,
+                    width: 80,
                     child: Text(
                       account.cedulaNumero,
                       style: const TextStyle(fontSize: 12),
                       textAlign: TextAlign.center,
+                      softWrap: true,
                     )),
               ],
             ),
@@ -72,6 +80,7 @@ class _AccountSummaryCardState extends State<AccountSummaryCard> {
                       ? account.nombre
                       : '${account.nombre.substring(0, 19)}...',
                   style: const TextStyle(fontSize: 12),
+                  softWrap: true,
                 )),
           ],
         ),

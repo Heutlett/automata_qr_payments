@@ -12,9 +12,7 @@ const showSharedAccountAddedRouteName = 'show_shared_account_added';
 
 const facturarRouteName = '/facturar';
 
-const selectReceptorAccountToGenerateQrRouteName =
-    '/select_receptor_account_to_generate_qr';
-const showReceptorQrRouteName = '/show_receptor_qr';
+const generateQrRouteName = '/generate_qr';
 
 const selectEmisorAccountRouteName = '/select_emisor_account';
 const scanQrReceptorAccountRouteName = '/scan_qr_receptor_account';

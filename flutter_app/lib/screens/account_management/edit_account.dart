@@ -33,6 +33,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
   String? _cedulaTipo;
   String? _tipoCuenta;
 
+  final _aliasController = TextEditingController();
   final _cedulaNumeroController = TextEditingController();
   final _idExtranjeroController = TextEditingController();
   final _nombreController = TextEditingController();
@@ -70,6 +71,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
 
   @override
   void dispose() {
+    _aliasController.dispose();
     _cedulaNumeroController.dispose();
     _idExtranjeroController.dispose();
     _nombreController.dispose();
@@ -129,6 +131,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
 
       _loadUbicacion(account, providerManager);
 
+      _aliasController.text = account.alias;
       _cedulaTipo = account.cedulaTipo;
       _cedulaNumeroController.text = account.cedulaNumero;
       _idExtranjeroController.text = account.idExtranjero;
@@ -205,6 +208,29 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                               border: Border.all(color: Colors.black)),
                           child: Column(
                             children: [
+                              const SizedBox(height: 8.0),
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                color: const Color.fromARGB(255, 255, 255, 255),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Alias',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    TextFormField(
+                                      controller: _aliasController,
+                                      decoration: const InputDecoration(
+                                          labelText:
+                                              'Ingrese un alias para la cuenta'),
+                                    ),
+                                  ],
+                                ),
+                              ),
                               const SizedBox(height: 8.0),
                               Container(
                                 padding: const EdgeInsets.all(8),
@@ -879,6 +905,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
 
   void _submitEditAccountForm(BuildContext context, String accountId,
       ProviderManager providerManager) async {
+    final alias = _aliasController.text;
     final cedulaTipo = _cedulaTipo;
     final cedulaNumero = _cedulaNumeroController.text;
     final idExtranjero = _idExtranjeroController.text;
@@ -912,6 +939,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
 
     final cuenta = {
       "id": accountId,
+      "alias": alias,
       "cedulaTipo": cedulaTipo,
       "cedulaNumero": cedulaNumero,
       "idExtranjero": idExtranjero,

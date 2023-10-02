@@ -10,7 +10,6 @@ import 'package:flutter_app/widgets/account/account_info_header.dart';
 import 'package:flutter_app/widgets/account/account_info_card_shared_acc.dart';
 import 'package:flutter_app/models/ubicacion.dart';
 import 'package:flutter_app/utils/utils.dart';
-import 'package:flutter_app/widgets/general/my_text.dart';
 import 'package:provider/provider.dart';
 
 class AccountInfoCard extends StatefulWidget {
@@ -60,32 +59,9 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
               isExpanded == true
                   ? AccountInfoCardExpand(account: account)
                   : const SizedBox(),
-              AccountInfoCardActivities(activities: widget.account.actividades),
-              widget.showIsShared
-                  ? account.esCompartida
-                      ? Card(
-                          color: Colors.amber[300],
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.all(2.0),
-                                child: MyText(
-                                    text: "Compartida conmigo (no soy dueño)"),
-                              ),
-                            ],
-                          ))
-                      : Card(
-                          color: Colors.green[300],
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.all(2.0),
-                                child: MyText(text: "Dueño"),
-                              ),
-                            ],
-                          ))
+              isExpanded == true
+                  ? AccountInfoCardActivities(
+                      activities: widget.account.actividades)
                   : const SizedBox(),
               addButtons == 2
                   ? AccountInfoCardSharedAcc(account: account)

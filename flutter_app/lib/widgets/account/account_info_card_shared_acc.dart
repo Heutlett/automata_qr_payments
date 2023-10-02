@@ -47,9 +47,9 @@ class _AccountInfoCardSharedAccState extends State<AccountInfoCardSharedAcc> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 MyText(
-                                  text: 'Usuarios con esta cuenta compartida:',
+                                  text: 'Usuarios con esta cuenta:',
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontSize: 15,
                                 ),
                               ],
                             ),
@@ -64,9 +64,13 @@ class _AccountInfoCardSharedAccState extends State<AccountInfoCardSharedAcc> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          MyText(
-                                            text: user.nombreCompleto,
-                                            fontSize: 13,
+                                          SizedBox(
+                                            width: 180,
+                                            child: Text(
+                                              user.nombreCompleto,
+                                              style: TextStyle(fontSize: 12),
+                                              softWrap: true,
+                                            ),
                                           ),
                                           ElevatedButton(
                                               style: const ButtonStyle(

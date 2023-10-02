@@ -154,8 +154,7 @@ class _HomeLoggedScreenState extends State<HomeLoggedScreen> {
     _setLoadingFalse();
 
     if (context.mounted) {
-      Navigator.of(context)
-          .pushNamed(selectReceptorAccountToGenerateQrRouteName);
+      Navigator.of(context).pushNamed(generateQrRouteName);
     }
   }
 

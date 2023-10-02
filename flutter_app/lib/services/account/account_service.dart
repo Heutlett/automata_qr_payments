@@ -12,6 +12,8 @@ import 'package:flutter_app/models/ubicacion.dart';
 Future<http.Response> postCreateAccount(Object? cuenta) async {
   String token = await SharedLocalStore.getAccessToken();
 
+  print(jsonEncode(cuenta));
+
   var responseCreateAcc = await http.post(
     Uri.parse(accountManagementUrl),
     body: jsonEncode(cuenta),
@@ -328,60 +330,67 @@ Future<List<Account>> mapAccountListResponse(var response) async {
   data = data['data'];
   List<Account> accounts = [];
 
-  for (var i = 0; i < data.length; i++) {
-    List<dynamic> dataActividades = data[i]['codigosActividad'];
-    List<dynamic> dataUsuariosCompartidos = data[i]['usuariosCompartidos'];
-    List<Actividad> actividades = [];
-    List<UsuarioCompartido> usuariosCompartidos = [];
-    List<Actividad> activityList = await Actividad.cargarActividades();
+  if (data != null) {
+    for (var i = 0; i < data.length; i++) {
+      List<dynamic> dataActividades = data[i]['codigosActividad'];
+      List<dynamic> dataUsuariosCompartidos = data[i]['usuariosCompartidos'];
+      List<Actividad> actividades = [];
+      List<UsuarioCompartido> usuariosCompartidos = [];
+      List<Actividad> activityList = await Actividad.cargarActividades();
 
-    for (var e = 0; e < dataActividades.length; e++) {
-      Actividad activity = activityList.firstWhere(
-        (actividad) => actividad.codigoActividad == dataActividades[e],
-        orElse: () => Actividad.nullActivity,
+      for (var e = 0; e < dataActividades.length; e++) {
+        Actividad activity = activityList.firstWhere(
+          (actividad) => actividad.codigoActividad == dataActividades[e],
+          orElse: () => Actividad.nullActivity,
+        );
+
+        actividades.add(activity);
+      }
+
+      for (var e = 0; e < dataUsuariosCompartidos.length; e++) {
+        usuariosCompartidos.add(UsuarioCompartido(
+          nombreCompleto: dataUsuariosCompartidos[e]['nombreCompleto'],
+          username: dataUsuariosCompartidos[e]['username'],
+        ));
+      }
+
+      UbicacionService ubicacionService = UbicacionService();
+
+      Ubicacion? ubicacion =
+          await ubicacionService.getUbicacion(data[i]['ubicacionCodigo']);
+
+      accounts.add(
+        Account(
+          id: data[i]['id'].toString(),
+          cedulaTipo: data[i]['cedulaTipo'] ?? '',
+          cedulaNumero: data[i]['cedulaNumero'] ?? '',
+          idExtranjero: data[i]['idExtranjero'] ?? '',
+          alias: data[i]['alias'] ?? '',
+          nombre: data[i]['nombre'] ?? '',
+          nombreComercial: data[i]['nombreComercial'] ?? '',
+          telCodigoPais: data[i]['telCodigoPais'] ?? '',
+          telNumero: data[i]['telNumero'] ?? '',
+          faxCodigoPais: data[i]['faxCodigoPais'] ?? '',
+          faxNumero: data[i]['faxNumero'] ?? '',
+          correo: data[i]['correo'] ?? ' ',
+          ubicacionCodigo: data[i]['ubicacionCodigo'] ?? '',
+          ubicacionSenas: data[i]['ubicacionSenas'] ?? '',
+          ubicacionSenasExtranjero: data[i]['ubicacionSenasExtranjero'] ?? '',
+          tipo: data[i]['tipo'] ?? '',
+          actividades: actividades,
+          nombreProvincia: ubicacion!.provincia.nombre,
+          nombreCanton: ubicacion.canton.nombre,
+          nombreDistrito: ubicacion.distrito.nombre,
+          nombreBarrio: ubicacion.barrio.nombre,
+          esCompartida: data[i]['esCompartida'] ?? '',
+          usuariosCompartidos: usuariosCompartidos,
+        ),
       );
-
-      actividades.add(activity);
     }
-
-    for (var e = 0; e < dataUsuariosCompartidos.length; e++) {
-      usuariosCompartidos.add(UsuarioCompartido(
-        nombreCompleto: dataUsuariosCompartidos[e]['nombreCompleto'],
-        username: dataUsuariosCompartidos[e]['username'],
-      ));
-    }
-
-    UbicacionService ubicacionService = UbicacionService();
-
-    Ubicacion? ubicacion =
-        await ubicacionService.getUbicacion(data[i]['ubicacionCodigo']);
-
-    accounts.add(Account(
-        id: data[i]['id'].toString(),
-        cedulaTipo: data[i]['cedulaTipo'],
-        cedulaNumero: data[i]['cedulaNumero'],
-        idExtranjero: data[i]['idExtranjero'],
-        alias: data[i]['alias'],
-        nombre: data[i]['nombre'],
-        nombreComercial: data[i]['nombreComercial'],
-        telCodigoPais: data[i]['telCodigoPais'],
-        telNumero: data[i]['telNumero'],
-        faxCodigoPais: data[i]['faxCodigoPais'],
-        faxNumero: data[i]['faxNumero'],
-        correo: data[i]['correo'],
-        ubicacionCodigo: data[i]['ubicacionCodigo'],
-        ubicacionSenas: data[i]['ubicacionSenas'],
-        ubicacionSenasExtranjero: data[i]['ubicacionSenasExtranjero'],
-        tipo: data[i]['tipo'],
-        actividades: actividades,
-        nombreProvincia: ubicacion!.provincia.nombre,
-        nombreCanton: ubicacion.canton.nombre,
-        nombreDistrito: ubicacion.distrito.nombre,
-        nombreBarrio: ubicacion.barrio.nombre,
-        esCompartida: data[i]['esCompartida'],
-        usuariosCompartidos: usuariosCompartidos));
+    return accounts;
+  } else {
+    return [];
   }
-  return accounts;
 }
 
 Future<List<Account>> getAccountList() async {

@@ -2,23 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/managers/provider_manager.dart';
 import 'package:flutter_app/models/account.dart';
-import 'package:flutter_app/widgets/account/account_info_card.dart';
+import 'package:flutter_app/widgets/account/account_info_header.dart';
 import 'package:flutter_app/widgets/account/account_summary_card.dart';
-import 'package:flutter_app/widgets/general/my_back_button.dart';
+import 'package:flutter_app/services/account/account_service.dart';
+import 'package:flutter_app/utils/utils.dart';
+import 'package:flutter_app/widgets/general/my_text.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
-class AccountManagementScreen extends StatefulWidget {
-  static const String routeName = accountManagementRouteName;
+class GenerateQrScreen extends StatefulWidget {
+  static const String routeName = generateQrRouteName;
 
-  const AccountManagementScreen({Key? key}) : super(key: key);
+  const GenerateQrScreen({super.key});
 
   @override
-  State<AccountManagementScreen> createState() =>
-      _AccountManagementScreenState();
+  State<GenerateQrScreen> createState() => _GenerateQrScreenState();
 }
 
-class _AccountManagementScreenState extends State<AccountManagementScreen> {
+class _GenerateQrScreenState extends State<GenerateQrScreen> {
   List<Account>? accounts;
+  List<String>? args;
+  bool isLoading = false;
 
   @override
   void didChangeDependencies() {
@@ -36,41 +40,9 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const MyBackButton(routeName: homeLoggedRouteName),
-            ElevatedButton(
-              onPressed: () {
-                _showCreateAccountScreen(context);
-              },
-              style: const ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll(Colors.green)),
-              child: const Row(
-                children: [
-                  Icon(Icons.add),
-                  Text('Cuenta'),
-                ],
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _showAddSharedAccountScreen(context);
-              },
-              style: const ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll(Colors.purple)),
-              child: const Row(
-                children: [
-                  Icon(Icons.add),
-                  Text('Cuenta compartida'),
-                ],
-              ),
-            ),
-          ],
-        ),
+        title: const Text('Seleccione su cuenta receptor'),
       ),
-      body: accounts == null
+      body: accounts == null || isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,16 +69,17 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                               side: const BorderSide(
                                   color: Colors.black, width: 1.0),
                             ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
                               child: Row(children: [
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 CircleWidget(
                                     radius: 7,
-                                    color: Color.fromARGB(255, 190, 237, 255)),
-                                SizedBox(width: 15),
-                                Text('Física'),
-                                SizedBox(width: 10),
+                                    color: const Color.fromARGB(
+                                        255, 190, 237, 255)),
+                                const SizedBox(width: 15),
+                                const Text('Física'),
+                                const SizedBox(width: 10),
                               ]),
                             ),
                           ),
@@ -119,16 +92,17 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                                   width:
                                       1.0), // Añade un borde negro de 1 píxel
                             ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
                               child: Row(children: [
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 CircleWidget(
                                     radius: 7,
-                                    color: Color.fromARGB(255, 190, 201, 255)),
-                                SizedBox(width: 15),
-                                Text('Jurídica'),
-                                SizedBox(width: 10),
+                                    color: const Color.fromARGB(
+                                        255, 190, 201, 255)),
+                                const SizedBox(width: 15),
+                                const Text('Jurídica'),
+                                const SizedBox(width: 10),
                               ]),
                             ),
                           )
@@ -146,7 +120,7 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: GestureDetector(
                           onTap: () {
-                            _openAlertModal(context, acc);
+                            _setQrArgs(acc);
                           },
                           child: AccountSummaryCard(account: acc),
                         ),
@@ -170,6 +144,7 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: GestureDetector(
                           onTap: () {
+                            _setQrArgs(acc);
                             _openAlertModal(context, acc);
                           },
                           child: AccountSummaryCard(account: acc),
@@ -183,6 +158,45 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
     );
   }
 
+  void _setLoadingTrue() {
+    setState(() {
+      isLoading = true;
+    });
+  }
+
+  void _setLoadingFalse() {
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void _setQrArgs(Account account) async {
+    _setLoadingTrue();
+    var accountEncryptedCode = await getAccountBillingQr(int.parse(account.id));
+    var receptorModelName = await getDeviceModel();
+    var receptorLocation = await getLocation();
+    var receptorTimeStamp = DateTime.now().toIso8601String();
+
+    String codigoQr =
+        '$accountEncryptedCode $receptorModelName ${receptorLocation[0]} ${receptorLocation[1]} $receptorTimeStamp';
+
+    setState(() {
+      args = [
+        account.cedulaTipo,
+        account.cedulaNumero,
+        account.nombre,
+        account.alias,
+        codigoQr,
+      ];
+    });
+
+    _setLoadingFalse();
+
+    if (context.mounted) {
+      _openAlertModal(context, account);
+    }
+  }
+
   void _openAlertModal(BuildContext context, Account account) {
     showDialog(
       context: context,
@@ -192,29 +206,49 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Card(
-                      margin: const EdgeInsets.all(8),
-                      elevation: 5,
-                      color: account.cedulaTipo == 'Juridica'
-                          ? const Color.fromARGB(255, 180, 193, 255)
-                          : const Color.fromARGB(255, 180, 234, 255),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            AccountInfoCard(
-                              account: account,
-                              addButtons: 2,
-                              showIsShared: true,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Card(
+                          elevation: 5,
+                          margin: const EdgeInsets.all(8),
+                          color: args![0] == 'Juridica'
+                              ? const Color.fromARGB(255, 180, 193, 255)
+                              : const Color.fromARGB(255, 180, 234, 255),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: AccountInfoCardHeader(
+                              cedulaTipo: args![0],
+                              cedulaNumero: args![1],
+                              nombre: args![2],
+                              alias: args![3],
                             ),
-                          ],
-                        ),
+                          )),
+                      const SizedBox(height: 20),
+                      const MyText(
+                        text: 'Código QR generado',
+                        fontSize: 24,
                       ),
-                    ),
-                  ],
+                      if (args![4].isNotEmpty) ...[
+                        const SizedBox(height: 26),
+                        Center(
+                          child: QrImage(
+                            data: args![4],
+                            version: QrVersions.auto,
+                            size: 200,
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 16),
+                      const MyText(
+                        text: 'Tiempo de expiración: 1 minuto',
+                        fontSize: 18,
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
                 ),
               );
             },
@@ -223,21 +257,13 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
       },
     );
   }
-
-  void _showCreateAccountScreen(BuildContext context) async {
-    Navigator.of(context).pushNamed(createAccountRouteName);
-  }
-
-  void _showAddSharedAccountScreen(BuildContext context) async {
-    Navigator.of(context).pushNamed(addSharedAccountRouteName);
-  }
 }
 
 class CircleWidget extends StatelessWidget {
   final double radius;
   final Color color;
 
-  const CircleWidget({super.key, required this.radius, required this.color});
+  CircleWidget({required this.radius, required this.color});
 
   @override
   Widget build(BuildContext context) {

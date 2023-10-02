@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/constants.dart';
 import 'package:flutter_app/constants/route_names.dart';
@@ -43,6 +45,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   Distrito? selectedDistrito;
   Barrio? selectedBarrio;
 
+  final _aliasController = TextEditingController();
   final _cedulaNumeroController = TextEditingController();
   final _idExtranjeroController = TextEditingController();
   final _nombreController = TextEditingController();
@@ -57,6 +60,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _codigoActividadController = TextEditingController();
   final _nombreActividadController = TextEditingController();
 
+  late FocusNode _aliasFocusNode;
   late FocusNode _cedulaTipoFocusNode;
   late FocusNode _cedulaNumeroFocusNode;
   late FocusNode _idExtranjeroFocusNode;
@@ -79,6 +83,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   @override
   void initState() {
     super.initState();
+    _aliasFocusNode = FocusNode();
     _cedulaTipoFocusNode = FocusNode();
     _cedulaNumeroFocusNode = FocusNode();
     _idExtranjeroFocusNode = FocusNode();
@@ -103,6 +108,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   @override
   void dispose() {
+    _aliasController.dispose();
     _cedulaNumeroController.dispose();
     _idExtranjeroController.dispose();
     _nombreController.dispose();
@@ -118,6 +124,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     _codigoActividadController.dispose();
     _nombreActividadController.dispose();
 
+    _aliasFocusNode.dispose();
     _cedulaTipoFocusNode.dispose();
     _cedulaNumeroFocusNode.dispose();
     _idExtranjeroFocusNode.dispose();
@@ -215,6 +222,37 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               border: Border.all(color: Colors.black)),
                           child: Column(
                             children: [
+                              const SizedBox(height: 8.0),
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                color: const Color.fromARGB(255, 255, 255, 255),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Alias',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    TextFormField(
+                                      focusNode: _aliasFocusNode,
+                                      controller: _aliasController,
+                                      onEditingComplete: () {
+                                        _focusNextField(
+                                          context,
+                                          _aliasFocusNode,
+                                          _cedulaTipoFocusNode,
+                                        );
+                                      },
+                                      decoration: const InputDecoration(
+                                          labelText:
+                                              'Ingrese un alias para la cuenta'),
+                                    ),
+                                  ],
+                                ),
+                              ),
                               const SizedBox(height: 8.0),
                               Container(
                                 padding: const EdgeInsets.all(8),
@@ -976,6 +1014,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   void _submitCreateAccountForm(
       BuildContext context, ProviderManager providerManager) async {
+    final alias = _aliasController.text;
     final cedulaTipo = _cedulaTipo;
     final cedulaNumero = _cedulaNumeroController.text;
     final idExtranjero = _idExtranjeroController.text;
@@ -1008,6 +1047,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         selectedBarrio!.id.toString().padLeft(2, '0');
 
     final cuenta = {
+      "alias": alias,
       "cedulaTipo": cedulaTipo,
       "cedulaNumero": cedulaNumero,
       "idExtranjero": idExtranjero,
@@ -1030,19 +1070,32 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     _setLoadingFalse();
 
     if (response.statusCode == 200) {
-      List<Account> accounts = await mapAccountListResponse(response);
+      var data = jsonDecode(response.body);
 
-      if (context.mounted) {
-        showAlertDialogWithFunction(
-          context,
-          'Cuenta agregada',
-          'La cuenta se agregó exitosamente.',
-          'Aceptar',
-          () {
-            providerManager.reloadAccountsInAccountManagement(
-                context, accounts);
-          },
-        );
+      if (data['success']) {
+        List<Account> accounts = await mapAccountListResponse(response);
+
+        if (context.mounted) {
+          showAlertDialogWithFunction(
+            context,
+            'Cuenta agregada',
+            'La cuenta se agregó exitosamente.',
+            'Aceptar',
+            () {
+              providerManager.reloadAccountsInAccountManagement(
+                  context, accounts);
+            },
+          );
+        }
+      } else {
+        if (context.mounted) {
+          showAlertDialog(
+            context,
+            'Error al agregar cuenta',
+            data['message'],
+            'Aceptar',
+          );
+        }
       }
     } else {
       if (context.mounted) {
