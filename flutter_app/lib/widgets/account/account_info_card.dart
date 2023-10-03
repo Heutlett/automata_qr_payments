@@ -72,6 +72,9 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
                       editAcc: () {
                         _showEditAccountScreen(context, providerManager);
                       },
+                      editAccAlias: () {
+                        _showEditAccountAliasScreen(context, providerManager);
+                      },
                       deleteAcc: account.esCompartida
                           ? () {
                               _deleteSharedAcc(
@@ -206,6 +209,17 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
 
     if (context.mounted) {
       Navigator.of(context).pushNamed(editAccountRouteName);
+    }
+  }
+
+  void _showEditAccountAliasScreen(
+      BuildContext context, ProviderManager providerManager) async {
+    _setLoadingTrue();
+    providerManager.setSelectedEditAccount(account);
+    _setLoadingFalse();
+
+    if (context.mounted) {
+      Navigator.of(context).pushNamed(editAccountAliasRouteName);
     }
   }
 

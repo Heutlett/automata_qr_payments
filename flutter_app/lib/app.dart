@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/managers/provider_manager.dart';
+import 'package:flutter_app/screens/account_management/edit_account_alias.dart';
 //import 'package:flutter_app/screens/factura/factura_emisor/show_factura.dart';
 import 'package:flutter_app/screens/home/home.dart';
 import 'package:flutter_app/screens/home/home_logged.dart';
@@ -43,6 +44,8 @@ class MyApp extends StatelessWidget {
               const CreateAccountScreen(),
           EditAccountScreen.routeName: (BuildContext context) =>
               const EditAccountScreen(),
+          EditAccountAliasScreen.routeName: (BuildContext context) =>
+              const EditAccountAliasScreen(),
           ShareAccountScreen.routeName: (BuildContext context) =>
               const ShareAccountScreen(),
           AddSharedAccountScreen.routeName: (BuildContext context) =>

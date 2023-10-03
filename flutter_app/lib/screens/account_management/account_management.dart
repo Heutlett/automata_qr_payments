@@ -4,6 +4,7 @@ import 'package:flutter_app/managers/provider_manager.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/widgets/account/account_info_card.dart';
 import 'package:flutter_app/widgets/account/account_summary_card.dart';
+import 'package:flutter_app/widgets/account/type_account_symb.dart';
 import 'package:flutter_app/widgets/general/my_back_button.dart';
 import 'package:provider/provider.dart';
 
@@ -37,36 +38,12 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Row(
+        title: const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const MyBackButton(routeName: homeLoggedRouteName),
-            ElevatedButton(
-              onPressed: () {
-                _showCreateAccountScreen(context);
-              },
-              style: const ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll(Colors.green)),
-              child: const Row(
-                children: [
-                  Icon(Icons.add),
-                  Text('Cuenta'),
-                ],
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _showAddSharedAccountScreen(context);
-              },
-              style: const ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll(Colors.purple)),
-              child: const Row(
-                children: [
-                  Icon(Icons.add),
-                  Text('Cuenta compartida'),
-                ],
-              ),
-            ),
+            MyBackButton(routeName: homeLoggedRouteName),
+            Text('Administración de cuentas'),
+            SizedBox()
           ],
         ),
       ),
@@ -75,84 +52,75 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
-                      child: Text(
-                        'Cuentas propias:',
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Row(
-                        children: [
-                          Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                              side: const BorderSide(
-                                  color: Colors.black, width: 1.0),
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Row(children: [
-                                SizedBox(width: 10),
-                                CircleWidget(
-                                    radius: 7,
-                                    color: Color.fromARGB(255, 190, 237, 255)),
-                                SizedBox(width: 15),
-                                Text('Física'),
-                                SizedBox(width: 10),
-                              ]),
-                            ),
-                          ),
-                          Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  10.0), // Ajusta el radio para controlar la redondez de las esquinas
-                              side: const BorderSide(
-                                  color: Colors.black,
-                                  width:
-                                      1.0), // Añade un borde negro de 1 píxel
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Row(children: [
-                                SizedBox(width: 10),
-                                CircleWidget(
-                                    radius: 7,
-                                    color: Color.fromARGB(255, 190, 201, 255)),
-                                SizedBox(width: 15),
-                                Text('Jurídica'),
-                                SizedBox(width: 10),
-                              ]),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: getFilteredAccounts(false).length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final acc = getFilteredAccounts(false)[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: GestureDetector(
-                          onTap: () {
-                            _openAlertModal(context, acc);
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _showCreateAccountScreen(context);
                           },
-                          child: AccountSummaryCard(account: acc),
+                          style: const ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.green)),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.add),
+                              Text('Cuenta'),
+                            ],
+                          ),
                         ),
-                      );
-                    },
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _showAddSharedAccountScreen(context);
+                          },
+                          style: const ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll(Colors.purple)),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.add),
+                              Text('Cuenta compartida'),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Divider(thickness: 1),
+                ),
+                const TypeAccountSymb(),
+                Expanded(
+                  child: getFilteredAccounts(false).isNotEmpty
+                      ? ListView.builder(
+                          itemCount: getFilteredAccounts(false).length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final acc = getFilteredAccounts(false)[index];
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  _openAccountManagementAlertModal(
+                                      context, acc);
+                                },
+                                child: AccountSummaryCard(account: acc),
+                              ),
+                            );
+                          },
+                        )
+                      : const Center(
+                          child: Text('No cuenta con cuentas propias.',
+                              style: TextStyle(color: Colors.red))),
                 ),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
@@ -162,28 +130,34 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
                   ),
                 ),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: getFilteredAccounts(true).length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final acc = getFilteredAccounts(true)[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: GestureDetector(
-                          onTap: () {
-                            _openAlertModal(context, acc);
+                  child: getFilteredAccounts(true).isNotEmpty
+                      ? ListView.builder(
+                          itemCount: getFilteredAccounts(true).length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final acc = getFilteredAccounts(true)[index];
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  _openAccountManagementAlertModal(
+                                      context, acc);
+                                },
+                                child: AccountSummaryCard(account: acc),
+                              ),
+                            );
                           },
-                          child: AccountSummaryCard(account: acc),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                        )
+                      : const Center(
+                          child: Text('No cuenta con cuentas compartidas.',
+                              style: TextStyle(color: Colors.red))),
+                )
               ],
             ),
     );
   }
 
-  void _openAlertModal(BuildContext context, Account account) {
+  void _openAccountManagementAlertModal(BuildContext context, Account account) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -230,24 +204,5 @@ class _AccountManagementScreenState extends State<AccountManagementScreen> {
 
   void _showAddSharedAccountScreen(BuildContext context) async {
     Navigator.of(context).pushNamed(addSharedAccountRouteName);
-  }
-}
-
-class CircleWidget extends StatelessWidget {
-  final double radius;
-  final Color color;
-
-  const CircleWidget({super.key, required this.radius, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: radius * 2,
-      height: radius * 2,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color,
-      ),
-    );
   }
 }

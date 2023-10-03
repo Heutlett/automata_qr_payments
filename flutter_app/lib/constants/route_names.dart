@@ -6,6 +6,7 @@ const homeLoggedRouteName = '/home_logged';
 const accountManagementRouteName = '/account_management';
 const createAccountRouteName = '/create_account';
 const editAccountRouteName = 'edit_account';
+const editAccountAliasRouteName = 'edit_account_alias';
 const shareAccountRouteName = '/share_account';
 const addSharedAccountRouteName = '/add_shared_account';
 const showSharedAccountAddedRouteName = 'show_shared_account_added';

@@ -68,7 +68,8 @@ class _AccountInfoCardSharedAccState extends State<AccountInfoCardSharedAcc> {
                                             width: 180,
                                             child: Text(
                                               user.nombreCompleto,
-                                              style: TextStyle(fontSize: 12),
+                                              style:
+                                                  const TextStyle(fontSize: 12),
                                               softWrap: true,
                                             ),
                                           ),

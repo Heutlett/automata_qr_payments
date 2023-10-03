@@ -42,6 +42,7 @@ class _ShareAccountScreenState extends State<ShareAccountScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("QR generado para compartir"),
+        automaticallyImplyLeading: false,
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())

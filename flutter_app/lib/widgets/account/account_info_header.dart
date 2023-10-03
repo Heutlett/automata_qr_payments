@@ -63,7 +63,7 @@ class AccountInfoCardHeader extends StatelessWidget {
                   width: 150,
                   child: Text(
                     nombre,
-                    style: TextStyle(fontSize: 12),
+                    style: const TextStyle(fontSize: 12),
                     softWrap: true,
                   ),
                 ),

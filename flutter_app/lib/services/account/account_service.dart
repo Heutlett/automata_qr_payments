@@ -12,8 +12,6 @@ import 'package:flutter_app/models/ubicacion.dart';
 Future<http.Response> postCreateAccount(Object? cuenta) async {
   String token = await SharedLocalStore.getAccessToken();
 
-  print(jsonEncode(cuenta));
-
   var responseCreateAcc = await http.post(
     Uri.parse(accountManagementUrl),
     body: jsonEncode(cuenta),
@@ -28,7 +26,9 @@ Future<http.Response> postCreateAccount(Object? cuenta) async {
 Future<http.Response> putEditAccount(String id, Object? cuenta) async {
   String token = await SharedLocalStore.getAccessToken();
 
-  var responseCreateAcc = await http.put(
+  print(jsonEncode(cuenta));
+
+  var response = await http.put(
     Uri.parse(accountManagementUrl),
     body: jsonEncode(cuenta),
     headers: {
@@ -36,7 +36,22 @@ Future<http.Response> putEditAccount(String id, Object? cuenta) async {
       'Authorization': 'bearer $token'
     },
   );
-  return responseCreateAcc;
+  return response;
+}
+
+Future<http.Response> putEditAccountAlias(String id, String alias) async {
+  String token = await SharedLocalStore.getAccessToken();
+
+  String url = '$accountManagementUrl/$id/alias/$alias';
+
+  var response = await http.put(
+    Uri.parse(url),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'bearer $token'
+    },
+  );
+  return response;
 }
 
 Future<http.Response> deleteOwnAccount(String id) async {
