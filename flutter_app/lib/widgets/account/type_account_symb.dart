@@ -21,6 +21,7 @@ class TypeAccountSymb extends StatelessWidget {
           child: Row(
             children: [
               Card(
+                elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                   side: const BorderSide(color: Colors.grey, width: 1.0),
@@ -38,6 +39,7 @@ class TypeAccountSymb extends StatelessWidget {
                 ),
               ),
               Card(
+                elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
                       10.0), // Ajusta el radio para controlar la redondez de las esquinas

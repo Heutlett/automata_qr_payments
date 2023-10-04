@@ -11,8 +11,6 @@ class MyBackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 30,
-      height: 80,
       padding: const EdgeInsets.all(4),
       decoration: ShapeDecoration(
         color: Colors.blue,
@@ -25,7 +23,7 @@ class MyBackButton extends StatelessWidget {
         },
         child: const Icon(
           Icons.keyboard_arrow_left,
-          size: 28,
+          size: 38,
         ),
       ),
     );

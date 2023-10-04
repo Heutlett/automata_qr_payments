@@ -9,7 +9,6 @@ const editAccountRouteName = 'edit_account';
 const editAccountAliasRouteName = 'edit_account_alias';
 const shareAccountRouteName = '/share_account';
 const addSharedAccountRouteName = '/add_shared_account';
-const showSharedAccountAddedRouteName = 'show_shared_account_added';
 
 const facturarRouteName = '/facturar';
 

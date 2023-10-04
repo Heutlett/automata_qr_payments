@@ -19,7 +19,6 @@ import 'package:flutter_app/screens/account_management/edit_account.dart';
 //import 'package:flutter_app/screens/history/facturas_history.dart';
 import 'package:flutter_app/screens/account_management/share_account.dart';
 import 'package:flutter_app/screens/account_management/add_shared_account.dart';
-import 'package:flutter_app/screens/account_management/show_shared_account_added.dart';
 import 'package:provider/provider.dart';
 
 class MyApp extends StatelessWidget {
@@ -50,8 +49,6 @@ class MyApp extends StatelessWidget {
               const ShareAccountScreen(),
           AddSharedAccountScreen.routeName: (BuildContext context) =>
               const AddSharedAccountScreen(),
-          ShowSharedAccountAddedScreen.routeName: (BuildContext context) =>
-              const ShowSharedAccountAddedScreen(),
           FacturarScreen.routeName: (BuildContext context) =>
               const FacturarScreen(),
           GenerateQrScreen.routeName: (BuildContext context) =>
