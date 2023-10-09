@@ -5,12 +5,14 @@ class AccountInfoCardHeader extends StatelessWidget {
   final String cedulaTipo;
   final String cedulaNumero;
   final String nombre;
+  final String alias;
 
   const AccountInfoCardHeader({
     super.key,
     required this.cedulaTipo,
     required this.cedulaNumero,
     required this.nombre,
+    required this.alias,
   });
 
   @override
@@ -26,20 +28,46 @@ class AccountInfoCardHeader extends StatelessWidget {
               children: [
                 MyText(
                   text: cedulaTipo,
-                  fontSize: 20,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
                 MyText(
                   text: cedulaNumero,
-                  fontSize: 15,
+                  fontSize: 12,
                 ),
               ],
             ),
             const Divider(thickness: 1),
-            MyText(
-              text: nombre,
-              fontSize: 15,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                SizedBox(
+                  width: 80,
+                  child: Text(
+                    alias.isNotEmpty ? alias : 'Sin alias',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: alias.isNotEmpty ? Colors.green : Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    softWrap: true,
+                  ),
+                ),
+                const SizedBox(
+                  height: 25,
+                  width: 5,
+                  child: VerticalDivider(thickness: 1),
+                ),
+                SizedBox(
+                  width: 150,
+                  child: Text(
+                    nombre,
+                    style: const TextStyle(fontSize: 12),
+                    softWrap: true,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

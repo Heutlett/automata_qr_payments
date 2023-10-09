@@ -16,7 +16,7 @@ class AccountInfoCardActivities extends StatelessWidget {
           children: [
             const MyText(
               text: 'Actividades económicas',
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: FontWeight.bold,
             ),
             const Divider(thickness: 1),
@@ -32,7 +32,7 @@ class AccountInfoCardActivities extends StatelessWidget {
                               children: [
                                 MyText(
                                   text: act.codigoActividad,
-                                  fontSize: 13,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 MyText(
