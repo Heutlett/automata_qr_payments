@@ -6,15 +6,13 @@ const homeLoggedRouteName = '/home_logged';
 const accountManagementRouteName = '/account_management';
 const createAccountRouteName = '/create_account';
 const editAccountRouteName = 'edit_account';
+const editAccountAliasRouteName = 'edit_account_alias';
 const shareAccountRouteName = '/share_account';
 const addSharedAccountRouteName = '/add_shared_account';
-const showSharedAccountAddedRouteName = 'show_shared_account_added';
 
 const facturarRouteName = '/facturar';
 
-const selectReceptorAccountToGenerateQrRouteName =
-    '/select_receptor_account_to_generate_qr';
-const showReceptorQrRouteName = '/show_receptor_qr';
+const generateQrRouteName = '/generate_qr';
 
 const selectEmisorAccountRouteName = '/select_emisor_account';
 const scanQrReceptorAccountRouteName = '/scan_qr_receptor_account';

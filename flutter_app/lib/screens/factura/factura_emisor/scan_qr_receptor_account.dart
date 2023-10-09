@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/models/account.dart';
-import 'package:flutter_app/widgets/general/my_button.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_app/services/account/account_service.dart';
 
 import 'package:flutter_app/models/server_response.dart';
 import 'package:flutter_app/utils/utils.dart';
-import 'package:flutter_app/widgets/general/my_text.dart';
 
 class ScanQrReceptorAccountScreen extends StatefulWidget {
   static const String routeName = scanQrReceptorAccountRouteName;
@@ -26,29 +24,35 @@ class _ScanQrReceptorAccountScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Selección de cuentas'),
+        title: const Text('Escaneo de QR'),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 80),
-              const MyText(
-                text: 'Cuenta receptor',
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () => _scanQR(context),
+              style: const ButtonStyle(
+                  backgroundColor: MaterialStatePropertyAll(Colors.green)),
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Text(
+                      'Escanear QR de receptor',
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.w400),
+                    ),
+                    SizedBox(height: 20),
+                    Icon(
+                      Icons.qr_code_scanner,
+                      size: 150,
+                    )
+                  ],
+                ),
               ),
-              const SizedBox(height: 20),
-              MyButton(
-                text: 'Escanear QR de receptor',
-                function: () => scanQR(context),
-                icon: Icons.qr_code_scanner,
-                backgroundColor: Colors.green,
-                size: const Size(290, 50),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -76,16 +80,19 @@ class _ScanQrReceptorAccountScreenState
     }
   }
 
-  Future<void> scanQR(BuildContext context) async {
+  Future<void> _scanQR(BuildContext context) async {
     String barcodeScanRes;
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancelar', true, ScanMode.QR);
-      if (context.mounted) {
+
+      if (barcodeScanRes != '-1' && context.mounted) {
         _showSelectAccountManagement(context, barcodeScanRes);
       }
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
+    } catch (e) {
+      showAlertDialog(context, 'Error', e.toString(), 'Ok');
     }
   }
 }

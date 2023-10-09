@@ -33,6 +33,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
   String? _cedulaTipo;
   String? _tipoCuenta;
 
+  final _aliasController = TextEditingController();
   final _cedulaNumeroController = TextEditingController();
   final _idExtranjeroController = TextEditingController();
   final _nombreController = TextEditingController();
@@ -70,6 +71,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
 
   @override
   void dispose() {
+    _aliasController.dispose();
     _cedulaNumeroController.dispose();
     _idExtranjeroController.dispose();
     _nombreController.dispose();
@@ -129,6 +131,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
 
       _loadUbicacion(account, providerManager);
 
+      _aliasController.text = account.alias;
       _cedulaTipo = account.cedulaTipo;
       _cedulaNumeroController.text = account.cedulaNumero;
       _idExtranjeroController.text = account.idExtranjero;
@@ -205,6 +208,29 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                               border: Border.all(color: Colors.black)),
                           child: Column(
                             children: [
+                              const SizedBox(height: 8.0),
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                color: const Color.fromARGB(255, 255, 255, 255),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Alias',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    TextFormField(
+                                      controller: _aliasController,
+                                      decoration: const InputDecoration(
+                                          labelText:
+                                              'Ingrese un alias para la cuenta'),
+                                    ),
+                                  ],
+                                ),
+                              ),
                               const SizedBox(height: 8.0),
                               Container(
                                 padding: const EdgeInsets.all(8),
@@ -614,7 +640,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                                                     flex: 1,
                                                     child: ElevatedButton(
                                                       onPressed: () {
-                                                        addActivity(context);
+                                                        _addActivity(context);
                                                         _codigoActividadController
                                                             .clear(); // Limpiar el TextFormField
                                                         FocusScope.of(context)
@@ -668,7 +694,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                                                           fontSize: 14,
                                                           text: 'Buscar',
                                                           function: () {
-                                                            searchActivityByName(
+                                                            _searchActivityByName(
                                                                 context);
                                                             _nombreActividadController
                                                                 .clear(); // Limpiar el TextFormField
@@ -839,7 +865,8 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                                       _submitEditAccountForm(
                                           context,
                                           providerManager
-                                              .selectedEditAccount!.id);
+                                              .selectedEditAccount!.id,
+                                          providerManager);
                                     } else {
                                       showAlertDialog(
                                         context,
@@ -876,7 +903,9 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     });
   }
 
-  void _submitEditAccountForm(BuildContext context, String accountId) async {
+  void _submitEditAccountForm(BuildContext context, String accountId,
+      ProviderManager providerManager) async {
+    final alias = _aliasController.text;
     final cedulaTipo = _cedulaTipo;
     final cedulaNumero = _cedulaNumeroController.text;
     final idExtranjero = _idExtranjeroController.text;
@@ -910,6 +939,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
 
     final cuenta = {
       "id": accountId,
+      "alias": alias,
       "cedulaTipo": cedulaTipo,
       "cedulaNumero": cedulaNumero,
       "idExtranjero": idExtranjero,
@@ -931,18 +961,24 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     var response = await putEditAccount(accountId, cuenta);
     _setLoadingFalse();
 
-    if (context.mounted) {
-      if (response.statusCode == 200) {
+    if (response.statusCode == 200) {
+      _setLoadingTrue();
+      List<Account> accounts = await mapAccountListResponse(response);
+      _setLoadingFalse();
+      if (context.mounted) {
         showAlertDialogWithFunction(
           context,
           'Cuenta editada',
           'La cuenta se editó exitosamente.',
           'Aceptar',
           () {
-            reloadAccounts(context);
+            providerManager.reloadAccountsInAccountManagement(
+                context, accounts);
           },
         );
-      } else {
+      }
+    } else {
+      if (context.mounted) {
         showAlertDialog(
           context,
           'Error al editar cuenta',
@@ -951,12 +987,6 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
         );
       }
     }
-  }
-
-  void reloadAccounts(BuildContext context) async {
-    Navigator.of(context).pushNamedAndRemoveUntil(
-        homeLoggedRouteName, (Route<dynamic> route) => false);
-    Navigator.of(context).pushNamed(accountManagementRouteName);
   }
 
   void _initActivities(BuildContext context, String activity) async {
@@ -972,7 +1002,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     });
   }
 
-  void addActivity(BuildContext context) async {
+  void _addActivity(BuildContext context) async {
     if (_codigoActividadController.text.isEmpty) {
       showAlertDialog(
           context,
@@ -1055,7 +1085,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     }).toList());
   }
 
-  void searchActivityByName(BuildContext context) async {
+  void _searchActivityByName(BuildContext context) async {
     if (_nombreActividadController.text.isEmpty) {
       showAlertDialog(
           context,
