@@ -235,10 +235,11 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
           arguments: [account, codigoQR],
         );
       }
-    } catch (e) {
+     } catch (e) {
       _setLoadingFalse();
-      // ignore: use_build_context_synchronously
+      if (context.mounted) {
       showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
+      }    
     }
   }
 
@@ -275,10 +276,11 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
               'Ha ocurrido un error al intentar eliminar la cuenta', 'Aceptar');
         }
       }
-    } catch (e) {
+     } catch (e) {
       _setLoadingFalse();
-      // ignore: use_build_context_synchronously
+      if (context.mounted) {
       showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
+      }    
     }
   }
 
@@ -315,10 +317,11 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
               'Ha ocurrido un error al intentar eliminar la cuenta', 'Aceptar');
         }
       }
-    } catch (e) {
+     } catch (e) {
       _setLoadingFalse();
-      // ignore: use_build_context_synchronously
+      if (context.mounted) {
       showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
+      }    
     }
   }
 }

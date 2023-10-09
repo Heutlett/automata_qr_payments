@@ -78,9 +78,10 @@ class _ScanQrReceptorAccountScreenState
           );
         }
       }
-    } catch (e) {
-      // ignore: use_build_context_synchronously
+     } catch (e) {
+      if (context.mounted) {
       showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
+      }    
     }
   }
 
