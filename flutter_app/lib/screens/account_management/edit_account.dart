@@ -729,7 +729,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .all(
+                                                                          .all(
                                                                           8.0),
                                                                   child: Column(
                                                                     crossAxisAlignment:
@@ -804,7 +804,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .all(
+                                                                          .all(
                                                                           8.0),
                                                                   child: Column(
                                                                     crossAxisAlignment:
@@ -956,36 +956,41 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
       "tipo": tipo,
       "codigosActividad": actividades.map((act) => act.codigoActividad).toList()
     };
-
-    _setLoadingTrue();
-    var response = await putEditAccount(accountId, cuenta);
-    _setLoadingFalse();
-
-    if (response.statusCode == 200) {
+    try {
       _setLoadingTrue();
-      List<Account> accounts = await mapAccountListResponse(response);
+      var response = await putEditAccount(accountId, cuenta);
       _setLoadingFalse();
-      if (context.mounted) {
-        showAlertDialogWithFunction(
-          context,
-          'Cuenta editada',
-          'La cuenta se editó exitosamente.',
-          'Aceptar',
-          () {
-            providerManager.reloadAccountsInAccountManagement(
-                context, accounts);
-          },
-        );
+
+      if (response.statusCode == 200) {
+        _setLoadingTrue();
+        List<Account> accounts = await mapAccountListResponse(response);
+        _setLoadingFalse();
+        if (context.mounted) {
+          showAlertDialogWithFunction(
+            context,
+            'Cuenta editada',
+            'La cuenta se editó exitosamente.',
+            'Aceptar',
+            () {
+              providerManager.reloadAccountsInAccountManagement(
+                  context, accounts);
+            },
+          );
+        }
+      } else {
+        if (context.mounted) {
+          showAlertDialog(
+            context,
+            'Error al editar cuenta',
+            'Ocurrió un error al editar la cuenta.',
+            'Aceptar',
+          );
+        }
       }
-    } else {
-      if (context.mounted) {
-        showAlertDialog(
-          context,
-          'Error al editar cuenta',
-          'Ocurrió un error al editar la cuenta.',
-          'Aceptar',
-        );
-      }
+    } catch (e) {
+      _setLoadingFalse();
+      // ignore: use_build_context_synchronously
+      showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
     }
   }
 

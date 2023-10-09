@@ -132,23 +132,29 @@ class _AccountInfoCardSharedAccState extends State<AccountInfoCardSharedAcc> {
 
   void _deleteUserAccConfirm(BuildContext context, String accountId,
       String username, ProviderManager providerManager) async {
-    _setLoadingTrue();
-    var response = await unshareUserAccount(accountId, username);
-    _setLoadingFalse();
-
-    if (response.success) {
+    try {
       _setLoadingTrue();
-      var loadedAccounts = await getAccountList();
+      var response = await unshareUserAccount(accountId, username);
       _setLoadingFalse();
 
-      if (context.mounted) {
-        providerManager.reloadAccountsInAccountManagement(
-            context, loadedAccounts);
+      if (response.success) {
+        _setLoadingTrue();
+        var loadedAccounts = await getAccountList();
+        _setLoadingFalse();
+
+        if (context.mounted) {
+          providerManager.reloadAccountsInAccountManagement(
+              context, loadedAccounts);
+        }
+      } else {
+        if (context.mounted) {
+          showAlertDialog(context, 'Error', response.message, 'Aceptar');
+        }
       }
-    } else {
-      if (context.mounted) {
-        showAlertDialog(context, 'Error', response.message, 'Aceptar');
-      }
+    } catch (e) {
+      _setLoadingFalse();
+      // ignore: use_build_context_synchronously
+      showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
     }
   }
 }

@@ -118,19 +118,26 @@ class _GenerateQrScreenState extends State<GenerateQrScreen> {
   }
 
   void _showAccountQr(Account account) async {
-    _setLoadingTrue();
+    try {
+      _setLoadingTrue();
 
-    var accountEncryptedCode = await getAccountBillingQr(int.parse(account.id));
-    var receptorModelName = await getDeviceModel();
-    var receptorLocation = await getLocation();
-    var receptorTimeStamp = DateTime.now().toIso8601String();
-    String codigoQr =
-        '$accountEncryptedCode $receptorModelName ${receptorLocation[0]} ${receptorLocation[1]} $receptorTimeStamp';
+      var accountEncryptedCode =
+          await getAccountBillingQr(int.parse(account.id));
+      var receptorModelName = await getDeviceModel();
+      var receptorLocation = await getLocation();
+      var receptorTimeStamp = DateTime.now().toIso8601String();
+      String codigoQr =
+          '$accountEncryptedCode $receptorModelName ${receptorLocation[0]} ${receptorLocation[1]} $receptorTimeStamp';
 
-    _setLoadingFalse();
+      _setLoadingFalse();
 
-    if (context.mounted) {
-      _openQrAlertModal(context, account, codigoQr);
+      if (context.mounted) {
+        _openQrAlertModal(context, account, codigoQr);
+      }
+    } catch (e) {
+      _setLoadingFalse();
+      // ignore: use_build_context_synchronously
+      showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
     }
   }
 

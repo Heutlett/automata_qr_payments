@@ -62,21 +62,25 @@ class _ScanQrReceptorAccountScreenState
       BuildContext context, String codigoQr) async {
     List<String> codigoQrParts = codigoQr.split(" ");
     var accountEncryptedCode = codigoQrParts[0];
+    try {
+      ServerResponse<Account?> getCuenta =
+          await getCuentaByQr(accountEncryptedCode);
 
-    ServerResponse<Account?> getCuenta =
-        await getCuentaByQr(accountEncryptedCode);
+      Account? receptorAccount = getCuenta.data;
 
-    Account? receptorAccount = getCuenta.data;
-
-    if (context.mounted) {
-      if (receptorAccount == null || !getCuenta.success) {
-        showAlertDialog(context, 'Error', getCuenta.message, 'Ok');
-      } else {
-        Navigator.of(context).pushNamed(
-          showSelectedAccountsRouteName,
-          arguments: receptorAccount,
-        );
+      if (context.mounted) {
+        if (receptorAccount == null || !getCuenta.success) {
+          showAlertDialog(context, 'Error', getCuenta.message, 'Ok');
+        } else {
+          Navigator.of(context).pushNamed(
+            showSelectedAccountsRouteName,
+            arguments: receptorAccount,
+          );
+        }
       }
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
     }
   }
 

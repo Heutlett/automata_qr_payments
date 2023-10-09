@@ -225,14 +225,20 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
 
   void _shareAcc(BuildContext context) async {
     _setLoadingTrue();
-    var codigoQR = await getAccountShareQr(int.parse(account.id));
-    _setLoadingTrue();
+    try {
+      var codigoQR = await getAccountShareQr(int.parse(account.id));
+      _setLoadingTrue();
 
-    if (context.mounted) {
-      Navigator.of(context).pushNamed(
-        shareAccountRouteName,
-        arguments: [account, codigoQR],
-      );
+      if (context.mounted) {
+        Navigator.of(context).pushNamed(
+          shareAccountRouteName,
+          arguments: [account, codigoQR],
+        );
+      }
+    } catch (e) {
+      _setLoadingFalse();
+      // ignore: use_build_context_synchronously
+      showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
     }
   }
 
@@ -250,23 +256,29 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
 
   void _deleteOwnAccConfirm(BuildContext context, String accountId,
       ProviderManager providerManager) async {
-    _setLoadingTrue();
-    var response = await deleteOwnAccount(accountId);
-    _setLoadingFalse();
-
-    if (response.statusCode == 200) {
+    try {
       _setLoadingTrue();
-      List<Account> accounts = await mapAccountListResponse(response);
+      var response = await deleteOwnAccount(accountId);
       _setLoadingFalse();
 
-      if (context.mounted) {
-        providerManager.reloadAccountsInAccountManagement(context, accounts);
+      if (response.statusCode == 200) {
+        _setLoadingTrue();
+        List<Account> accounts = await mapAccountListResponse(response);
+        _setLoadingFalse();
+
+        if (context.mounted) {
+          providerManager.reloadAccountsInAccountManagement(context, accounts);
+        }
+      } else {
+        if (context.mounted) {
+          showAlertDialog(context, 'Error',
+              'Ha ocurrido un error al intentar eliminar la cuenta', 'Aceptar');
+        }
       }
-    } else {
-      if (context.mounted) {
-        showAlertDialog(context, 'Error',
-            'Ha ocurrido un error al intentar eliminar la cuenta', 'Aceptar');
-      }
+    } catch (e) {
+      _setLoadingFalse();
+      // ignore: use_build_context_synchronously
+      showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
     }
   }
 
@@ -284,23 +296,29 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
 
   void _deleteSharedAccConfirm(BuildContext context, String accountId,
       ProviderManager providerManager) async {
-    _setLoadingTrue();
-    var response = await deleteSharedAccount(accountId);
-    _setLoadingFalse();
-
-    if (response.statusCode == 200) {
+    try {
       _setLoadingTrue();
-      List<Account> accounts = await mapAccountListResponse(response);
+      var response = await deleteSharedAccount(accountId);
       _setLoadingFalse();
 
-      if (context.mounted) {
-        providerManager.reloadAccountsInAccountManagement(context, accounts);
+      if (response.statusCode == 200) {
+        _setLoadingTrue();
+        List<Account> accounts = await mapAccountListResponse(response);
+        _setLoadingFalse();
+
+        if (context.mounted) {
+          providerManager.reloadAccountsInAccountManagement(context, accounts);
+        }
+      } else {
+        if (context.mounted) {
+          showAlertDialog(context, 'Error',
+              'Ha ocurrido un error al intentar eliminar la cuenta', 'Aceptar');
+        }
       }
-    } else {
-      if (context.mounted) {
-        showAlertDialog(context, 'Error',
-            'Ha ocurrido un error al intentar eliminar la cuenta', 'Aceptar');
-      }
+    } catch (e) {
+      _setLoadingFalse();
+      // ignore: use_build_context_synchronously
+      showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
     }
   }
 }

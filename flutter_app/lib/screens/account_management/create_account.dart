@@ -842,7 +842,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .all(
+                                                                          .all(
                                                                           8.0),
                                                                   child: Column(
                                                                     crossAxisAlignment:
@@ -917,7 +917,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                              .all(
+                                                                          .all(
                                                                           8.0),
                                                                   child: Column(
                                                                     crossAxisAlignment:
@@ -1064,48 +1064,53 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       "tipo": tipo,
       "codigosActividad": actividades.map((act) => act.codigoActividad).toList()
     };
+    try {
+      _setLoadingTrue();
+      var response = await postCreateAccount(cuenta);
+      _setLoadingFalse();
 
-    _setLoadingTrue();
-    var response = await postCreateAccount(cuenta);
-    _setLoadingFalse();
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
 
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
+        if (data['success']) {
+          List<Account> accounts = await mapAccountListResponse(response);
 
-      if (data['success']) {
-        List<Account> accounts = await mapAccountListResponse(response);
-
-        if (context.mounted) {
-          showAlertDialogWithFunction(
-            context,
-            'Cuenta agregada',
-            'La cuenta se agregó exitosamente.',
-            'Aceptar',
-            () {
-              providerManager.reloadAccountsInAccountManagement(
-                  context, accounts);
-            },
-          );
+          if (context.mounted) {
+            showAlertDialogWithFunction(
+              context,
+              'Cuenta agregada',
+              'La cuenta se agregó exitosamente.',
+              'Aceptar',
+              () {
+                providerManager.reloadAccountsInAccountManagement(
+                    context, accounts);
+              },
+            );
+          }
+        } else {
+          if (context.mounted) {
+            showAlertDialog(
+              context,
+              'Error al agregar cuenta',
+              data['message'],
+              'Aceptar',
+            );
+          }
         }
       } else {
         if (context.mounted) {
           showAlertDialog(
             context,
             'Error al agregar cuenta',
-            data['message'],
+            'Ocurrió un error al agregar la cuenta.',
             'Aceptar',
           );
         }
       }
-    } else {
-      if (context.mounted) {
-        showAlertDialog(
-          context,
-          'Error al agregar cuenta',
-          'Ocurrió un error al agregar la cuenta.',
-          'Aceptar',
-        );
-      }
+    } catch (e) {
+      _setLoadingFalse();
+      // ignore: use_build_context_synchronously
+      showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
     }
   }
 
