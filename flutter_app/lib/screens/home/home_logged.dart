@@ -140,7 +140,8 @@ class _HomeLoggedScreenState extends State<HomeLoggedScreen> {
   }
 
   void _showHomeScreen(BuildContext context) {
-    Navigator.of(context).pushNamed(homeRouteName);
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        homeRouteName, (Route<dynamic> route) => false);
   }
 
   // void _showFacturarScreen(BuildContext context) {
