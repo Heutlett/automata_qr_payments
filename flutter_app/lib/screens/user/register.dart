@@ -141,38 +141,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _submitRegisterForm(BuildContext context) async {
-    try {
-      _setLoadingTrue();
-      var response = await postRegister(
-        _usernameController.text,
-        _nameController.text,
-        _passwordController.text,
-        _emailController.text,
-      );
-      _setLoadingFalse();
+    _setLoadingTrue();
+    var response = await postRegister(
+      _usernameController.text,
+      _nameController.text,
+      _passwordController.text,
+      _emailController.text,
+    );
+    var data = jsonDecode(response.body);
+    _setLoadingFalse();
 
+    if (context.mounted) {
       if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        if (context.mounted) {
-          showAlertDialogWithRoute(context, 'Resultado registro',
-              data['message'], 'Ok', homeRouteName);
-        }
+        showAlertDialogWithRoute(context, 'Resultado registro', data['message'],
+            'Ok', homeRouteName);
       } else {
-        if (response.statusCode == 404) {
-          if (context.mounted) {
-            showAlertDialog(context, "Resultado de inicio sesion",
-                'Ha ocurrido un error con el servidor.', 'Ok');
-          }
-        } else if (context.mounted) {
-          var data = jsonDecode(response.body);
-          showAlertDialog(
-              context, "Resultado de inicio sesion", data['message'], 'Ok');
-        }
+        showAlertDialog(context, 'Resultado registro', data['message'], 'Ok');
       }
-    } catch (e) {
-      _setLoadingFalse();
-      showAlertDialog(
-          context, 'Resultado de inicio sesion', e.toString(), 'Ok');
     }
   }
 }

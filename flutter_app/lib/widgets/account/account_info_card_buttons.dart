@@ -2,19 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/models/account.dart';
 
 class AccountInfoCardButtons extends StatefulWidget {
-  const AccountInfoCardButtons({
-    super.key,
-    required this.expandInfo,
-    required this.editAcc,
-    required this.editAccAlias,
-    required this.deleteAcc,
-    required this.account,
-    required this.shareAcc,
-    this.buttons = 0,
-  });
+  const AccountInfoCardButtons(
+      {super.key,
+      required this.expandInfo,
+      required this.editAcc,
+      required this.deleteAcc,
+      required this.account,
+      required this.shareAcc,
+      this.buttons = 0});
   final VoidCallback expandInfo;
   final VoidCallback editAcc;
-  final VoidCallback editAccAlias;
   final VoidCallback deleteAcc;
   final VoidCallback shareAcc;
   final int buttons;
@@ -47,27 +44,27 @@ class _AccountInfoCardButtonsState extends State<AccountInfoCardButtons> {
         children: [
           buttons == 1 || buttons == 2
               ? IconButton(
-                  onPressed: _expandAction,
+                  onPressed: expandAction,
                   icon: Icon(expandIcon),
                   color: Colors.blue)
               : const SizedBox(),
           buttons == 2
               ? IconButton(
-                  onPressed: acc.esCompartida ? _editAliasAction : _editAction,
+                  onPressed: editAction,
                   icon: const Icon(Icons.edit),
                   color: Colors.amber.shade800,
                 )
               : const SizedBox(),
           buttons == 2
               ? IconButton(
-                  onPressed: acc.esCompartida ? null : _shareAction,
+                  onPressed: acc.esCompartida ? null : shareAction,
                   icon: const Icon(Icons.share),
                   color: acc.esCompartida ? Colors.grey : Colors.green,
                 )
               : const SizedBox(),
           buttons == 2
               ? IconButton(
-                  onPressed: _deleteAction,
+                  onPressed: deleteAction,
                   icon: const Icon(Icons.delete),
                   color: Colors.red,
                 )
@@ -77,7 +74,7 @@ class _AccountInfoCardButtonsState extends State<AccountInfoCardButtons> {
     );
   }
 
-  void _expandAction() {
+  void expandAction() {
     setState(() {
       if (expandName == 'Expandir') {
         expandName = 'Contraer';
@@ -90,19 +87,15 @@ class _AccountInfoCardButtonsState extends State<AccountInfoCardButtons> {
     widget.expandInfo();
   }
 
-  void _editAction() {
+  void editAction() {
     widget.editAcc();
   }
 
-  void _editAliasAction() {
-    widget.editAccAlias();
-  }
-
-  void _deleteAction() {
+  void deleteAction() {
     widget.deleteAcc();
   }
 
-  void _shareAction() {
+  void shareAction() {
     widget.shareAcc();
   }
 }

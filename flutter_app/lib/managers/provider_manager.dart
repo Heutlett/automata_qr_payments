@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/models/account.dart';
 import 'package:flutter_app/models/ubicacion.dart';
 
@@ -80,15 +79,5 @@ class ProviderManager extends ChangeNotifier {
   void setAddedSharedAccount(Account addedSharedAccount) {
     _addedSharedAccount = addedSharedAccount;
     notifyListeners();
-  }
-
-  void reloadAccountsInAccountManagement(
-      BuildContext context, List<Account> accounts) {
-    setMyAccounts(accounts);
-
-    if (context.mounted) {
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          accountManagementRouteName, (Route<dynamic> route) => false);
-    }
   }
 }

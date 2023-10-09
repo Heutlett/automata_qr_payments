@@ -10,6 +10,7 @@ import 'package:flutter_app/widgets/account/account_info_header.dart';
 import 'package:flutter_app/widgets/account/account_info_card_shared_acc.dart';
 import 'package:flutter_app/models/ubicacion.dart';
 import 'package:flutter_app/utils/utils.dart';
+import 'package:flutter_app/widgets/general/my_text.dart';
 import 'package:provider/provider.dart';
 
 class AccountInfoCard extends StatefulWidget {
@@ -54,26 +55,45 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
                 cedulaTipo: account.cedulaTipo,
                 cedulaNumero: account.cedulaNumero,
                 nombre: account.nombre,
-                alias: account.alias,
               ),
               isExpanded == true
                   ? AccountInfoCardExpand(account: account)
                   : const SizedBox(),
-              isExpanded == true
-                  ? AccountInfoCardActivities(
-                      activities: widget.account.actividades)
+              AccountInfoCardActivities(activities: widget.account.actividades),
+              widget.showIsShared
+                  ? account.esCompartida
+                      ? Card(
+                          color: Colors.amber[300],
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(2.0),
+                                child: MyText(
+                                    text: "Compartida conmigo (no soy dueño)"),
+                              ),
+                            ],
+                          ))
+                      : Card(
+                          color: Colors.green[300],
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(2.0),
+                                child: MyText(text: "Dueño"),
+                              ),
+                            ],
+                          ))
                   : const SizedBox(),
               addButtons == 2
                   ? AccountInfoCardSharedAcc(account: account)
                   : const SizedBox(),
               addButtons != 0
                   ? AccountInfoCardButtons(
-                      expandInfo: _expandInfo,
+                      expandInfo: expandInfo,
                       editAcc: () {
                         _showEditAccountScreen(context, providerManager);
-                      },
-                      editAccAlias: () {
-                        _showEditAccountAliasScreen(context, providerManager);
                       },
                       deleteAcc: account.esCompartida
                           ? () {
@@ -85,7 +105,7 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
                                   context, account.id, providerManager);
                             },
                       shareAcc: () {
-                        _shareAcc(context);
+                        shareAcc(context);
                       },
                       buttons: addButtons,
                       account: account,
@@ -95,7 +115,7 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
           );
   }
 
-  void _expandInfo() {
+  void expandInfo() {
     setState(() {
       if (isExpanded) {
         isExpanded = false;
@@ -212,27 +232,30 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
     }
   }
 
-  void _showEditAccountAliasScreen(
-      BuildContext context, ProviderManager providerManager) async {
-    _setLoadingTrue();
-    providerManager.setSelectedEditAccount(account);
-    _setLoadingFalse();
-
-    if (context.mounted) {
-      Navigator.of(context).pushNamed(editAccountAliasRouteName);
-    }
-  }
-
-  void _shareAcc(BuildContext context) async {
-    _setLoadingTrue();
+  void shareAcc(BuildContext context) async {
     var codigoQR = await getAccountShareQr(int.parse(account.id));
-    _setLoadingTrue();
 
     if (context.mounted) {
       Navigator.of(context).pushNamed(
         shareAccountRouteName,
         arguments: [account, codigoQR],
       );
+    }
+  }
+
+  Future<void> _loadAccounts(
+      ProviderManager providerManager, List<Account> accounts) async {
+    providerManager.setMyAccounts(accounts);
+  }
+
+  Future<void> _showAccountManagementScreen(BuildContext context,
+      ProviderManager providerManager, List<Account> accounts) async {
+    _setLoadingTrue();
+    await _loadAccounts(providerManager, accounts);
+    _setLoadingFalse();
+
+    if (context.mounted) {
+      Navigator.of(context).pushNamed(accountManagementRouteName);
     }
   }
 
@@ -260,7 +283,8 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
       _setLoadingFalse();
 
       if (context.mounted) {
-        providerManager.reloadAccountsInAccountManagement(context, accounts);
+        Navigator.of(context).pop();
+        _showAccountManagementScreen(context, providerManager, accounts);
       }
     } else {
       if (context.mounted) {
@@ -294,7 +318,8 @@ class _AccountInfoCardState extends State<AccountInfoCard> {
       _setLoadingFalse();
 
       if (context.mounted) {
-        providerManager.reloadAccountsInAccountManagement(context, accounts);
+        Navigator.of(context).pop();
+        _showAccountManagementScreen(context, providerManager, accounts);
       }
     } else {
       if (context.mounted) {

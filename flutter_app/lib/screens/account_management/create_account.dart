@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/constants.dart';
 import 'package:flutter_app/constants/route_names.dart';
@@ -45,7 +43,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   Distrito? selectedDistrito;
   Barrio? selectedBarrio;
 
-  final _aliasController = TextEditingController();
   final _cedulaNumeroController = TextEditingController();
   final _idExtranjeroController = TextEditingController();
   final _nombreController = TextEditingController();
@@ -60,7 +57,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _codigoActividadController = TextEditingController();
   final _nombreActividadController = TextEditingController();
 
-  late FocusNode _aliasFocusNode;
   late FocusNode _cedulaTipoFocusNode;
   late FocusNode _cedulaNumeroFocusNode;
   late FocusNode _idExtranjeroFocusNode;
@@ -83,7 +79,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   @override
   void initState() {
     super.initState();
-    _aliasFocusNode = FocusNode();
     _cedulaTipoFocusNode = FocusNode();
     _cedulaNumeroFocusNode = FocusNode();
     _idExtranjeroFocusNode = FocusNode();
@@ -108,7 +103,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   @override
   void dispose() {
-    _aliasController.dispose();
     _cedulaNumeroController.dispose();
     _idExtranjeroController.dispose();
     _nombreController.dispose();
@@ -124,7 +118,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     _codigoActividadController.dispose();
     _nombreActividadController.dispose();
 
-    _aliasFocusNode.dispose();
     _cedulaTipoFocusNode.dispose();
     _cedulaNumeroFocusNode.dispose();
     _idExtranjeroFocusNode.dispose();
@@ -222,37 +215,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               border: Border.all(color: Colors.black)),
                           child: Column(
                             children: [
-                              const SizedBox(height: 8.0),
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                color: const Color.fromARGB(255, 255, 255, 255),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Alias',
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    TextFormField(
-                                      focusNode: _aliasFocusNode,
-                                      controller: _aliasController,
-                                      onEditingComplete: () {
-                                        _focusNextField(
-                                          context,
-                                          _aliasFocusNode,
-                                          _cedulaTipoFocusNode,
-                                        );
-                                      },
-                                      decoration: const InputDecoration(
-                                          labelText:
-                                              'Ingrese un alias para la cuenta'),
-                                    ),
-                                  ],
-                                ),
-                              ),
                               const SizedBox(height: 8.0),
                               Container(
                                 padding: const EdgeInsets.all(8),
@@ -586,7 +548,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                           barrios =
                                               []; // Reinicia la lista de barrios
                                           // Simula la carga de los cantones para la provincia seleccionada
-                                          _loadCantones(context);
+                                          loadCantones(context);
                                         });
                                         _focusNextField(
                                             context,
@@ -616,7 +578,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                           barrios =
                                               []; // Reinicia la lista de barrios
                                           // Simula la carga de los distritos para el cantón seleccionado
-                                          _loadDistritos(context);
+                                          loadDistritos(context);
                                         });
                                         _focusNextField(
                                             context,
@@ -643,7 +605,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                           barrios =
                                               []; // Reinicia la lista de barrios
                                           // Simula la carga de los barrios para el distrito seleccionado
-                                          _loadBarrios(context);
+                                          loadBarrios(context);
                                         });
                                         _focusNextField(
                                             context,
@@ -753,7 +715,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                                     flex: 1,
                                                     child: ElevatedButton(
                                                       onPressed: () {
-                                                        _addActivity(context);
+                                                        addActivity(context);
                                                         _codigoActividadController
                                                             .clear(); // Limpiar el TextFormField
                                                         FocusScope.of(context)
@@ -807,7 +769,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                                           fontSize: 14,
                                                           text: 'Buscar',
                                                           function: () {
-                                                            _searchActivityByName(
+                                                            searchActivityByName(
                                                                 context);
                                                             _nombreActividadController
                                                                 .clear(); // Limpiar el TextFormField
@@ -1014,7 +976,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   void _submitCreateAccountForm(
       BuildContext context, ProviderManager providerManager) async {
-    final alias = _aliasController.text;
     final cedulaTipo = _cedulaTipo;
     final cedulaNumero = _cedulaNumeroController.text;
     final idExtranjero = _idExtranjeroController.text;
@@ -1047,7 +1008,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         selectedBarrio!.id.toString().padLeft(2, '0');
 
     final cuenta = {
-      "alias": alias,
       "cedulaTipo": cedulaTipo,
       "cedulaNumero": cedulaNumero,
       "idExtranjero": idExtranjero,
@@ -1070,32 +1030,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     _setLoadingFalse();
 
     if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
+      List<Account> accounts = await mapAccountListResponse(response);
 
-      if (data['success']) {
-        List<Account> accounts = await mapAccountListResponse(response);
-
-        if (context.mounted) {
-          showAlertDialogWithFunction(
-            context,
-            'Cuenta agregada',
-            'La cuenta se agregó exitosamente.',
-            'Aceptar',
-            () {
-              providerManager.reloadAccountsInAccountManagement(
-                  context, accounts);
-            },
-          );
-        }
-      } else {
-        if (context.mounted) {
-          showAlertDialog(
-            context,
-            'Error al agregar cuenta',
-            data['message'],
-            'Aceptar',
-          );
-        }
+      if (context.mounted) {
+        showAlertDialogWithFunction(
+          context,
+          'Cuenta agregada',
+          'La cuenta se agregó exitosamente.',
+          'Aceptar',
+          () {
+            _reloadAccounts(context, providerManager, accounts);
+          },
+        );
       }
     } else {
       if (context.mounted) {
@@ -1109,7 +1055,20 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     }
   }
 
-  void _loadCantones(BuildContext context) async {
+  Future<void> _loadAccounts(
+      ProviderManager providerManager, List<Account> accounts) async {
+    providerManager.setMyAccounts(accounts);
+  }
+
+  void _reloadAccounts(BuildContext context, ProviderManager providerManager,
+      List<Account> accounts) async {
+    _loadAccounts(providerManager, accounts);
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        homeLoggedRouteName, (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamed(accountManagementRouteName);
+  }
+
+  void loadCantones(BuildContext context) async {
     if (selectedProvincia != null) {
       var cantonesList =
           await ubicacionService.getCantonesByProvincia(selectedProvincia!.id);
@@ -1125,7 +1084,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     }
   }
 
-  void _loadDistritos(BuildContext context) async {
+  void loadDistritos(BuildContext context) async {
     if (selectedCanton != null) {
       var distritosList = await ubicacionService.getDistritosByCanton(
           selectedProvincia!.id, selectedCanton!.id);
@@ -1141,7 +1100,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     }
   }
 
-  void _loadBarrios(BuildContext context) async {
+  void loadBarrios(BuildContext context) async {
     if (selectedDistrito != null) {
       var barriosList = await ubicacionService.getBarriosByDistrito(
           selectedProvincia!.id, selectedCanton!.id, selectedDistrito!.id);
@@ -1157,7 +1116,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     }
   }
 
-  void _addActivity(BuildContext context) async {
+  void addActivity(BuildContext context) async {
     if (_codigoActividadController.text.isEmpty) {
       showAlertDialog(
           context,
@@ -1200,7 +1159,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     }
   }
 
-  void _searchActivityByName(BuildContext context) async {
+  void searchActivityByName(BuildContext context) async {
     if (_nombreActividadController.text.isEmpty) {
       showAlertDialog(
           context,

@@ -86,12 +86,14 @@ Future<ServerResponse<Comprobante>> getComprobante(int id) async {
     if (data['success']) {
       data = data['data'];
 
+      print(data);
+      print("");
+
       Account accountEmisor = Account(
         id: data['cuentaEmisor']['id'].toString(),
         cedulaTipo: data['cuentaEmisor']['cedulaTipo'],
         cedulaNumero: data['cuentaEmisor']['cedulaNumero'],
         idExtranjero: data['cuentaEmisor']['idExtranjero'],
-        alias: data['cuentaEmisor']['alias'],
         nombre: data['cuentaEmisor']['nombre'],
         nombreComercial: data['cuentaEmisor']['nombreComercial'],
         telCodigoPais: data['cuentaEmisor']['telCodigoPais'],
@@ -115,7 +117,6 @@ Future<ServerResponse<Comprobante>> getComprobante(int id) async {
         cedulaNumero: data['cuentaReceptor']['cedulaNumero'],
         idExtranjero: data['cuentaReceptor']['idExtranjero'],
         nombre: data['cuentaReceptor']['nombre'],
-        alias: data['cuentaReceptor']['alias'],
         nombreComercial: data['cuentaReceptor']['nombreComercial'],
         telCodigoPais: data['cuentaReceptor']['telCodigoPais'],
         telNumero: data['cuentaReceptor']['telNumero'],

@@ -5,7 +5,6 @@ class Account {
   final String cedulaTipo;
   final String cedulaNumero;
   final String idExtranjero;
-  final String alias;
   final String nombre;
   final String nombreComercial;
   final String telCodigoPais;
@@ -30,7 +29,6 @@ class Account {
     required this.cedulaTipo,
     required this.cedulaNumero,
     required this.idExtranjero,
-    required this.alias,
     required this.nombre,
     required this.nombreComercial,
     required this.telCodigoPais,
@@ -57,7 +55,6 @@ class Account {
       'cedulaTipo': cedulaTipo,
       'cedulaNumero': cedulaNumero,
       'idExtranjero': idExtranjero,
-      'alias': alias,
       'nombre': nombre,
       'nombreComercial': nombreComercial,
       'telCodigoPais': telCodigoPais,

@@ -48,7 +48,9 @@ class FacturarScreen extends StatelessWidget {
     var accounts = await getAccountList();
 
     if (context.mounted) {
-      Navigator.of(context).pushNamed(generateQrRouteName, arguments: accounts);
+      Navigator.of(context).pushNamed(
+          selectReceptorAccountToGenerateQrRouteName,
+          arguments: accounts);
     }
   }
 
