@@ -40,7 +40,7 @@ class _GenerateQrScreenState extends State<GenerateQrScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Seleccione su cuenta receptor'),
+        title: const Text('Seleccione una cuenta'),
       ),
       body: accounts == null || isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -137,8 +137,8 @@ class _GenerateQrScreenState extends State<GenerateQrScreen> {
     } catch (e) {
       _setLoadingFalse();
       if (context.mounted) {
-      showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
-      }    
+        showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
+      }
     }
   }
 

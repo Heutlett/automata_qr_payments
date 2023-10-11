@@ -5,19 +5,21 @@ import 'package:flutter_app/services/account/account_service.dart';
 import 'package:flutter_app/utils/utils.dart';
 import 'package:flutter_app/widgets/account/account_info_card.dart';
 
-class ShowSharedAddedAccount extends StatefulWidget {
+class ShowSharedAddedAccountScreen extends StatefulWidget {
   final ProviderManager providerManager;
 
-  const ShowSharedAddedAccount({
+  const ShowSharedAddedAccountScreen({
     super.key,
     required this.providerManager,
   });
 
   @override
-  State<ShowSharedAddedAccount> createState() => _ShowSharedAddedAccountState();
+  State<ShowSharedAddedAccountScreen> createState() =>
+      _ShowSharedAddedAccountScreenState();
 }
 
-class _ShowSharedAddedAccountState extends State<ShowSharedAddedAccount> {
+class _ShowSharedAddedAccountScreenState
+    extends State<ShowSharedAddedAccountScreen> {
   bool isLoading = false;
   final _aliasController = TextEditingController();
   late ProviderManager providerManager;
@@ -149,7 +151,7 @@ class _ShowSharedAddedAccountState extends State<ShowSharedAddedAccount> {
     } catch (e) {
       _setLoadingFalse();
       if (context.mounted) {
-        showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
+        showAlertDialog(context, 'Ha ocurrido un error', e.toString(), 'Ok');
       }
     }
   }

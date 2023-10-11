@@ -154,8 +154,8 @@ class _AccountInfoCardSharedAccState extends State<AccountInfoCardSharedAcc> {
     } catch (e) {
       _setLoadingFalse();
       if (context.mounted) {
-      showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
-      }    
+        showAlertDialog(context, 'Ha ocurrido un error', e.toString(), 'Ok');
+      }
     }
   }
 }

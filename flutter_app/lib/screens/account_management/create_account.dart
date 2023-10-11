@@ -842,7 +842,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                          .all(
+                                                                              .all(
                                                                           8.0),
                                                                   child: Column(
                                                                     crossAxisAlignment:
@@ -917,7 +917,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                          .all(
+                                                                              .all(
                                                                           8.0),
                                                                   child: Column(
                                                                     crossAxisAlignment:
@@ -1110,8 +1110,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     } catch (e) {
       _setLoadingFalse();
       if (context.mounted) {
-      showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
-      }    
+        showAlertDialog(context, 'Ha ocurrido un error', e.toString(), 'Ok');
+      }
     }
   }
 

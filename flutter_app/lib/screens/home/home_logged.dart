@@ -160,7 +160,7 @@ class _HomeLoggedScreenState extends State<HomeLoggedScreen> {
   }
 
   void _showSelectReceptorAccount(BuildContext context) {
-    Navigator.of(context).pushNamed(scanQrReceptorAccountRouteName);
+    Navigator.of(context).pushNamed(scanQrRouteName);
   }
 
   // void _showFacturasHistoryScreen(

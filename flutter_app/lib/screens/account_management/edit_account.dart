@@ -729,7 +729,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                          .all(
+                                                                              .all(
                                                                           8.0),
                                                                   child: Column(
                                                                     crossAxisAlignment:
@@ -804,7 +804,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                                                                 child: Padding(
                                                                   padding:
                                                                       const EdgeInsets
-                                                                          .all(
+                                                                              .all(
                                                                           8.0),
                                                                   child: Column(
                                                                     crossAxisAlignment:
@@ -987,11 +987,11 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
           );
         }
       }
-     } catch (e) {
+    } catch (e) {
       _setLoadingFalse();
       if (context.mounted) {
-      showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
-      }    
+        showAlertDialog(context, 'Ha ocurrido un error', e.toString(), 'Ok');
+      }
     }
   }
 

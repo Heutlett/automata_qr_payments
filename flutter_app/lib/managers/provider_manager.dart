@@ -26,6 +26,10 @@ class ProviderManager extends ChangeNotifier {
   Account? _addedSharedAccount;
   Account? get addedSharedAccount => _addedSharedAccount;
 
+  // -- Scan Qr Receptor
+  Account? _qrReceptorAccount;
+  Account? get qrReceptorAccount => _qrReceptorAccount;
+
   // -- Accounts
   void setMyAccounts(List<Account> accounts) {
     _myAccounts.clear();
@@ -39,9 +43,33 @@ class ProviderManager extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearSelectedEditAccount() {
+    _selectedEditAccount = null;
+    notifyListeners();
+  }
+
+  // -- Qr Receptor Account
+
+  void setQrReceptorAccount(Account qrReceptorAccount) {
+    _qrReceptorAccount = qrReceptorAccount;
+    notifyListeners();
+  }
+
+  void clearQrReceptorAccount() {
+    _qrReceptorAccount = null;
+    notifyListeners();
+  }
+
+  // -- Ubicacion
+
   void setCantonesSelectedEditAccount(
       List<Canton> cantonesSelectedEditAccount) {
     _cantonesSelectedEditAccount = cantonesSelectedEditAccount;
+    notifyListeners();
+  }
+
+  void clearCantonesSelectedEditAccount() {
+    _cantonesSelectedEditAccount!.clear();
     notifyListeners();
   }
 
@@ -51,23 +79,13 @@ class ProviderManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setBarriosSelectedEditAccount(List<Barrio> barriosSelectedEditAccount) {
-    _barriosSelectedEditAccount = barriosSelectedEditAccount;
-    notifyListeners();
-  }
-
-  void clearSelectedEditAccount() {
-    _selectedEditAccount = null;
-    notifyListeners();
-  }
-
-  void clearCantonesSelectedEditAccount() {
-    _cantonesSelectedEditAccount!.clear();
-    notifyListeners();
-  }
-
   void clearDistritosSelectedEditAccount() {
     _distritosSelectedEditAccount!.clear();
+    notifyListeners();
+  }
+
+  void setBarriosSelectedEditAccount(List<Barrio> barriosSelectedEditAccount) {
+    _barriosSelectedEditAccount = barriosSelectedEditAccount;
     notifyListeners();
   }
 

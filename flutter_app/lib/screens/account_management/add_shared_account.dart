@@ -68,7 +68,7 @@ class _AddSharedAccountScreenState extends State<AddSharedAccountScreen> {
                     ],
                   ),
                 )
-              : ShowSharedAddedAccount(providerManager: providerManager),
+              : ShowSharedAddedAccountScreen(providerManager: providerManager),
     );
   }
 

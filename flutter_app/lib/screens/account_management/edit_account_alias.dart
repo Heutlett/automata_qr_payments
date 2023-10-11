@@ -206,11 +206,11 @@ class _EditAccountAliasScreenState extends State<EditAccountAliasScreen> {
           );
         }
       }
-     } catch (e) {
+    } catch (e) {
       _setLoadingFalse();
       if (context.mounted) {
-      showAlertDialog(context, 'A ocurrido un error', e.toString(), 'Ok');
-      }    
+        showAlertDialog(context, 'Ha ocurrido un error', e.toString(), 'Ok');
+      }
     }
   }
 }
