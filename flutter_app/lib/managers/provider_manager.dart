@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/models/account.dart';
+import 'package:flutter_app/models/activity_history.dart';
 import 'package:flutter_app/models/ubicacion.dart';
 
 class ProviderManager extends ChangeNotifier {
@@ -29,6 +30,10 @@ class ProviderManager extends ChangeNotifier {
   // -- Scan Qr Receptor
   Account? _qrReceptorAccount;
   Account? get qrReceptorAccount => _qrReceptorAccount;
+
+  // -- Activities History
+  final List<ActivityHistory> _activitiesHistory = [];
+  List<ActivityHistory> get activitiesHistory => _activitiesHistory;
 
   // -- Accounts
   void setMyAccounts(List<Account> accounts) {
@@ -108,5 +113,12 @@ class ProviderManager extends ChangeNotifier {
       Navigator.of(context).pushNamedAndRemoveUntil(
           accountManagementRouteName, (Route<dynamic> route) => false);
     }
+  }
+
+  // -- Activities History
+  void setActivitiesHistory(List<ActivityHistory> activitiesHistory) {
+    _activitiesHistory.clear();
+    _activitiesHistory.insertAll(0, activitiesHistory);
+    notifyListeners();
   }
 }

@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/constants/constants.dart';
 import 'package:flutter_app/constants/route_names.dart';
 import 'package:flutter_app/managers/provider_manager.dart';
+import 'package:flutter_app/models/activity_history.dart';
 import 'package:flutter_app/services/account/account_service.dart';
+import 'package:flutter_app/services/user/user_service.dart';
+import 'package:flutter_app/utils/utils.dart';
 import 'package:flutter_app/widgets/general/my_button.dart';
 import 'package:flutter_app/widgets/general/my_text.dart';
 import 'package:provider/provider.dart';
@@ -100,6 +105,13 @@ class _HomeLoggedScreenState extends State<HomeLoggedScreen> {
                     ),
                     const SizedBox(height: 20.0),
                     MyButton(
+                      text: 'Historial de actividades',
+                      function: () => _showActivitiesHistoryScreen(
+                          context, providerManager),
+                      size: const Size(250, 60),
+                    ),
+                    const SizedBox(height: 20.0),
+                    MyButton(
                       text: 'Cerrar sesión',
                       function: () => _showHomeScreen(context),
                       size: const Size(250, 60),
@@ -147,6 +159,53 @@ class _HomeLoggedScreenState extends State<HomeLoggedScreen> {
   // void _showFacturarScreen(BuildContext context) {
   //   Navigator.of(context).pushNamed(facturarRouteName);
   // }
+
+  void _showActivitiesHistoryScreen(
+      BuildContext context, ProviderManager providerManager) async {
+    try {
+      _setLoadingTrue();
+      var response = await getUserActivities();
+      _setLoadingFalse();
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        data = data['data'];
+
+        List<ActivityHistory> activitiesHistory = [];
+
+        if (data != null) {
+          for (var i = 0; i < data.length; i++) {
+            activitiesHistory.add(
+              ActivityHistory(
+                id: data[i]['id'],
+                fecha: data[i]['fecha'],
+                accion: data[i]['accion'],
+                cuentaId: data[i]['cuentaId'],
+                cuentaNombre: data[i]['cuentaNombre'],
+              ),
+            );
+          }
+        }
+
+        providerManager.setActivitiesHistory(activitiesHistory);
+
+        if (context.mounted) {
+          Navigator.of(context).pushNamed(activitiesHistoryRouteName);
+        }
+      } else {
+        if (context.mounted) {
+          showAlertDialog(
+              context,
+              'Error',
+              'Ha ocurrido un error al obtener el historial de actividades',
+              'Aceptar');
+        }
+      }
+    } catch (e) {
+      showAlertDialog(
+          context, 'Error', 'Ha ocurrido un error: ${e.toString()}', 'Aceptar');
+    }
+  }
 
   void _showSelectReceptorAccountToGenerateQrScreen(
       BuildContext context, ProviderManager providerManager) async {

@@ -20,3 +20,6 @@ const getComprobantesSummaryUrl =
     'https://$facturasApi/api/Comprobante/comprobantes/summary';
 const getComprobanteDetailsUrl =
     'https://$facturasApi/api/Comprobante/comprobantes';
+
+// User
+const getActivitiesUrl = 'https://$facturasApi/api/usuario/actividades';

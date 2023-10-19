@@ -12,3 +12,5 @@ const addSharedAccountRouteName = '/add_shared_account';
 
 const generateQrRouteName = '/generate_qr';
 const scanQrRouteName = '/scan_qr';
+
+const activitiesHistoryRouteName = '/activities_history';

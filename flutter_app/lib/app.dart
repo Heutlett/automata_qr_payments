@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/managers/provider_manager.dart';
 import 'package:flutter_app/screens/account_management/edit_account_alias.dart';
+import 'package:flutter_app/screens/history/activities_history.dart';
 import 'package:flutter_app/screens/home/home.dart';
 import 'package:flutter_app/screens/home/home_logged.dart';
 import 'package:flutter_app/screens/user/register.dart';
@@ -46,6 +47,8 @@ class MyApp extends StatelessWidget {
               const GenerateQrScreen(),
           ScanQrScreen.routeName: (BuildContext context) =>
               const ScanQrScreen(),
+          ActivitiesHistoryScreen.routeName: (BuildContext context) =>
+              const ActivitiesHistoryScreen(),
         },
       ),
     );

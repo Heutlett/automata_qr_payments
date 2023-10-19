@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_app/constants/endpoints.dart';
+import 'package:flutter_app/managers/shared_local_store.dart';
 import 'package:http/http.dart' as http;
 
 Future<http.Response> postLogin(String username, String password) async {
@@ -30,6 +31,15 @@ Future<http.Response> postRegister(
 
   var response = await http.post(Uri.parse(postRegisterUrl),
       headers: headers, body: json.encode(data));
+
+  return response;
+}
+
+Future<http.Response> getUserActivities() async {
+  String token = await SharedLocalStore.getAccessToken();
+
+  var headers = {"Authorization": "bearer $token"};
+  var response = await http.get(Uri.parse(getActivitiesUrl), headers: headers);
 
   return response;
 }
