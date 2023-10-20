@@ -19,9 +19,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+   
     return ChangeNotifierProvider(
+      
       create: (context) => ProviderManager(),
       child: MaterialApp(
+         debugShowCheckedModeBanner: false,
         initialRoute: HomeScreen.routeName,
         routes: {
           HomeScreen.routeName: (BuildContext context) => const HomeScreen(),
