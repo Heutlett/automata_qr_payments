@@ -20,8 +20,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-
+bool showPassword = false;
+bool showConfirmPassword = false;
   bool isLoading = false;
 
   @override
@@ -76,13 +78,46 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 20.0),
                       TextFormField(
                         controller: _passwordController,
-                        obscureText: true,
-                        decoration: const InputDecoration(
+                        obscureText: !showPassword, // Mostrar contraseña si showPassword es true
+                        decoration: InputDecoration(
                           labelText: 'Contraseña *',
+                          suffixIcon: IconButton(
+                            icon: Icon(showPassword ? Icons.visibility : Icons.visibility_off),
+                            onPressed: () {
+                              setState(() {
+                                showPassword = !showPassword;
+                              });
+                            },
+                          ),
                         ),
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Por favor, ingresa tu contraseña';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20.0),
+                      TextFormField(
+                        controller: _confirmPasswordController,
+                        obscureText: !showConfirmPassword,
+                        decoration:  InputDecoration(
+                          labelText: 'Confirmar Contraseña *',
+                          suffixIcon: IconButton(
+                            icon: Icon(showConfirmPassword ? Icons.visibility : Icons.visibility_off),
+                            onPressed: () {
+                              setState(() {
+                                showConfirmPassword = !showConfirmPassword;
+                              });
+                            },
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Por favor, confirma tu contraseña';
+                          }
+                          if (value != _passwordController.text) {
+                            return 'Las contraseñas no coinciden';
                           }
                           return null;
                         },

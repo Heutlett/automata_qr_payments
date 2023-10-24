@@ -26,7 +26,8 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _rememberUsername = false;
   late String _lastUsername;
   late ProviderManager providerManager;
-
+   
+  bool showPassword = false;  
   bool isLoading = false;
 
   @override
@@ -95,10 +96,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 20.0),
                       TextFormField(
-                        obscureText: true,
+                        obscureText: !showPassword, // Mostrar contraseña si showPassword es true
                         controller: _passwordController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Contraseña',
+                          suffixIcon: IconButton(
+                            icon: Icon(showPassword ? Icons.visibility : Icons.visibility_off),
+                            onPressed: () {
+                              setState(() {
+                                showPassword = !showPassword;
+                              });
+                            },
+                          ),
                         ),
                         validator: (value) {
                           if (value!.isEmpty) {
